@@ -2,26 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fluffi Presale</title>
+  <title>Fluffi Token Presale</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>🚀 Fluffi Token Presale</h1>
-    <p>Send BNB to the wallet below to participate:</p>
-    
+    <p>Send BNB to the wallet address below to participate:</p>
+
     <div class="wallet-box">
       <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
       <button onclick="copyWallet()">Copy Address</button>
     </div>
-    
-    <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Max:</strong> 5 BNB</p>
+
+    <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+
+    <div class="timer-box">
+      <h2>Presale Countdown</h2>
+      <p id="countdown">Loading timer...</p>
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-<div class="timer-box">
-  <h2>Presale Countdown</h2>
-  <p id="countdown"></p>
-</div>
