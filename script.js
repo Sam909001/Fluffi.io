@@ -2,12 +2,12 @@
 function copyWallet() {
   const walletInput = document.getElementById("wallet");
   walletInput.select();
-  walletInput.setSelectionRange(0, 99999); // For mobile
+  walletInput.setSelectionRange(0, 99999);
   document.execCommand("copy");
   alert("Wallet address copied!");
 }
 
-// Countdown timer
+// Countdown timer logic
 const presaleEndDate = new Date("May 1, 2025 00:00:00").getTime();
 
 const countdownInterval = setInterval(function () {
@@ -20,10 +20,4 @@ const countdownInterval = setInterval(function () {
     return;
   }
 
-  const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-  document.getElementById("countdown").innerHTML =
-    days + "d " + hours + "h " + minutes + "
+  const days = Math.floor(timeRemaining / (1000
