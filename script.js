@@ -5,8 +5,8 @@ function copyWallet() {
   document.execCommand("copy");
   alert("Wallet address copied!");
 }
-// Set the end date for the presale (e.g., 1st May 2025)
-var presaleEndDate = new Date("May 1, 2025 00:00:00").getTime();
+// Set the end date for the presale (e.g., 8st May 2025)
+var presaleEndDate = new Date("May 8, 2025 00:00:00").getTime();
 
 // Update the countdown every 1 second
 var countdownInterval = setInterval(function() {
