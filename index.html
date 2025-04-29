@@ -2,44 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fluffi Token Presale</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>🚀 Fluffi Token Presale</h1>
-    <p>Send BNB to the wallet address below to participate:</p>
-
-    <div class="wallet-box">
-      <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
-      <button onclick="copyWallet()">Copy Address</button>
-    </div>
-
-    <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
-
-    <div class="timer-box">
-      <h2>Presale Countdown</h2>
-      <p id="countdown">Loading timer...</p>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FLUFFI Meme Coin Presale</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       text-align: center;
-      background-color: #fdf6e3;
+      background-color: #fff8f0;
       font-family: Arial, sans-serif;
     }
     img {
-      width: 300px;
+      width: 450px;
       border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       margin-top: 40px;
@@ -49,78 +22,64 @@
       font-size: 2.5em;
       color: #333;
     }
+    h2 {
+      color: #ff6600;
+      margin-top: 20px;
+    }
+    .wallet-box {
+      margin-top: 30px;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .timer-box {
+      margin-top: 30px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to the FLUFFI Coin Presale 🚀</h1>
+  <h1>🚀 Fluffi Token Presale</h1>
+
   <img src="fluffi.jpg" alt="Fluffi Meme Coin">
 
-</body>
-</html>
-<div style="text-align: center; margin-top: 20px;">
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Fluffi Token Presale</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>🚀 Fluffi Token Presale</h1>
-    <p>Send BNB to the wallet address below to participate:</p>
+  <h2>The Future of Meme Coins is Fluffy! 🚀</h2>
 
-    <div class="wallet-box">
-      <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
-      <button onclick="copyWallet()">Copy Address</button>
-    </div>
+  <p>Send BNB to the wallet address below to participate:</p>
 
-    <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+  <div class="wallet-box">
+    <input type="text" id="wallet" value="0x6F5f48A159Cd46a10faDEED95b29028972554747" readonly>
+    <button onclick="copyWallet()">Copy Address</button>
+  </div>
 
-    <div class="timer-box">
-      <h2>Presale Countdown</h2>
-      <p id="countdown">Loading timer...</p>
-    </div>
+  <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+
+  <div class="timer-box">
+    <h2>Presale Countdown</h2>
+    <p id="countdown">Loading timer...</p>
   </div>
 
   <script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FLUFFI Meme Coin Presale</title>
-  <style>
-    body {
-      text-align: center;
-      background-color: #fdf6e3;
-      font-family: Arial, sans-serif;
-    }
-    img {
-      width: 300px;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      margin-top: 40px;
-    }
-    h1 {
-      margin-top: 20px;
-      font-size: 2.5em;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
 
-  <h1>Welcome to the FLUFFI Coin Presale 🚀</h1>
-  <img src="fluffi.jpg" alt="Fluffi Meme Coin">
+  <script>
+    function copyWallet() {
+      var copyText = document.getElementById("wallet");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("Wallet Address Copied: " + copyText.value);
+    }
+  </script>
 
 </body>
 </html>
-<div style="text-align: center; margin-top: 20px;">
-  <img src="fluffi.jpg" alt="Fluffi Meme Coin" style="width: 300px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
-  <h2 style="color: #ff6600; margin-top: 20px;">The Future of Meme Coins is Fluffy! 🚀</h2>
-</div>
-</div>
