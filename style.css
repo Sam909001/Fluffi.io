@@ -150,3 +150,31 @@ body.dark-mode .faq-text {
 details {
   margin-bottom: 1rem;
 }
+/* === FAQ Section Improvements === */
+details {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.faq-text {
+  color: var(--text-color);
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  line-height: 1.5;
+}
+
+/* Dark mode specific for FAQ */
+body.dark-mode summary {
+  color: var(--dark-text);
+}
+
+body.dark-mode .faq-text {
+  color: var(--dark-text);
+}
