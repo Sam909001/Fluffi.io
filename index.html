@@ -1,15 +1,71 @@
-<!DOCTYPE html><html lang="en" data-critters-container><head>
-  <meta charset="utf-8">
-  <title>Solaxy Token: SOLX Layer 2 Token | Best Crypto Presale 2025</title>
-  <meta name="description" content="Join the Solaxy Crypto Presale and discover the SOLX Token! Powered by Solana’s first Layer 2 blockchain, Solaxy delivers fast, affordable transactions. Buy $SOLX now!">
-  <base href="/">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLUFFI - Presale & Staking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <img src="fluffi.jpg" alt="Fluffi Logo" class="logo" />
+    <h1>🚀 FLUFFI Token Presale & Staking</h1>
+    <nav>
+      <button onclick="scrollToSection('presale')">Presale</button>
+      <button onclick="scrollToSection('staking')">Staking</button>
+      <button onclick="scrollToSection('faq')">FAQ</button>
+      <button onclick="scrollToSection('social')">Socials</button>
+      <button id="themeToggle">🌓</button>
+    </nav>
+  </header>
 
-  <!-- Cache buster -->
-  <meta http-equiv="Cache-Control" content="max-age=0, no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <!-- Presale Section -->
+  <section id="presale">
+    <h2>Presale is Live!</h2>
+    <p>Connect your wallet to participate.</p>
+    <button id="connectWallet">Connect Wallet</button>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="keywords" content="Solaxy">
-  <meta name="robots" content="index,follow">
-  <link rel="icon" type="image/x-icon" href="assets/images/svg-icons/token.svg">
+    <div class="presale-details">
+      <p><strong>Current Stage:</strong> <span id="currentStage">1</span>/15</p>
+      <p><strong>Price:</strong> <span id="tokenPrice">0.0001</span> BNB</p>
+      <p><strong>Tokens Sold:</strong> <span id="tokensSold">0</span> / 4,000,000,000 FLUFFI</p>
+      <progress id="progressBar" value="0" max="4000000000"></progress>
+    </div>
+    <button id="buyNow">Buy FLUFFI</button>
+  </section>
+
+  <!-- Staking Section -->
+  <section id="staking">
+    <h2>Stake Your FLUFFI</h2>
+    <p>Earn 90% APY. Minimum: 0.01 BNB or equivalent. Locked until listing.</p>
+    <input type="number" id="stakeAmount" placeholder="Amount to stake" />
+    <button id="stakeBtn">Stake Now</button>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq">
+    <h2>FAQ</h2>
+    <details>
+      <summary>When will FLUFFI list?</summary>
+      <p>Right after presale ends. Stay tuned on our socials!</p>
+    </details>
+    <details>
+      <summary>Can I unstake before listing?</summary>
+      <p>No. All stakes are locked until the listing date.</p>
+    </details>
+  </section>
+
+  <!-- Social Section -->
+  <section id="social">
+    <h2>Join the Community</h2>
+    <a href="https://twitter.com/" target="_blank">🐦 Twitter</a>
+    <a href="https://t.me/" target="_blank">📢 Telegram</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 FLUFFI Token. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
