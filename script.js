@@ -1,198 +1,43 @@
-// Connect Wallet
-const connectButton = document.getElementById('connectButton');
+// Presale configuration
+const totalStages = 15;
+const initialPrice = 0.0001; // USD
+const priceIncrease = 0.05;  // 5%
+const tokensPerStage = 100000000; // Adjust as needed
+const stageDuration = 60 * 5; // 5 minutes per stage
 
-connectButton.addEventListener('click', async () => {
-  if (typeof window.ethereum !== 'undefined') {
-    try {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      connectButton.innerText = 'Wallet Connected';
-      connectButton.disabled = true;
-    } catch (error) {
-      console.error('User rejected connection');
-    }
-  } else {
-    alert('Please install MetaMask!');
-  }
-});
-
-// Copy Wallet Address
-function copyWallet() {
-  const wallet = document.getElementById('wallet');
-  wallet.select();
-  wallet.setSelectionRange(0, 99999); // For mobile devices
-  navigator.clipboard.writeText(wallet.value);
-  alert("Wallet Address Copied!");
-}
-
-// Dark Mode Toggle
-const darkModeToggle = document.getElementById('darkModeToggle');
-darkModeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  document.querySelector('footer').classList.toggle('dark-mode');
-  document.querySelector('header').classList.toggle('dark-mode');
-});
-
-// BNB Raised Counter (Fake animation for now)
-let bnbRaised = 800; // Example: 800 BNB raised
-document.getElementById('bnbRaised').innerText = `BNB Raised: ${bnbRaised}`;
-
-// Update Progress Bar
-function updateProgressBar() {
-  const progressBar = document.getElementById('progressBar');
-  const percentage = (bnbRaised / 1600) * 100; // Example: target 1600 BNB
-  progressBar.style.width = `${percentage}%`;
-  progressBar.innerText = `${Math.floor(percentage)}%`;
-}
-updateProgressBar();
-
-// Confetti Celebration
-const canvas = document.getElementById('confettiCanvas');
-const confetti = canvas.getContext('2d');
-
-function startConfetti() {
-  const pieces = [];
-  for (let i = 0; i < 150; i++) {
-    pieces.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      size: Math.random() * 5 + 2,
-      speedX: Math.random() * 3 - 1.5,
-      speedY: Math.random() * 3 + 2,
-      color: `hsl(${Math.random() * 360}, 100%, 50%)`
-    });
-  }
-
-  function update() {
-    confetti.clearRect(0, 0, canvas.width, canvas.height);
-    for (const p of pieces) {
-      p.x += p.speedX;
-      p.y += p.speedY;
-      if (p.y > window.innerHeight) {
-        p.y = -10;
-        p.x = Math.random() * window.innerWidth;
-      }
-      confetti.fillStyle = p.color;
-      confetti.fillRect(p.x, p.y, p.size, p.size);
-    }
-    requestAnimationFrame(update);
-  }
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  update();
-}
-
-window.onload = startConfetti;
-const ctx = document.getElementById('tokenChart').getContext('2d');
-new Chart(ctx, {
-  type: 'pie',
-  data: {
-    labels: ['Presale - 40%', 'Liquidity - 30%', 'Marketing - 15%', 'Team - 10%', 'Reserve - 5%'],
-    datasets: [{
-      data: [40, 30, 15, 10, 5],
-      backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff'],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true
-  }
-});
-function updateStats() {
-  const price = 0.0001;
-  const supply = 4000000000;
-  const marketcap = (price * supply).toLocaleString();
-
-  document.getElementById('price').innerText = `$${price.toFixed(6)}`;
-  document.getElementById('supply').innerText = supply.toLocaleString();
-  document.getElementById('marketcap').innerText = `$${marketcap}`;
-}
-
-updateStats();
-let stage = 1;
-const maxStages = 15;
-let stageProgress = 0;
-const stageLimit = 100; // Tokens or arbitrary units per stage
-const basePrice = 0.0001;
-
-function updatePresaleDisplay() {
-  document.getElementById('current-stage').textContent = stage;
-  const price = basePrice * Math.pow(1.05, stage - 1);
-  document.getElementById('token-price').textContent = price.toFixed(6);
-  document.getElementById('stage-progress').value = stageProgress;
-}
-
-function buyTokens() {
-  stageProgress += 10; // Simulate a token purchase
-
-  if (stageProgress >= stageLimit && stage < maxStages) {
-    stage++;
-    stageProgress = 0;
-  }
-
-  updatePresaleDisplay();
-}
-
-updatePresaleDisplay();
-let stage = 1;
-const maxStages = 15;
-let stageProgress = 0;
-const tokensPerStage = 100;
+// Presale state
+let currentStage = 1;
 let tokensSold = 0;
-const basePrice = 0.0001;
-let stageDuration = 300; // 5 minutes per stage
-let timeLeft = stageDuration;
+let stageStartTime = Date.now();
 
-function updatePresaleDisplay() {
-  document.getElementById('current-stage').textContent = stage;
-  const price = basePrice * Math.pow(1.05, stage - 1);
-  document.getElementById('token-price').textContent = price.toFixed(6);
-  document.getElementById('stage-progress').value = stageProgress;
-  document.getElementById('tokens-sold').textContent = tokensSold;
-  document.getElementById('tokens-remaining').textContent = tokensPerStage - stageProgress;
+function updatePresaleUI() {
+  const price = (initialPrice * Math.pow(1 + priceIncrease, currentStage - 1)).toFixed(6);
+  const totalSold = tokensPerStage * (currentStage - 1);
+  const remaining = tokensPerStage;
+
+  document.getElementById("current-stage").textContent = currentStage;
+  document.getElementById("token-price").textContent = price;
+  document.getElementById("tokens-sold").textContent = totalSold.toLocaleString();
+  document.getElementById("tokens-remaining").textContent = remaining.toLocaleString();
+
+  const elapsed = Math.floor((Date.now() - stageStartTime) / 1000);
+  const remainingTime = Math.max(stageDuration - elapsed, 0);
+  const mins = String(Math.floor(remainingTime / 60)).padStart(2, '0');
+  const secs = String(remainingTime % 60).padStart(2, '0');
+  document.getElementById("stage-timer").textContent = `${mins}:${secs}`;
+  document.getElementById("stage-progress").value = ((elapsed / stageDuration) * 100);
+
+  if (remainingTime === 0 && currentStage < totalStages) {
+    currentStage++;
+    tokensSold += tokensPerStage;
+    stageStartTime = Date.now();
+  }
 }
 
 function buyTokens() {
-  const tokensToBuy = 10;
-  if (stageProgress + tokensToBuy <= tokensPerStage) {
-    stageProgress += tokensToBuy;
-    tokensSold += tokensToBuy;
-  } else {
-    const remaining = tokensPerStage - stageProgress;
-    stageProgress += remaining;
-    tokensSold += remaining;
-  }
-
-  if (stageProgress >= tokensPerStage && stage < maxStages) {
-    stage++;
-    stageProgress = 0;
-    timeLeft = stageDuration;
-  }
-
-  updatePresaleDisplay();
+  alert("This is a demo. Integration with Web3 and Metamask goes here.");
+  // You would handle the Web3 wallet transaction here
 }
 
-function startStageTimer() {
-  const timerInterval = setInterval(() => {
-    if (timeLeft <= 0) {
-      if (stage < maxStages) {
-        stage++;
-        stageProgress = 0;
-        timeLeft = stageDuration;
-      }
-    } else {
-      timeLeft--;
-    }
-
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('stage-timer').textContent =
-      `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    updatePresaleDisplay();
-  }, 1000);
-}
-
-startStageTimer();
-updatePresaleDisplay();
-
+// Update the UI every second
+setInterval(updatePresaleUI, 1000);
