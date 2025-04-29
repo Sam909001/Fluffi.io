@@ -323,4 +323,12 @@ footer.dark-mode {
 
 #presale-stages button:hover {
   background-color: #e67e22;
+  .faq {
+  background-color: #1e1e1e; /* darker background */
+  color: #f0f0f0;            /* light text */
+  padding: 20px;
+  border-radius: 12px;
+  margin: 40px auto;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
