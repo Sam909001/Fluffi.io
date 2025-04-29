@@ -164,3 +164,32 @@ function formatTime(ms) {
 setInterval(updateTimer, 1000);
 updateTimer();
 <script src="script.js"></script>
+// Capture referrer from URL
+const urlParams = new URLSearchParams(window.location.search);
+const ref = urlParams.get('ref');
+if (ref && /^0x[a-fA-F0-9]{40}$/.test(ref)) {
+  localStorage.setItem('referrer', ref);
+  console.log("Referrer saved:", ref);
+}
+
+// Simulated referral data (you can replace this with real backend logic later)
+const referralData = {
+  "0xAbc1234567890000000000000000000000000000": 4,
+  "0xDef4567890000000000000000000000000000000": 3,
+  "0xGhi7890000000000000000000000000000000000": 2,
+};
+
+// Render leaderboard
+function updateLeaderboard() {
+  const tbody = document.querySelector('#refTable tbody');
+  tbody.innerHTML = '';
+  for (const [wallet, count] of Object.entries(referralData)) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td style="padding: 8px;">${wallet.slice(0, 6)}...${wallet.slice(-4)}</td>
+      <td style="padding: 8px;">${count}</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+updateLeaderboard();
