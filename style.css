@@ -332,3 +332,6 @@ footer.dark-mode {
   max-width: 800px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+.faq h2 {
+  color: #00ffd9;
+}
