@@ -3,69 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FLUFFI - Presale & Staking</title>
+  <title>Fluffi Token Presale & Staking</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
   <header>
-    <img src="fluffi.jpg" alt="Fluffi Logo" class="logo" />
-    <h1>🚀 FLUFFI Token Presale & Staking</h1>
     <nav>
-      <button onclick="scrollToSection('presale')">Presale</button>
-      <button onclick="scrollToSection('staking')">Staking</button>
-      <button onclick="scrollToSection('faq')">FAQ</button>
-      <button onclick="scrollToSection('social')">Socials</button>
-      <button id="themeToggle">🌓</button>
+      <h1>FLUFFI 🐶</h1>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#presale">Presale</a></li>
+        <li><a href="#staking">Staking</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><button id="darkModeToggle">🌙</button></li>
+      </ul>
     </nav>
   </header>
 
-  <!-- Presale Section -->
+  <section id="home">
+    <h2>Welcome to Fluffi</h2>
+    <p>The cutest meme coin with real rewards!</p>
+    <img src="fluffi.jpg" alt="Fluffi Mascot" />
+  </section>
+
   <section id="presale">
     <h2>Presale is Live!</h2>
-    <p>Connect your wallet to participate.</p>
-    <button id="connectWallet">Connect Wallet</button>
-
-    <div class="presale-details">
-      <p><strong>Current Stage:</strong> <span id="currentStage">1</span>/15</p>
-      <p><strong>Price:</strong> <span id="tokenPrice">0.0001</span> BNB</p>
-      <p><strong>Tokens Sold:</strong> <span id="tokensSold">0</span> / 4,000,000,000 FLUFFI</p>
-      <progress id="progressBar" value="0" max="4000000000"></progress>
+    <p>Buy FLUFFI directly from your wallet.</p>
+    <div id="walletConnectBox">
+      <button onclick="connectWallet()">Connect Wallet</button>
+      <input type="number" id="bnbAmount" placeholder="Enter BNB amount" />
+      <button onclick="buyTokens()">Buy Tokens</button>
     </div>
-    <button id="buyNow">Buy FLUFFI</button>
+    <div id="presaleProgress">
+      <div id="progressBar"></div>
+      <p><span id="soldAmount">0</span> / 4,000,000,000 FLUFFI sold</p>
+    </div>
   </section>
 
-  <!-- Staking Section -->
   <section id="staking">
-    <h2>Stake Your FLUFFI</h2>
-    <p>Earn 90% APY. Minimum: 0.01 BNB or equivalent. Locked until listing.</p>
-    <input type="number" id="stakeAmount" placeholder="Amount to stake" />
-    <button id="stakeBtn">Stake Now</button>
+    <h2>Stake FLUFFI</h2>
+    <p>Earn 90% APY. Minimum: 0.01 BNB or equivalent. Lock until listing.</p>
+    <div id="stakingBox">
+      <input type="number" id="stakeAmount" placeholder="Enter FLUFFI amount" />
+      <button onclick="stakeFluffi()">Stake</button>
+      <p id="stakeStatus"></p>
+    </div>
   </section>
 
-  <!-- FAQ Section -->
   <section id="faq">
     <h2>FAQ</h2>
     <details>
-      <summary>When will FLUFFI list?</summary>
-      <p>Right after presale ends. Stay tuned on our socials!</p>
+      <summary>What is Fluffi?</summary>
+      <p>Fluffi is a meme token with staking, rewards, and community governance.</p>
     </details>
     <details>
-      <summary>Can I unstake before listing?</summary>
-      <p>No. All stakes are locked until the listing date.</p>
+      <summary>How does staking work?</summary>
+      <p>You lock FLUFFI until listing and earn 90% APY. Rewards are distributed post-listing.</p>
     </details>
-  </section>
-
-  <!-- Social Section -->
-  <section id="social">
-    <h2>Join the Community</h2>
-    <a href="https://twitter.com/" target="_blank">🐦 Twitter</a>
-    <a href="https://t.me/" target="_blank">📢 Telegram</a>
+    <details>
+      <summary>Is there a minimum for staking?</summary>
+      <p>Yes, the minimum is 0.01 BNB or equivalent in ETH, USDC, or SOL.</p>
+    </details>
   </section>
 
   <footer>
-    <p>&copy; 2025 FLUFFI Token. All rights reserved.</p>
+    <p>Follow us on:</p>
+    <a href="https://twitter.com/" target="_blank">Twitter</a> |
+    <a href="https://t.me/" target="_blank">Telegram</a>
+    <p>&copy; 2025 FLUFFI. All rights reserved.</p>
   </footer>
-
-  <script src="script.js"></script>
 </body>
 </html>
