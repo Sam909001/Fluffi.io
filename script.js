@@ -98,3 +98,14 @@ new Chart(ctx, {
     responsive: true
   }
 });
+function updateStats() {
+  const price = 0.0001;
+  const supply = 4000000000;
+  const marketcap = (price * supply).toLocaleString();
+
+  document.getElementById('price').innerText = `$${price.toFixed(6)}`;
+  document.getElementById('supply').innerText = supply.toLocaleString();
+  document.getElementById('marketcap').innerText = `$${marketcap}`;
+}
+
+updateStats();
