@@ -109,3 +109,29 @@ function updateStats() {
 }
 
 updateStats();
+let stage = 1;
+const maxStages = 15;
+let stageProgress = 0;
+const stageLimit = 100; // Tokens or arbitrary units per stage
+const basePrice = 0.0001;
+
+function updatePresaleDisplay() {
+  document.getElementById('current-stage').textContent = stage;
+  const price = basePrice * Math.pow(1.05, stage - 1);
+  document.getElementById('token-price').textContent = price.toFixed(6);
+  document.getElementById('stage-progress').value = stageProgress;
+}
+
+function buyTokens() {
+  stageProgress += 10; // Simulate a token purchase
+
+  if (stageProgress >= stageLimit && stage < maxStages) {
+    stage++;
+    stageProgress = 0;
+  }
+
+  updatePresaleDisplay();
+}
+
+updatePresaleDisplay();
+
