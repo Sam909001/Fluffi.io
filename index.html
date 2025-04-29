@@ -4,110 +4,64 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fluffi Token Presale</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
-    }
-    header {
-      background-color: #1e1e1e;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header img {
-      height: 50px;
-      border-radius: 10px;
-    }
-    nav a {
-      color: #fff;
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav a:hover {
-      color: #ff9900;
-    }
-    .container {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #ff9900;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    #presale-stages {
-      background-color: #1e1e1e;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 30px auto;
-      max-width: 500px;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.4);
-    }
-    progress {
-      width: 100%;
-      height: 20px;
-    }
-    section h2 {
-      color: #ff9900;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header>
-    <img src="fluffi.jpg" alt="Fluffi Logo">
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#buy">Buy Now</a>
-      <a href="#faq">FAQ</a>
-      <a href="#tokenomics">Tokenomics</a>
+    <nav class="navbar">
+      <h1>Fluffi Coin</h1>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#buy">Buy Now</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#tokenomics">Tokenomics</a></li>
+      </ul>
     </nav>
   </header>
 
-  <div class="container" id="home">
-    <h1>🚀 Fluffi Token Presale</h1>
-    <p>Send BNB to participate in the Fluffi presale!</p>
-    <p><strong>Wallet:</strong> <span id="wallet">0xFc3381a6AA1d134DDf22f641E97c92C400959910</span></p>
-  </div>
+  <main class="container">
+    <section id="home">
+      <h2>🚀 Fluffi Token Presale</h2>
+      <p>Send BNB to the wallet address below to participate:</p>
+      <div class="wallet-box">
+        <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly />
+        <button onclick="copyWallet()">Copy Address</button>
+      </div>
+      <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
 
-  <section id="presale-stages">
-    <h2>🔥 Presale Stage</h2>
-    <p><strong>Current Stage:</strong> <span id="current-stage">1</span> / 15</p>
-    <p><strong>Token Price:</strong> $<span id="token-price">0.000100</span></p>
-    <p><strong>Tokens Sold:</strong> <span id="tokens-sold">0</span></p>
-    <p><strong>Tokens Remaining:</strong> <span id="tokens-remaining">100</span></p>
-    <p><strong>Time Remaining:</strong> <span id="stage-timer">05:00</span></p>
-    <progress id="stage-progress" value="0" max="100"></progress>
-    <br />
-    <button onclick="buyTokens()">Buy Tokens</button>
-  </section>
+      <div class="presale">
+        <h3>Presale Stage: <span id="current-stage"></span></h3>
+        <p>Token Price: <span id="token-price"></span> BNB</p>
+        <p>Tokens Sold: <span id="tokens-sold"></span></p>
+        <p>Tokens Remaining: <span id="tokens-remaining"></span></p>
+        <p>Time Remaining: <span id="stage-timer"></span></p>
+        <progress id="stage-progress" value="0" max="100"></progress>
+        <br>
+        <button onclick="buyTokens()">Buy Tokens</button>
+      </div>
+    </section>
 
-  <section id="faq" class="container">
-    <h2>❓ FAQ</h2>
-    <p><strong>What is Fluffi?</strong><br>Fluffi is a fun meme token built for community and good vibes.</p>
-    <p><strong>How do I buy?</strong><br>Send BNB to the presale wallet and tokens will be distributed after presale ends.</p>
-  </section>
+    <section id="faq" class="faq">
+      <h2>❓ FAQ</h2>
+      <p><strong>What is Fluffi?</strong> A meme coin with community and utility in mind.</p>
+      <p><strong>How do I buy?</strong> Use MetaMask to send BNB to the wallet above.</p>
+    </section>
 
-  <section id="tokenomics" class="container">
-    <h2>📊 Tokenomics</h2>
-    <p>Total Supply: 4,000,000,000 FLUFFI</p>
-    <p>Presale Allocation: 60%</p>
-    <p>Liquidity: 30%</p>
-    <p>Team & Development: 10%</p>
-  </section>
+    <section id="tokenomics">
+      <h2>📊 Tokenomics</h2>
+      <ul>
+        <li>Total Supply: 10,000,000,000 FLUFFI</li>
+        <li>Presale: 4,000,000,000 FLUFFI</li>
+        <li>Liquidity: 30%</li>
+        <li>Team & Marketing: 20%</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Fluffi Coin. All rights reserved.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
-<button onclick="buyTokens()">Buy Tokens</button>
 </html>
