@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Fluffi Token Presale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       text-align: center;
@@ -66,4 +65,114 @@
       line-height: 30px;
       color: white;
       font-weight: bold;
-      transition: width 0.5
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚀 Fluffi Token Presale</h1>
+  <img src="fluffi.jpg" alt="Fluffi Meme Coin">
+
+  <p>Send BNB to the wallet address below to participate:</p>
+
+  <div class="wallet-box">
+    <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
+    <br>
+    <button onclick="copyWallet()">Copy Wallet Address</button>
+  </div>
+
+  <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+
+  <div id="connected"></div>
+
+  <div class="timer-box">
+    <h2>Presale Countdown</h2>
+    <p id="countdown">Loading timer...</p>
+  </div>
+
+  <button onclick="buyNow()">🚀 Buy Fluffi Token Now</button>
+
+  <h2>Presale Progress</h2>
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar">0%</div>
+  </div>
+
+  <script>
+    const hardCapTokens = 4000000000; // 4 Billion Fluffi
+    const pricePerTokenBNB = 0.0001; // 1 Fluffi = 0.0001 BNB
+    let tokensSold = 0;
+
+    function copyWallet() {
+      var copyText = document.getElementById("wallet");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); 
+      document.execCommand("copy");
+      alert("Wallet Address Copied: " + copyText.value);
+    }
+
+    async function buyNow() {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          document.getElementById('connected').innerText = "Wallet Connected ✅";
+
+          const account = accounts[0];
+          const amountInBNB = 0.1; 
+          const valueInWei = (amountInBNB * 1e18).toString();
+
+          const transactionParameters = {
+            to: '0xFc3381a6AA1d134DDf22f641E97c92C400959910',
+            from: account,
+            value: valueInWei,
+          };
+
+          const txHash = await ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+          });
+
+          alert('Transaction Sent!\nTransaction Hash: ' + txHash);
+
+          let tokensBought = amountInBNB / pricePerTokenBNB;
+          tokensSold += tokensBought;
+          updateProgressBar();
+
+        } catch (error) {
+          console.error(error);
+          alert('Transaction Failed: ' + error.message);
+        }
+      } else {
+        alert('MetaMask not detected. Please install it: https://metamask.io/download.html');
+      }
+    }
+
+    function updateProgressBar() {
+      let percentage = (tokensSold / hardCapTokens) * 100;
+      percentage = Math.min(100, percentage);
+      document.getElementById('progress-bar').style.width = percentage + "%";
+      document.getElementById('progress-bar').innerText = percentage.toFixed(2) + "%";
+    }
+
+    var countdownDate = new Date("May 30, 2025 23:59:59").getTime();
+    var x = setInterval(function() {
+      var now = new Date().getTime();
+      var distance = countdownDate - now;
+
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s ";
+
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = "Presale Ended";
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
