@@ -5,51 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fluffi Token Presale & Staking</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
 </head>
 <body>
   <header>
+    <h1>Fluffi Token</h1>
     <nav>
-      <h1>FLUFFI 🐶</h1>
       <ul>
-        <li><a href="#home">Home</a></li>
         <li><a href="#presale">Presale</a></li>
         <li><a href="#staking">Staking</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li><button id="darkModeToggle">🌙</button></li>
+        <li><button id="darkModeToggle">🌓</button></li>
       </ul>
     </nav>
   </header>
 
-  <section id="home">
-    <h2>Welcome to Fluffi</h2>
-    <p>The cutest meme coin with real rewards!</p>
-    <img src="fluffi.jpg" alt="Fluffi Mascot" />
-  </section>
-
   <section id="presale">
-    <h2>Presale is Live!</h2>
-    <p>Buy FLUFFI directly from your wallet.</p>
+    <h2>Presale</h2>
     <div id="walletConnectBox">
       <button onclick="connectWallet()">Connect Wallet</button>
-      <input type="number" id="bnbAmount" placeholder="Enter BNB amount" />
-      <button onclick="buyTokens()">Buy Tokens</button>
+      <div id="walletAddress"></div>
     </div>
+    <div id="currentStage">Stage: 1</div>
+    <div id="tokenPrice">Price: 0.0001</div>
+    <div id="stageTimer"></div>
     <div id="presaleProgress">
       <div id="progressBarContainer">
         <div id="progressBar"></div>
       </div>
-      <p><span id="soldAmount">0</span> / 4,000,000,000 FLUFFI sold</p>
     </div>
+    <button onclick="buyTokens(1)">Buy Token</button>
   </section>
 
   <section id="staking">
-    <h2>Stake FLUFFI</h2>
-    <p>Earn 90% APY. Minimum: 0.01 BNB or equivalent. Lock until listing.</p>
+    <h2>Staking</h2>
     <div id="stakingBox">
-      <input type="number" id="stakeAmount" placeholder="Enter FLUFFI amount" />
-      <button onclick="stakeFluffi()">Stake</button>
-      <p id="stakeStatus"></p>
+      <input type="number" placeholder="Amount to Stake" id="stakeAmount" />
+      <button onclick="stakeTokens()">Stake</button>
     </div>
   </section>
 
@@ -57,23 +48,22 @@
     <h2>FAQ</h2>
     <details>
       <summary>What is Fluffi?</summary>
-      <p class="faq-text">Fluffi is a meme token with staking, rewards, and community governance.</p>
+      <div class="faq-text">Fluffi is a community-driven token with real staking rewards.</div>
     </details>
     <details>
-      <summary>How does staking work?</summary>
-      <p class="faq-text">You lock FLUFFI until listing and earn 90% APY. Rewards are distributed post-listing.</p>
+      <summary>How does the presale work?</summary>
+      <div class="faq-text">Presale has 15 stages, each increasing price by 5%.</div>
     </details>
     <details>
-      <summary>Is there a minimum for staking?</summary>
-      <p class="faq-text">Yes, the minimum is 0.01 BNB or equivalent in ETH, USDC, or SOL.</p>
+      <summary>When can I claim my tokens?</summary>
+      <div class="faq-text">Tokens will be claimable after the listing date.</div>
     </details>
   </section>
 
   <footer>
-    <p>Follow us on:</p>
-    <a href="https://twitter.com/" target="_blank">Twitter</a> |
-    <a href="https://t.me/" target="_blank">Telegram</a>
-    <p>&copy; 2025 FLUFFI. All rights reserved.</p>
+    <p>&copy; 2025 Fluffi Token. All rights reserved.</p>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
