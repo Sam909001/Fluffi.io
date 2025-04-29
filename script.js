@@ -126,3 +126,40 @@ function generateReferralLink() {
     referralText.innerText = link;
   });
 }
+const presaleStart = new Date("2025-05-05T00:00:00Z"); // UTC time
+const stageDurationMs = 24 * 60 * 60 * 1000; // 24 hours
+const totalStages = 15;
+
+function updateTimer() {
+  const now = new Date();
+  const countdownEl = document.getElementById("presaleCountdown");
+  const statusEl = document.getElementById("presaleStatus");
+  const stageInfoEl = document.getElementById("stageInfo");
+
+  if (now < presaleStart) {
+    const diff = presaleStart - now;
+    countdownEl.textContent = formatTime(diff);
+    statusEl.textContent = "Presale starts in:";
+    stageInfoEl.textContent = "";
+  } else {
+    const timeSinceStart = now - presaleStart;
+    const stageNumber = Math.min(Math.floor(timeSinceStart / stageDurationMs) + 1, totalStages);
+    const stageEnd = new Date(presaleStart.getTime() + stageNumber * stageDurationMs);
+    const timeLeft = stageEnd - now;
+
+    statusEl.textContent = "Presale is live!";
+    countdownEl.textContent = `Time left in stage ${stageNumber}: ${formatTime(timeLeft)}`;
+    stageInfoEl.textContent = `Stage ${stageNumber} of ${totalStages}`;
+  }
+}
+
+function formatTime(ms) {
+  const seconds = Math.floor(ms / 1000) % 60;
+  const minutes = Math.floor(ms / (1000 * 60)) % 60;
+  const hours = Math.floor(ms / (1000 * 60 * 60)) % 24;
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateTimer, 1000);
+updateTimer();
