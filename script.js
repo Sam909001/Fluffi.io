@@ -113,3 +113,16 @@ async function buyTokens() {
 
 setInterval(updatePresaleUI, 1000);
 updatePresaleUI();
+function generateReferralLink() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask is not installed!');
+    return;
+  }
+
+  ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
+    const address = accounts[0];
+    const link = `${window.location.origin}?ref=${address}`;
+    const referralText = document.getElementById('referralLink');
+    referralText.innerText = link;
+  });
+}
