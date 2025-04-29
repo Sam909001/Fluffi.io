@@ -49,18 +49,29 @@
       margin-top: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
-    .faq, .tokenomics {
+    .faq, .tokenomics, .roadmap, .testimonials {
       background-color: #161b22;
       padding: 30px;
       border-radius: 10px;
       margin: 30px auto;
       max-width: 800px;
     }
-    .faq h2, .tokenomics h2 {
+    .faq h2, .tokenomics h2, .roadmap h2, .testimonials h2 {
       color: #58a6ff;
     }
-    .faq p, .tokenomics p {
+    .faq p, .tokenomics p, .roadmap ul, .testimonials p {
       text-align: left;
+    }
+    .roadmap ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .roadmap li {
+      margin-bottom: 10px;
+    }
+    .testimonials blockquote {
+      font-style: italic;
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -90,7 +101,7 @@
 
   <section class="tokenomics">
     <h2>📊 Tokenomics</h2>
-    <p>Total Supply: 10,000,000,000 FLUFFI<br>
+    <p>Total Supply: 4,000,000,000 FLUFFI<br>
     Presale Price: 0.0001 BNB per FLUFFI<br>
     Presale Stages: 15 stages, price increases 5% per stage</p>
   </section>
@@ -100,6 +111,24 @@
     <p><strong>How do I buy?</strong><br>Connect MetaMask and enter the BNB amount to buy tokens.</p>
     <p><strong>Is there a minimum?</strong><br>Yes, 0.1 BNB minimum and 5 BNB maximum.</p>
     <p><strong>How do referrals work?</strong><br>Use your wallet address as a referral link. You’ll get a bonus when friends buy.</p>
+  </section>
+
+  <section class="roadmap">
+    <h2>🗺️ Roadmap</h2>
+    <ul>
+      <li>✅ Phase 1: Launch Website & Presale</li>
+      <li>🔜 Phase 2: Token Listing on PancakeSwap</li>
+      <li>🔜 Phase 3: Staking & Farming Features</li>
+      <li>🔜 Phase 4: NFT Collection Release</li>
+      <li>🔜 Phase 5: DAO Voting & Governance</li>
+    </ul>
+  </section>
+
+  <section class="testimonials">
+    <h2>💬 What Our Community Says</h2>
+    <blockquote>"Fluffi is the next big meme coin!" – @CryptoLover</blockquote>
+    <blockquote>"I earned bonuses through the referral system – amazing!" – @BNBfan</blockquote>
+    <blockquote>"Super clean site and easy to buy. Great work Fluffi team!" – @TokenBro</blockquote>
   </section>
 
   <script>
