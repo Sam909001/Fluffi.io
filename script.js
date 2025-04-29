@@ -163,3 +163,4 @@ function formatTime(ms) {
 
 setInterval(updateTimer, 1000);
 updateTimer();
+<script src="script.js"></script>
