@@ -69,6 +69,24 @@
       padding-top: 10px;
       color: #ccc;
     }
+    .wallet-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #00bfff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #009acd;
+    }
   </style>
 </head>
 <body>
@@ -77,6 +95,11 @@
   </header>
 
   <div class="container">
+    <div class="wallet-buttons">
+      <button id="connectWallet">Connect Wallet</button>
+      <button id="buyNow">Buy Token</button>
+    </div>
+
     <h2>Presale Progress</h2>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
@@ -129,6 +152,31 @@
       item.addEventListener('click', () => {
         item.classList.toggle('active');
       });
+    });
+
+    // Web3 Wallet Connect
+    let userAddress = null;
+    document.getElementById('connectWallet').addEventListener('click', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          userAddress = accounts[0];
+          alert('Wallet connected: ' + userAddress);
+        } catch (error) {
+          alert('Wallet connection failed');
+        }
+      } else {
+        alert('Please install MetaMask');
+      }
+    });
+
+    // Simulate Buy
+    document.getElementById('buyNow').addEventListener('click', () => {
+      if (!userAddress) {
+        alert('Please connect your wallet first.');
+      } else {
+        alert('Token purchase simulated. In production, send transaction to smart contract.');
+      }
     });
   </script>
 </body>
