@@ -1,44 +1,58 @@
-// Presale configuration
-const totalStages = 15;
-const initialPrice = 0.0001;
-const priceIncrease = 0.05;
-const tokensPerStage = 100000000;
-const stageDuration = 60 * 5;
+// script.js
 
-let currentStage = 1;
+function copyWallet() {
+  const walletInput = document.getElementById("wallet");
+  walletInput.select();
+  document.execCommand("copy");
+  alert("Wallet address copied to clipboard!");
+}
+
+// Presale stages config
+const stages = 15;
+const initialPrice = 0.0001;
+const totalTokens = 4000000000;
 let tokensSold = 0;
-let stageStartTime = Date.now();
+const stageLength = 60 * 60 * 24; // 1 day in seconds
+const startTime = Date.now();
+
+function getCurrentStage() {
+  const now = Date.now();
+  const elapsedSeconds = Math.floor((now - startTime) / 1000);
+  return Math.min(Math.floor(elapsedSeconds / stageLength), stages - 1);
+}
+
+function getTokenPrice(stage) {
+  return (initialPrice * Math.pow(1.05, stage)).toFixed(8);
+}
 
 function updatePresaleUI() {
-  const price = (initialPrice * Math.pow(1 + priceIncrease, currentStage - 1)).toFixed(6);
-  const totalSold = tokensPerStage * (currentStage - 1);
-  const remaining = tokensPerStage;
+  const currentStage = getCurrentStage();
+  const price = getTokenPrice(currentStage);
+  const tokensPerStage = totalTokens / stages;
+  const tokensRemaining = Math.max(0, tokensPerStage - (tokensSold % tokensPerStage));
+  const stageProgress = ((tokensSold % tokensPerStage) / tokensPerStage) * 100;
+  const secondsLeft = stageLength - Math.floor((Date.now() - startTime) / 1000) % stageLength;
 
-  document.getElementById("current-stage").textContent = currentStage;
+  document.getElementById("current-stage").textContent = currentStage + 1;
   document.getElementById("token-price").textContent = price;
-  document.getElementById("tokens-sold").textContent = totalSold.toLocaleString();
-  document.getElementById("tokens-remaining").textContent = remaining.toLocaleString();
+  document.getElementById("tokens-sold").textContent = tokensSold.toLocaleString();
+  document.getElementById("tokens-remaining").textContent = Math.floor(tokensRemaining).toLocaleString();
+  document.getElementById("stage-progress").value = stageProgress;
+  document.getElementById("stage-timer").textContent = formatTime(secondsLeft);
+}
 
-  const elapsed = Math.floor((Date.now() - stageStartTime) / 1000);
-  const remainingTime = Math.max(stageDuration - elapsed, 0);
-  const mins = String(Math.floor(remainingTime / 60)).padStart(2, '0');
-  const secs = String(remainingTime % 60).padStart(2, '0');
-  document.getElementById("stage-timer").textContent = `${mins}:${secs}`;
-  document.getElementById("stage-progress").value = (elapsed / stageDuration) * 100;
-
-  if (remainingTime === 0 && currentStage < totalStages) {
-    currentStage++;
-    tokensSold += tokensPerStage;
-    stageStartTime = Date.now();
-  }
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h}h ${m}m ${s}s`;
 }
 
 function buyTokens() {
-  alert("This is a demo. Web3 wallet connection would go here.");
+  alert("This is a demo. Connect to Web3 to enable real transactions.");
+  tokensSold += 10000000; // Simulate token purchase
+  updatePresaleUI();
 }
 
-// Update UI every second
 setInterval(updatePresaleUI, 1000);
-function buyTokens() {
-  alert("This is a demo. Connect wallet functionality goes here.");
-}
+updatePresaleUI();
