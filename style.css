@@ -219,3 +219,12 @@ footer.dark-mode {
 .use-case:hover {
   transform: translateY(-5px);
 }
+#tokenomics {
+  text-align: center;
+  margin-top: 40px;
+}
+
+#tokenChart {
+  margin-top: 20px;
+  max-width: 100%;
+}
