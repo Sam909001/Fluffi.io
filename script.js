@@ -211,3 +211,26 @@ function handleEmailSubmit(event) {
   // Optional: clear the form
   document.getElementById('emailInput').value = '';
 }
+// Simulated data — you can replace this with live values from your backend
+const totalTokens = 4000000000;
+let tokensSold = 1580000000;
+let participants = 125;
+
+function updateStats() {
+  const percentSold = (tokensSold / totalTokens) * 100;
+
+  document.getElementById("participantsCount").textContent = participants;
+  document.getElementById("tokensSold").textContent = tokensSold.toLocaleString();
+  document.getElementById("progressBar").style.width = percentSold + "%";
+}
+
+// Optional: auto-refresh every few seconds (simulate dynamic updates)
+setInterval(() => {
+  // Fake growth for demo purposes
+  tokensSold += Math.floor(Math.random() * 1000000); 
+  participants += Math.floor(Math.random() * 3);
+  if (tokensSold > totalTokens) tokensSold = totalTokens;
+  updateStats();
+}, 5000);
+
+updateStats(); // Initial call
