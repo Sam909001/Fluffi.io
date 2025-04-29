@@ -198,3 +198,24 @@ footer.dark-mode {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   margin-bottom: 10px;
 }
+.use-case-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.use-case {
+  background: #1e1e1e;
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 250px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.use-case:hover {
+  transform: translateY(-5px);
+}
