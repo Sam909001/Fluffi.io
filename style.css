@@ -249,3 +249,21 @@ footer.dark-mode {
   font-size: 1.8em;
   margin: 0 0 10px 0;
 }
+.nft-gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.nft-gallery img {
+  width: 180px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.nft-gallery img:hover {
+  transform: scale(1.05);
+}
