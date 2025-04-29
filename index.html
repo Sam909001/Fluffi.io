@@ -4,74 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fluffi Token Presale</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      padding: 20px;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    button {
+      background-color: #238636;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+      margin-right: 10px;
+    }
+    section {
+      margin: 40px auto;
+      max-width: 600px;
+    }
+    #referralLink {
+      color: #58a6ff;
+      word-break: break-word;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <nav class="navbar">
-      <h1>Fluffi Coin</h1>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#buy">Buy Now</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#tokenomics">Tokenomics</a></li>
-      </ul>
-    </nav>
+    <h1>🚀 Fluffi Token Presale</h1>
+    <p>Buy tokens directly using MetaMask</p>
   </header>
 
-  <main class="container">
-    <section id="home">
-      <section id="referral" style="text-align: center; margin: 50px auto; max-width: 600px;">
-  <h2>🎁 Earn Rewards with Referrals</h2>
-  <p>Share your unique referral link and earn bonus tokens when your friends buy!</p>
+  <section id="buy">
+    <input id="bnbAmount" type="number" min="0.1" max="5" step="0.01" placeholder="Enter BNB (0.1 - 5)">
+    <button onclick="buyTokens()">Buy Tokens</button>
+  </section>
 
-  <div id="referralBox" style="margin-top: 20px;">
-    <button onclick="generateReferralLink()" style="padding: 10px 20px; font-size: 16px;">Generate My Referral Link</button>
-    <p id="referralLink" style="margin-top: 10px; word-break: break-all;"></p>
-  </div>
-</section>
-      <h2>🚀 Fluffi Token Presale</h2>
-       <!-- Buy Tokens Section -->
-<div style="text-align: center; margin-top: 30px;">
-  <input id="bnbAmount" type="number" min="0.1" max="5" step="0.01" placeholder="Enter BNB (0.1 - 5)" style="padding: 10px; width: 200px; font-size: 16px;">
-  <button onclick="buyTokens()" style="padding: 10px 20px; font-size: 16px; margin-left: 10px;">Buy Tokens</button>
-</div>
-      </div>
-      <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+  <section id="referral">
+    <h2>🎁 Earn Rewards with Referrals</h2>
+    <p>Share your unique referral link and earn bonus tokens when your friends buy!</p>
+    <div id="referralBox">
+      <button onclick="generateReferralLink()">Generate My Referral Link</button>
+      <p id="referralLink"></p>
+    </div>
+  </section>
 
-      <div class="presale">
-        <h3>Presale Stage: <span id="current-stage"></span></h3>
-        <p>Token Price: <span id="token-price"></span> BNB</p>
-        <p>Tokens Sold: <span id="tokens-sold"></span></p>
-        <p>Tokens Remaining: <span id="tokens-remaining"></span></p>
-        <p>Time Remaining: <span id="stage-timer"></span></p>
-        <progress id="stage-progress" value="0" max="100"></progress>
-        <br>
-        <button onclick="buyTokens()">Buy Tokens</button>
-      </div>
-    </section>
+  <script>
+    async function buyTokens() {
+      if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask is not installed!');
+        return;
+      }
 
-    <section id="faq" class="faq">
-      <h2>❓ FAQ</h2>
-      <p><strong>What is Fluffi?</strong> A meme coin with community and utility in mind.</p>
-      <p><strong>How do I buy?</strong> Use MetaMask to send BNB to the wallet above.</p>
-    </section>
+      const bnbAmount = parseFloat(document.getElementById('bnbAmount').value);
+      if (isNaN(bnbAmount) || bnbAmount < 0.1 || bnbAmount > 5) {
+        alert('Enter a valid BNB amount between 0.1 and 5.');
+        return;
+      }
 
-    <section id="tokenomics">
-      <h2>📊 Tokenomics</h2>
-      <ul>
-        <li>Total Supply: 10,000,000,000 FLUFFI</li>
-        <li>Presale: 4,000,000,000 FLUFFI</li>
-        <li>Liquidity: 30%</li>
-        <li>Team & Marketing: 20%</li>
-      </ul>
-    </section>
-  </main>
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const sender = accounts[0];
+      const recipient = '0xFc3381a6AA1d134DDf22f641E97c92C400959910';
 
-  <footer>
-    <p>&copy; 2025 Fluffi Coin. All rights reserved.</p>
-  </footer>
+      try {
+        await ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: sender,
+            to: recipient,
+            value: (bnbAmount * 1e18).toString(16),
+            gas: '21000'
+          }]
+        });
+        alert('Transaction sent! Thank you for participating in the presale!');
+      } catch (error) {
+        console.error(error);
+        alert('Transaction failed.');
+      }
+    }
 
-  <script src="script.js"></script>
+    function generateReferralLink() {
+      if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask is not installed!');
+        return;
+      }
+
+      ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
+        const address = accounts[0];
+        const link = `${window.location.origin}?ref=${address}`;
+        document.getElementById('referralLink').innerText = link;
+      });
+    }
+  </script>
 </body>
 </html>
