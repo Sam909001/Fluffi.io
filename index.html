@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Fluffi Token Presale</title>
-  <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       text-align: center;
@@ -33,99 +33,37 @@
     button {
       padding: 10px 20px;
       font-size: 1em;
-      margin-top: 10px;
+      margin: 10px;
       cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 8px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
     }
     .timer-box {
       margin-top: 30px;
     }
-  </style>
-</head>
-<body>
-
-  <h1>🚀 Fluffi Token Presale</h1>
-  <img src="fluffi.jpg" alt="Fluffi Meme Coin">
-
-  <p>Send BNB to the wallet address below to participate:</p>
-
-  <div class="wallet-box">
-    <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
-    <br>
-    <button onclick="copyWallet()">Copy Wallet Address</button>
-  </div>
-
-  <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
-
-  <div class="timer-box">
-    <h2>Presale Countdown</h2>
-    <p id="countdown">Loading timer...</p>
-  </div>
-
-  <button onclick="buyNow()">🚀 Buy Fluffi Token Now</button>
-
-  <script>
-    // Copy Wallet Address
-    function copyWallet() {
-      var copyText = document.getElementById("wallet");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); // For mobile devices
-      document.execCommand("copy");
-      alert("Wallet Address Copied: " + copyText.value);
+    #connected {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
     }
-
-    // Buy Now Function (Connect MetaMask + Send BNB)
-    async function buyNow() {
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const accounts = await ethereum.request({ method: 'eth_accounts' });
-
-          const transactionParameters = {
-            to: '0xFc3381a6AA1d134DDf22f641E97c92C400959910', // Your wallet address
-            from: accounts[0],
-            value: '100000000000000000', // 0.1 BNB (in wei)
-          };
-
-          const txHash = await ethereum.request({
-            method: 'eth_sendTransaction',
-            params: [transactionParameters],
-          });
-
-          alert('Transaction Sent! TxHash: ' + txHash);
-        } catch (error) {
-          console.error(error);
-          alert('Transaction Failed: ' + error.message);
-        }
-      } else {
-        alert('MetaMask not detected. Please install it: https://metamask.io/download.html');
-      }
+    .progress-container {
+      width: 80%;
+      background-color: #ddd;
+      border-radius: 20px;
+      margin: 20px auto;
+      overflow: hidden;
     }
-
-    // Countdown Timer
-    var countdownDate = new Date("May 30, 2025 23:59:59").getTime();
-
-    var x = setInterval(function() {
-      var now = new Date().getTime();
-      var distance = countdownDate - now;
-
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-        + minutes + "m " + seconds + "s ";
-
-      if (distance < 0) {
-        clearInterval(x);
-        document.getElementById("countdown").innerHTML = "Presale Ended";
-      }
-    }, 1000);
-  </script>
-
-</body>
-</html>
+    .progress-bar {
+      height: 30px;
+      width: 0%;
+      background-color: #4CAF50;
+      line-height: 30px;
+      color: white;
+      font-weight: bold;
+      transition: width 0.5
