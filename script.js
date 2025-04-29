@@ -39,3 +39,6 @@ function buyTokens() {
 
 // Update UI every second
 setInterval(updatePresaleUI, 1000);
+function buyTokens() {
+  alert("This is a demo. Connect wallet functionality goes here.");
+}
