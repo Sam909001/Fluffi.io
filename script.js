@@ -134,4 +134,65 @@ function buyTokens() {
 }
 
 updatePresaleDisplay();
+let stage = 1;
+const maxStages = 15;
+let stageProgress = 0;
+const tokensPerStage = 100;
+let tokensSold = 0;
+const basePrice = 0.0001;
+let stageDuration = 300; // 5 minutes per stage
+let timeLeft = stageDuration;
+
+function updatePresaleDisplay() {
+  document.getElementById('current-stage').textContent = stage;
+  const price = basePrice * Math.pow(1.05, stage - 1);
+  document.getElementById('token-price').textContent = price.toFixed(6);
+  document.getElementById('stage-progress').value = stageProgress;
+  document.getElementById('tokens-sold').textContent = tokensSold;
+  document.getElementById('tokens-remaining').textContent = tokensPerStage - stageProgress;
+}
+
+function buyTokens() {
+  const tokensToBuy = 10;
+  if (stageProgress + tokensToBuy <= tokensPerStage) {
+    stageProgress += tokensToBuy;
+    tokensSold += tokensToBuy;
+  } else {
+    const remaining = tokensPerStage - stageProgress;
+    stageProgress += remaining;
+    tokensSold += remaining;
+  }
+
+  if (stageProgress >= tokensPerStage && stage < maxStages) {
+    stage++;
+    stageProgress = 0;
+    timeLeft = stageDuration;
+  }
+
+  updatePresaleDisplay();
+}
+
+function startStageTimer() {
+  const timerInterval = setInterval(() => {
+    if (timeLeft <= 0) {
+      if (stage < maxStages) {
+        stage++;
+        stageProgress = 0;
+        timeLeft = stageDuration;
+      }
+    } else {
+      timeLeft--;
+    }
+
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('stage-timer').textContent =
+      `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    updatePresaleDisplay();
+  }, 1000);
+}
+
+startStageTimer();
+updatePresaleDisplay();
 
