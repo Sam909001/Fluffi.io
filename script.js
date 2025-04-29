@@ -83,3 +83,18 @@ function startConfetti() {
 }
 
 window.onload = startConfetti;
+const ctx = document.getElementById('tokenChart').getContext('2d');
+new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: ['Presale - 40%', 'Liquidity - 30%', 'Marketing - 15%', 'Team - 10%', 'Reserve - 5%'],
+    datasets: [{
+      data: [40, 30, 15, 10, 5],
+      backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true
+  }
+});
