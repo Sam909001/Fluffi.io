@@ -137,45 +137,20 @@ body.dark-mode #stakingBox {
 body.dark-mode #progressBarContainer {
   background: #444;
 }
-/* Add this to your existing style.css under the FAQ section or dark-mode section */
-.faq-text {
-  color: var(--text-color);
-  font-size: 1rem;
-  padding: 0.5rem 0;
-}
 
-body.dark-mode .faq-text {
-  color: var(--dark-text);
-}
-details {
-  margin-bottom: 1rem;
-}
-/* === FAQ Section Improvements === */
-details {
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.5rem;
-}
-
-summary {
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.faq-text {
-  color: var(--text-color);
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  line-height: 1.5;
-}
-
-/* Dark mode specific for FAQ */
-body.dark-mode summary {
-  color: var(--dark-text);
-}
-
-body.dark-mode .faq-text {
-  color: var(--dark-text);
-}
-<link rel="stylesheet" href="style.css?v=1.0">
+/* Wallet connect script */
+<script>
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const walletAddress = accounts[0];
+        document.getElementById('walletStatus').textContent = `Connected: ${walletAddress}`;
+      } catch (error) {
+        console.error("User rejected the request.");
+      }
+    } else {
+      alert("MetaMask not detected. Please install MetaMask extension.");
+    }
+  }
+</script>
