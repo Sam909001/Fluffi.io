@@ -267,3 +267,23 @@ footer.dark-mode {
 .nft-gallery img:hover {
   transform: scale(1.05);
 }
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px 0;
+}
+
+.timeline-item {
+  background-color: #111;
+  color: #fff;
+  border-left: 4px solid #f39c12;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s;
+}
+
+.timeline-item:hover {
+  transform: translateX(10px);
+}
