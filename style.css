@@ -228,3 +228,24 @@ footer.dark-mode {
   margin-top: 20px;
   max-width: 100%;
 }
+.stats-grid {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #222;
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.stat h3 {
+  font-size: 1.8em;
+  margin: 0;
+}
