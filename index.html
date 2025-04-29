@@ -4,47 +4,57 @@
   <meta charset="UTF-8">
   <title>Fluffi Token Presale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
       text-align: center;
-      background-color: #fdf6e3;
-      font-family: Arial, sans-serif;
-    }
-    img {
-      width: 300px;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      margin-top: 20px;
-    }
-    h1 {
-      margin-top: 20px;
-      font-size: 2.5em;
       color: #333;
     }
+    img {
+      width: 250px;
+      border-radius: 20px;
+      margin-top: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+    img:hover {
+      transform: scale(1.05);
+    }
+    h1 {
+      font-size: 2.5em;
+      margin: 20px 0;
+    }
     .wallet-box {
-      margin: 20px auto;
+      margin: 20px;
     }
     #wallet {
       width: 300px;
       padding: 10px;
       font-size: 1em;
+      border: 2px solid #333;
+      border-radius: 10px;
     }
     button {
-      padding: 10px 20px;
-      font-size: 1em;
-      margin: 10px;
-      cursor: pointer;
-      background-color: #4CAF50;
+      background: #ff9800;
       color: white;
       border: none;
-      border-radius: 8px;
-      transition: background 0.3s;
+      padding: 12px 24px;
+      font-size: 1em;
+      margin: 10px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
     }
     button:hover {
-      background-color: #45a049;
+      background: #e68900;
+      transform: scale(1.05);
     }
     .timer-box {
-      margin-top: 30px;
+      margin: 30px 0;
     }
     #connected {
       margin-top: 10px;
@@ -53,18 +63,21 @@
     }
     .progress-container {
       width: 80%;
-      background-color: #ddd;
+      height: 30px;
+      background: #eee;
       border-radius: 20px;
       margin: 20px auto;
       overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
     }
     .progress-bar {
-      height: 30px;
+      height: 100%;
       width: 0%;
-      background-color: #4CAF50;
-      line-height: 30px;
+      background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+      text-align: center;
       color: white;
       font-weight: bold;
+      line-height: 30px;
       transition: width 0.5s ease;
     }
   </style>
@@ -79,34 +92,34 @@
   <div class="wallet-box">
     <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
     <br>
-    <button onclick="copyWallet()">Copy Wallet Address</button>
+    <button onclick="copyWallet()">📋 Copy Wallet Address</button>
   </div>
-
-  <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
 
   <div id="connected"></div>
 
+  <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
+
   <div class="timer-box">
-    <h2>Presale Countdown</h2>
-    <p id="countdown">Loading timer...</p>
+    <h2>Presale Countdown ⏳</h2>
+    <p id="countdown">Loading...</p>
   </div>
 
-  <button onclick="buyNow()">🚀 Buy Fluffi Token Now</button>
+  <button onclick="buyNow()">💎 Buy Fluffi Token Now</button>
 
-  <h2>Presale Progress</h2>
+  <h2>Presale Progress 🚀</h2>
   <div class="progress-container">
     <div class="progress-bar" id="progress-bar">0%</div>
   </div>
 
   <script>
-    const hardCapTokens = 4000000000; // 4 Billion Fluffi
-    const pricePerTokenBNB = 0.0001; // 1 Fluffi = 0.0001 BNB
+    const hardCapTokens = 4000000000;
+    const pricePerTokenBNB = 0.0001;
     let tokensSold = 0;
 
     function copyWallet() {
       var copyText = document.getElementById("wallet");
       copyText.select();
-      copyText.setSelectionRange(0, 99999); 
+      copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
       alert("Wallet Address Copied: " + copyText.value);
     }
@@ -169,7 +182,7 @@
 
       if (distance < 0) {
         clearInterval(x);
-        document.getElementById("countdown").innerHTML = "Presale Ended";
+        document.getElementById("countdown").innerHTML = "Presale Ended 🚀";
       }
     }, 1000);
   </script>
