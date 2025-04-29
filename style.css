@@ -1,40 +1,28 @@
-/* style.css for Fluffi Presale & Staking Site */
+/* style.css - Fluffi Presale & Staking Styles */
 
 :root {
-  --light-bg: #fff8f2;
+  --main-color: #ff69b4;
+  --bg-color: #fff;
+  --text-color: #222;
   --dark-bg: #121212;
-  --light-text: #333;
   --dark-text: #eee;
-  --accent: #ff69b4;
-  --primary: #4caf50;
-  --danger: #e53935;
 }
 
 body {
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--light-bg);
-  color: var(--light-text);
-  transition: background-color 0.4s, color 0.4s;
-}
-
-body.dark {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
 
 header {
-  background-color: var(--primary);
+  background: var(--main-color);
   color: white;
-  padding: 1rem;
+  padding: 1rem 2rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-}
-
-nav h1 {
-  margin: 0;
-  font-size: 1.8rem;
+  align-items: center;
 }
 
 nav ul {
@@ -45,87 +33,107 @@ nav ul {
   margin: 0;
 }
 
-nav ul li a,
-nav ul li button {
+nav a {
   text-decoration: none;
   color: white;
-  background: none;
+  font-weight: bold;
+}
+
+#darkModeToggle {
+  background: transparent;
   border: none;
-  font-size: 1rem;
+  font-size: 1.2rem;
   cursor: pointer;
+  color: white;
 }
 
 section {
   padding: 2rem;
-  text-align: center;
+  max-width: 1000px;
+  margin: auto;
 }
 
-section#home img {
-  width: 250px;
-  border-radius: 1rem;
-  margin-top: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+section h2 {
+  color: var(--main-color);
 }
 
-#walletConnectBox input,
+#walletConnectBox, #stakingBox {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 #walletConnectBox button,
-#stakingBox input,
 #stakingBox button {
-  padding: 0.7rem;
-  margin: 0.5rem;
-  border: 1px solid #ccc;
+  padding: 0.5rem;
+  background: var(--main-color);
+  color: white;
+  border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#presaleProgress {
+  margin-top: 1rem;
+}
+
+#progressBarContainer {
+  width: 100%;
+  background: #ddd;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 20px;
 }
 
 #progressBar {
   width: 0%;
-  height: 20px;
-  background-color: var(--accent);
-  border-radius: 10px;
-  margin-top: 1rem;
-  transition: width 0.4s ease;
-}
-
-#presaleProgress {
-  width: 80%;
-  margin: 1rem auto;
-  background-color: #eee;
-  border-radius: 10px;
-  padding: 0.5rem;
+  height: 100%;
+  background: var(--main-color);
 }
 
 summary {
   cursor: pointer;
   font-weight: bold;
-  margin: 1rem 0;
 }
 
-details p {
-  margin: 0.5rem 0 1rem;
+.faq-text {
+  margin-left: 1rem;
 }
 
 footer {
-  background-color: #f4f4f4;
-  padding: 1rem;
+  background: #f0f0f0;
   text-align: center;
-  font-size: 0.9rem;
-  color: #666;
-  border-top: 1px solid #ccc;
+  padding: 1rem;
+  margin-top: 2rem;
 }
 
-body.dark footer {
-  background-color: #1e1e1e;
-  color: #aaa;
-  border-top-color: #333;
+/* Dark mode */
+body.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
-@media (max-width: 768px) {
-  nav ul {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  nav ul li {
-    margin: 0.3rem 0;
-  }
+body.dark-mode header,
+body.dark-mode footer {
+  background-color: #1f1f1f;
+  color: white;
+}
+
+body.dark-mode nav a,
+body.dark-mode #darkModeToggle {
+  color: #ff69b4;
+}
+
+body.dark-mode #walletConnectBox,
+body.dark-mode #stakingBox {
+  background: #2a2a2a;
+}
+
+body.dark-mode #progressBarContainer {
+  background: #444;
 }
