@@ -200,3 +200,14 @@ function buyToken() {
   // Optional future integration:
   // Send referral info to backend or pass to smart contract
 }
+function handleEmailSubmit(event) {
+  event.preventDefault();
+  const email = document.getElementById('emailInput').value;
+  document.getElementById('emailMessage').textContent = "Thank you! You're on the Fluffi list 🐶";
+
+  // Simulate storing email (replace with API or backend call)
+  console.log("Email captured:", email);
+
+  // Optional: clear the form
+  document.getElementById('emailInput').value = '';
+}
