@@ -19,22 +19,23 @@
     </nav>
   </header>
 
-  <section id="presale">
-    <h2>Presale</h2>
-    <div id="walletConnectBox">
-      <button onclick="connectWallet()">Connect Wallet</button>
-      <div id="walletAddress"></div>
+<section id="presale">
+  <h2>Fluffi Token Presale</h2>
+  <div id="walletConnectBox">
+    <input type="number" id="bnbInput" placeholder="Enter BNB Amount" />
+    <button id="buyBtn">Buy FLUFFI</button>
+    <button id="connectWalletBtn">Connect Wallet</button>
+  </div>
+
+  <div id="presaleProgress">
+    <p>Presale Progress</p>
+    <div id="progressBarContainer">
+      <div id="progressBar" style="width: 0%;"></div>
     </div>
-    <div id="currentStage">Stage: 1</div>
-    <div id="tokenPrice">Price: 0.0001</div>
-    <div id="stageTimer"></div>
-    <div id="presaleProgress">
-      <div id="progressBarContainer">
-        <div id="progressBar"></div>
-      </div>
-    </div>
-    <button onclick="buyTokens(1)">Buy Token</button>
-  </section>
+  </div>
+</section>
+
+<button id="darkModeToggle">🌙</button>
 
   <section id="staking">
     <h2>Staking</h2>
