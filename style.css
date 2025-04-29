@@ -237,15 +237,15 @@ footer.dark-mode {
 }
 
 .stat {
-  background: #222;
+  background-color: #222;
   color: #fff;
   padding: 20px 30px;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .stat h3 {
   font-size: 1.8em;
-  margin: 0;
+  margin: 0 0 10px 0;
 }
