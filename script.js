@@ -49,9 +49,37 @@ function formatTime(seconds) {
 }
 
 async function buyTokens() {
-  if (!window.ethereum) {
-    alert("MetaMask not found. Please install MetaMask to continue.");
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask is not installed!');
     return;
+  }
+
+  const bnbAmount = parseFloat(document.getElementById('bnbAmount').value);
+  if (isNaN(bnbAmount) || bnbAmount < 0.1 || bnbAmount > 5) {
+    alert('Enter a valid BNB amount between 0.1 and 5.');
+    return;
+  }
+
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+  const sender = accounts[0];
+  const recipient = '0xFc3381a6AA1d134DDf22f641E97c92C400959910';
+
+  try {
+    await ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{
+        from: sender,
+        to: recipient,
+        value: (bnbAmount * 1e18).toString(16),
+        gas: '21000'
+      }]
+    });
+    alert('Transaction sent! Thank you for participating in the presale!');
+  } catch (error) {
+    console.error(error);
+    alert('Transaction failed.');
+  }
+}
   }
 
   try {
