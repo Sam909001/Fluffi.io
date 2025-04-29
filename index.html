@@ -1,70 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fluffi Token Presale & Staking</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyToken - Presale & Staking</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Fluffi Token</h1>
-    <nav>
-      <ul>
-        <li><a href="#presale">Presale</a></li>
-        <li><a href="#staking">Staking</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><button id="darkModeToggle">🌓</button></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <div class="container">
+            <h1>MyToken</h1>
+            <button id="connectWallet">Connect Wallet</button>
+            <div id="walletInfo" class="hidden">
+                <span id="walletAddress"></span>
+                <span id="networkName"></span>
+                <span id="ethBalance"></span>
+            </div>
+        </div>
+    </header>
 
-<section id="presale">
-  <h2>Fluffi Token Presale</h2>
-  <div id="walletConnectBox">
-    <input type="number" id="bnbInput" placeholder="Enter BNB Amount" />
-    <button id="buyBtn">Buy FLUFFI</button>
-    <button id="connectWalletBtn">Connect Wallet</button>
-  </div>
+    <main class="container">
+        <div class="tabs">
+            <button class="tab-button active" data-tab="presale">Presale</button>
+            <button class="tab-button" data-tab="staking">Staking</button>
+        </div>
 
-  <div id="presaleProgress">
-    <p>Presale Progress</p>
-    <div id="progressBarContainer">
-      <div id="progressBar" style="width: 0%;"></div>
-    </div>
-  </div>
-</section>
+        <div id="presale" class="tab-content active">
+            <div class="card">
+                <h2>Token Presale</h2>
+                <div class="progress-container">
+                    <div class="progress-bar" id="presaleProgress"></div>
+                    <div class="progress-text" id="presaleProgressText">0%</div>
+                </div>
+                <div class="stats">
+                    <div>
+                        <span>Raised:</span>
+                        <span id="raisedAmount">0 ETH</span>
+                    </div>
+                    <div>
+                        <span>Hard Cap:</span>
+                        <span id="hardCap">100 ETH</span>
+                    </div>
+                    <div>
+                        <span>Token Price:</span>
+                        <span id="tokenPrice">1 ETH = 1000 MTK</span>
+                    </div>
+                    <div>
+                        <span>Ends In:</span>
+                        <span id="presaleTimer">00d 00h 00m 00s</span>
+                    </div>
+                </div>
+                <div class="buy-form">
+                    <input type="number" id="buyAmount" placeholder="ETH amount" min="0.01" step="0.01">
+                    <button id="buyTokens">Buy Tokens</button>
+                    <div class="estimated">
+                        <span>You will receive:</span>
+                        <span id="estimatedTokens">0 MTK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<button id="darkModeToggle">🌙</button>
+        <div id="staking" class="tab-content">
+            <div class="card">
+                <h2>Staking Dashboard</h2>
+                <div class="stats">
+                    <div>
+                        <span>Your Staked:</span>
+                        <span id="stakedAmount">0 MTK</span>
+                    </div>
+                    <div>
+                        <span>Your Rewards:</span>
+                        <span id="rewardAmount">0 MTK</span>
+                    </div>
+                    <div>
+                        <span>APY:</span>
+                        <span id="apyValue">15%</span>
+                    </div>
+                </div>
+                <div class="staking-form">
+                    <input type="number" id="stakeAmount" placeholder="MTK amount" min="1">
+                    <button id="stakeTokens">Stake Tokens</button>
+                    <button id="unstakeTokens">Unstake</button>
+                    <button id="claimRewards">Claim Rewards</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
-  <section id="staking">
-    <h2>Staking</h2>
-    <div id="stakingBox">
-      <input type="number" placeholder="Amount to Stake" id="stakeAmount" />
-      <button onclick="stakeTokens()">Stake</button>
-    </div>
-  </section>
+    <footer>
+        <div class="container">
+            <p>© 2023 MyToken. All rights reserved.</p>
+        </div>
+    </footer>
 
-  <section id="faq">
-    <h2>FAQ</h2>
-    <details>
-      <summary>What is Fluffi?</summary>
-      <div class="faq-text">Fluffi is a community-driven token with real staking rewards.</div>
-    </details>
-    <details>
-      <summary>How does the presale work?</summary>
-      <div class="faq-text">Presale has 15 stages, each increasing price by 5%.</div>
-    </details>
-    <details>
-      <summary>When can I claim my tokens?</summary>
-      <div class="faq-text">Tokens will be claimable after the listing date.</div>
-    </details>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 Fluffi Token. All rights reserved.</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
