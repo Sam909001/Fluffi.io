@@ -1,69 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fluffi Token Presale & Staking</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>Fluffi Token</h1>
-    <nav>
-      <ul>
-        <li><a href="#presale">Presale</a></li>
-        <li><a href="#staking">Staking</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><button id="darkModeToggle">🌓</button></li>
-      </ul>
-    </nav>
-  </header>
+/* script.js - Fluffi Presale & Staking Script */
 
-  <section id="presale">
-    <h2>Presale</h2>
-    <div id="walletConnectBox">
-      <button onclick="connectWallet()">Connect Wallet</button>
-      <div id="walletAddress"></div>
-    </div>
-    <div id="currentStage">Stage: 1</div>
-    <div id="tokenPrice">Price: 0.0001</div>
-    <div id="stageTimer"></div>
-    <div id="presaleProgress">
-      <div id="progressBarContainer">
-        <div id="progressBar"></div>
-      </div>
-    </div>
-    <button onclick="buyTokens(1)">Buy Token</button>
-  </section>
+let currentStage = 1;
+const totalStages = 15;
+const basePrice = 0.0001;
+let tokensSold = 0;
+const tokensPerStage = 4000000000 / totalStages;
 
-  <section id="staking">
-    <h2>Staking</h2>
-    <div id="stakingBox">
-      <input type="number" placeholder="Amount to Stake" id="stakeAmount" />
-      <button onclick="stakeTokens()">Stake</button>
-    </div>
-  </section>
+function getCurrentPrice() {
+  return +(basePrice * Math.pow(1.05, currentStage - 1)).toFixed(8);
+}
 
-  <section id="faq">
-    <h2>FAQ</h2>
-    <details>
-      <summary>What is Fluffi?</summary>
-      <div class="faq-text">Fluffi is a community-driven token with real staking rewards.</div>
-    </details>
-    <details>
-      <summary>How does the presale work?</summary>
-      <div class="faq-text">Presale has 15 stages, each increasing price by 5%.</div>
-    </details>
-    <details>
-      <summary>When can I claim my tokens?</summary>
-      <div class="faq-text">Tokens will be claimable after the listing date.</div>
-    </details>
-  </section>
+function updateProgressBar() {
+  const percent = (tokensSold / 4000000000) * 100;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
 
-  <footer>
-    <p>&copy; 2025 Fluffi Token. All rights reserved.</p>
-  </footer>
+function simulatePurchase(amount) {
+  const currentPrice = getCurrentPrice();
+  const tokensToBuy = amount / currentPrice;
+  if (tokensSold + tokensToBuy > currentStage * tokensPerStage) {
+    if (currentStage < totalStages) {
+      currentStage++;
+      alert("Stage advanced to " + currentStage + ". New price: " + getCurrentPrice() + " BNB");
+      simulatePurchase(amount); // recursively apply new stage price
+    } else {
+      alert("Presale is sold out!");
+    }
+  } else {
+    tokensSold += tokensToBuy;
+    updateProgressBar();
+    alert(`You bought ${tokensToBuy.toFixed(2)} FLUFFI at ${currentPrice} BNB/token.`);
+  }
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+document.getElementById("buyTokenBtn").addEventListener("click", () => {
+  const buyAmount = prompt("Enter BNB amount to spend:");
+  if (buyAmount && !isNaN(buyAmount)) {
+    simulatePurchase(parseFloat(buyAmount));
+  }
+});
+
+// Dark mode toggle
+document.getElementById("darkModeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+// Initial update
+updateProgressBar();
