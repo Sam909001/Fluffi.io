@@ -137,3 +137,13 @@ body.dark-mode #stakingBox {
 body.dark-mode #progressBarContainer {
   background: #444;
 }
+/* Add this to your existing style.css under the FAQ section or dark-mode section */
+.faq-text {
+  color: var(--text-color);
+  font-size: 1rem;
+  padding: 0.5rem 0;
+}
+
+body.dark-mode .faq-text {
+  color: var(--dark-text);
+}
