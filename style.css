@@ -85,3 +85,21 @@ footer {
 h2 {
   color: #00ffd9;
 }
+.social-links {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.social-icon {
+  width: 28px;
+  height: 28px;
+  margin-left: 12px;
+  filter: brightness(0) invert(1); /* makes icons white */
+  transition: transform 0.3s;
+}
+
+.social-icon:hover {
+  transform: scale(1.2);
+}
