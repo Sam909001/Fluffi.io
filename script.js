@@ -1,18 +1,18 @@
 // script.js
 
-function copyWallet() {
+async function copyWallet() {
   const walletInput = document.getElementById("wallet");
   walletInput.select();
   document.execCommand("copy");
   alert("Wallet address copied to clipboard!");
 }
 
-// Presale stages config
+const presaleWallet = "0xFc3381a6AA1d134DDf22f641E97c92C400959910";
 const stages = 15;
 const initialPrice = 0.0001;
 const totalTokens = 4000000000;
 let tokensSold = 0;
-const stageLength = 60 * 60 * 24; // 1 day in seconds
+const stageLength = 60 * 60 * 24;
 const startTime = Date.now();
 
 function getCurrentStage() {
@@ -48,10 +48,39 @@ function formatTime(seconds) {
   return `${h}h ${m}m ${s}s`;
 }
 
-function buyTokens() {
-  alert("This is a demo. Connect to Web3 to enable real transactions.");
-  tokensSold += 10000000; // Simulate token purchase
-  updatePresaleUI();
+async function buyTokens() {
+  if (!window.ethereum) {
+    alert("MetaMask not found. Please install MetaMask to continue.");
+    return;
+  }
+
+  try {
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const account = accounts[0];
+    const amountInBNB = prompt("Enter amount in BNB to send:", "0.1");
+
+    if (!amountInBNB || isNaN(amountInBNB)) return;
+
+    const amountInWei = BigInt(Number(amountInBNB) * 1e18).toString();
+
+    await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from: account,
+          to: presaleWallet,
+          value: "0x" + BigInt(amountInWei).toString(16)
+        }
+      ]
+    });
+
+    tokensSold += Math.floor((Number(amountInBNB) / getTokenPrice(getCurrentStage())));
+    updatePresaleUI();
+    alert("Transaction sent successfully!");
+  } catch (error) {
+    console.error(error);
+    alert("Transaction failed or cancelled.");
+  }
 }
 
 setInterval(updatePresaleUI, 1000);
