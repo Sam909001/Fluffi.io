@@ -25,7 +25,11 @@
       <p>Send BNB to the wallet address below to participate:</p>
       <div class="wallet-box">
         <input type="text" id="wallet" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly />
-        <button onclick="copyWallet()">Copy Address</button>
+       <!-- Buy Tokens Section -->
+<div style="text-align: center; margin-top: 30px;">
+  <input id="bnbAmount" type="number" min="0.1" max="5" step="0.01" placeholder="Enter BNB (0.1 - 5)" style="padding: 10px; width: 200px; font-size: 16px;">
+  <button onclick="buyTokens()" style="padding: 10px 20px; font-size: 16px; margin-left: 10px;">Buy Tokens</button>
+</div>
       </div>
       <p><strong>Minimum:</strong> 0.1 BNB &nbsp; | &nbsp; <strong>Maximum:</strong> 5 BNB</p>
 
