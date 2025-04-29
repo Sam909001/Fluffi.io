@@ -1,11 +1,10 @@
 // Presale configuration
 const totalStages = 15;
-const initialPrice = 0.0001; // USD
-const priceIncrease = 0.05;  // 5%
-const tokensPerStage = 100000000; // Adjust as needed
-const stageDuration = 60 * 5; // 5 minutes per stage
+const initialPrice = 0.0001;
+const priceIncrease = 0.05;
+const tokensPerStage = 100000000;
+const stageDuration = 60 * 5;
 
-// Presale state
 let currentStage = 1;
 let tokensSold = 0;
 let stageStartTime = Date.now();
@@ -25,7 +24,7 @@ function updatePresaleUI() {
   const mins = String(Math.floor(remainingTime / 60)).padStart(2, '0');
   const secs = String(remainingTime % 60).padStart(2, '0');
   document.getElementById("stage-timer").textContent = `${mins}:${secs}`;
-  document.getElementById("stage-progress").value = ((elapsed / stageDuration) * 100);
+  document.getElementById("stage-progress").value = (elapsed / stageDuration) * 100;
 
   if (remainingTime === 0 && currentStage < totalStages) {
     currentStage++;
@@ -35,9 +34,8 @@ function updatePresaleUI() {
 }
 
 function buyTokens() {
-  alert("This is a demo. Integration with Web3 and Metamask goes here.");
-  // You would handle the Web3 wallet transaction here
+  alert("This is a demo. Web3 wallet connection would go here.");
 }
 
-// Update the UI every second
+// Update UI every second
 setInterval(updatePresaleUI, 1000);
