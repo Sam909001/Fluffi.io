@@ -193,3 +193,10 @@ function updateLeaderboard() {
   }
 }
 updateLeaderboard();
+function buyToken() {
+  const referrer = localStorage.getItem('referrer') || 'none';
+  alert(`Buy Token clicked.\nReferrer: ${referrer}\n\n(This is a demo — connect wallet logic goes here.)`);
+
+  // Optional future integration:
+  // Send referral info to backend or pass to smart contract
+}
