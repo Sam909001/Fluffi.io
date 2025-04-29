@@ -161,16 +161,19 @@
       item.addEventListener('click', () => {
         item.classList.toggle('active');
       });
-    });
-<section id="live-stats" style="text-align: center; margin: 40px 0;">
+      <section id="live-stats" style="text-align: center; margin: 40px 0;">
   <h2>📊 Live Presale Stats</h2>
   <div style="margin-top: 15px;">
     <p><strong>Total Tokens for Presale:</strong> 4,000,000,000 FLUFFI</p>
     <p><strong>Price per Token:</strong> $0.0001</p>
     <p><strong>Participants:</strong> <span id="participantsCount">125</span></p>
     <p><strong>Tokens Sold:</strong> <span id="tokensSold">1,580,000,000</span></p>
-    <div style="width: 80%; margin: 20px auto; background: #ddd; border-radius: 10px; overflow: hidden;">
+    <div style="width: 80%; margin: 20px auto; background-color: #ddd; border-radius: 10px; overflow: hidden;">
       <div id="progressBar" style="width: 39.5%; background: linear-gradient(90deg, #ffce00, #ff8a00); height: 24px;"></div>
+    </div>
+    <p><strong><span id="progressPercent">39.5%</span></strong> of presale goal reached</p>
+  </div>
+</section>
     </div>
     <p><strong>39.5%</strong> of presale goal reached</p>
   </div>
