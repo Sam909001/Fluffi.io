@@ -47,3 +47,18 @@ document.getElementById("darkModeToggle").addEventListener("click", () => {
 
 // Initial update
 updateProgressBar();
+<script>
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const walletAddress = accounts[0];
+        document.getElementById('walletStatus').textContent = `Connected: ${walletAddress}`;
+      } catch (error) {
+        console.error("User rejected the request.");
+      }
+    } else {
+      alert("MetaMask not detected. Please install MetaMask extension.");
+    }
+  }
+</script>
