@@ -351,3 +351,10 @@ async function buyTokens() {
         alert("Payment failed: " + error.message);
     }
 }
+// Copy payment address to clipboard
+document.getElementById('copyAddress').addEventListener('click', function() {
+    const address = document.getElementById('paymentAddress').textContent;
+    navigator.clipboard.writeText(address).then(() => {
+        alert("Address copied to clipboard!");
+    });
+});
