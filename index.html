@@ -6,11 +6,7 @@
   <title>$FLUFFI Presale & Staking</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
     body {
       background: linear-gradient(to bottom, #fff0f5, #fff9e6);
     }
@@ -38,6 +34,21 @@
     }
     .dark .text-blue-600 {
       color: #60a5fa !important;
+    }
+    .stage-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1rem;
+    }
+    .stage-dot {
+      flex: 1;
+      height: 10px;
+      background: #d1d5db;
+      border-radius: 9999px;
+      transition: background 0.3s ease;
+    }
+    .stage-dot.active {
+      background: #ec4899;
     }
   </style>
 </head>
@@ -69,8 +80,8 @@
       <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
         <div class="bg-pink-500 h-4 rounded-full" style="width: 10%"></div>
       </div>
+      <div class="stage-bar" id="stageTimeline"></div>
       <p class="mb-4 timer" id="countdown"></p>
-
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
       <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Buy Now</button>
@@ -105,25 +116,22 @@
       <details class="mb-2"><summary>What chains are supported?</summary><p class="pl-4">BNB, ETH, SOL, and USDC.</p></details>
     </section>
 
-    <!-- Socials Section (still used for anchor link) -->
+    <!-- Socials Section -->
     <section id="socials" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Join Us</h2>
-      <p>Follow our community for updates and support.</p>
     </section>
   </main>
 
-  <!-- Fixed Social Icons -->
-  <div class="fixed bottom-4 left-4 flex gap-4">
-    <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" rel="noopener noreferrer" class="text-blue-500 text-2xl hover:text-blue-700">
-      <i class="fab fa-telegram"></i>
-    </a>
-    <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" rel="noopener noreferrer" class="text-blue-400 text-2xl hover:text-blue-600">
-      <i class="fab fa-twitter"></i>
-    </a>
-  </div>
-
   <footer class="text-center text-sm p-4 text-gray-600 dark:text-gray-300">
     © 2025 $FLUFFI Token
+    <div class="absolute bottom-4 left-4 flex gap-4">
+      <a href="https://t.meFLUFFISOLANALAYER2" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="w-6 h-6">
+      </a>
+      <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" class="w-6 h-6">
+      </a>
+    </div>
   </footer>
 
   <script>
@@ -140,6 +148,17 @@
       const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
       document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
       document.getElementById('priceInfo').textContent = `Price: $${price}`;
+      updateStageTimeline(stage);
+    }
+
+    function updateStageTimeline(currentStage) {
+      const timeline = document.getElementById('stageTimeline');
+      timeline.innerHTML = '';
+      for (let i = 0; i < stages; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'stage-dot' + (i <= currentStage ? ' active' : '');
+        timeline.appendChild(dot);
+      }
     }
 
     function updateCountdown() {
