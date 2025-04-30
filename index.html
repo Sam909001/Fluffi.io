@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLUFFI - The Fluffiest Meme Coin on BSC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,13 +15,14 @@
                 <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo">
                 <h1>FLUFFI</h1>
             </div>
-            <div class="social-links">
-                <a href="https://twitter.com/FLUFFIOFFICIAL" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
-                <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
+            <div class="wallet-connect">
+                <button id="connectWallet" class="fluffi-button">
+                    <i class="fas fa-wallet"></i> Connect Wallet
+                </button>
+                <div id="walletInfo" class="hidden">
+                    <span id="walletAddress"></span>
+                </div>
             </div>
-            <button id="connectWallet" class="fluffi-button">
-                <i class="fas fa-wallet"></i> Connect Wallet
-            </button>
         </div>
     </header>
 
@@ -34,70 +35,27 @@
         <div id="presale" class="tab-content active">
             <div class="card">
                 <h2><i class="fas fa-coins"></i> FLUFFI Presale</h2>
+                
+                <!-- Payment Address Display -->
+                <div class="payment-address-card">
+                    <h3><i class="fas fa-wallet"></i> Payment Address</h3>
+                    <div class="address-display">
+                        <input type="text" id="paymentAddressDisplay" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
+                        <button id="copyPaymentAddress" class="fluffi-button small">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <p class="notice"><i class="fas fa-info-circle"></i> All presale payments must be sent to this address</p>
+                    <a href="https://bscscan.com/address/0xFc3381a6AA1d134DDf22f641E97c92C400959910" 
+                       target="_blank" 
+                       class="verify-link">
+                        <i class="fas fa-external-link-alt"></i> Verify on BscScan
+                    </a>
+                </div>
+
                 <div class="progress-container">
                     <div class="progress-bar" id="presaleProgress"></div>
                     <div class="progress-text" id="presaleProgressText">0%</div>
-                    <div class="payment-address-card">
-    <h3><i class="fas fa-wallet"></i> Payment Address</h3>
-    <div class="address-display">
-        <input type="text" id="paymentAddressDisplay" value="0xFc3381a6AA1d134DDf22f641E97c92C400959910" readonly>
-        <button id="copyPaymentAddress" class="fluffi-button small">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    </div>
-    <p class="notice"><i class="fas fa-info-circle"></i> All presale payments must be sent to this address</p>
-    <a href="https://bscscan.com/address/0xFc3381a6AA1d134DDf22f641E97c92C400959910" 
-       target="_blank" 
-       class="verify-link">
-        <i class="fas fa-external-link-alt"></i> Verify on BscScan
-    </a>
-</div>
-2. CSS Styling (Add to style.css)
-css
-/* Payment Address Card */
-.payment-address-card {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px 0;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.payment-address-card h3 {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.address-display {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.address-display input {
-    flex: 1;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: white;
-    font-family: monospace;
-    font-size: 14px;
-}
-
-.notice {
-    font-size: 14px;
-    opacity: 0.8;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 15px;
-}
-
-.verify-link {
-New chat
                 </div>
                 <div class="stats">
                     <div>
@@ -167,13 +125,13 @@ New chat
                 <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo small">
                 <span>FLUFFI</span>
             </div>
-            <p>© 2023 FLUFFI - The Fluffiest Meme Coin on SOL</p>
+            <p>© 2023 FLUFFI - The Fluffiest Meme Coin on BSC</p>
         </div>
     </footer>
 
+    <!-- Web3 and WalletConnect -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
     <script src="script.js"></script>
-    <!-- WalletConnect provider -->
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
 </body>
 </html>
