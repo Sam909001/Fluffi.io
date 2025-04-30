@@ -179,4 +179,8 @@ function updateUI() {
     
     // Update staking info
     document.getElementById('apyValue').textContent = FLUFFI_CONFIG.staking.apy + "%";
+    const chainId = await web3.eth.getChainId();
+if (chainId !== 56) { // 56 is BSC mainnet
+    alert("Please switch to Binance Smart Chain");
+}
 }
