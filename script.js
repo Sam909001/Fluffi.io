@@ -238,3 +238,9 @@ setInterval(() => {
         window.location.href = "/security-alert";
     }
 }, 5000);
+// Added to prevent console tampering:
+Object.defineProperty(window, "FLUFFI_CONFIG", {
+    value: FLUFFI_CONFIG,
+    writable: false,
+    configurable: false
+});
