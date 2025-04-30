@@ -4,39 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLUFFI - The Fluffiest Meme Coin on BSC</title>
-    <meta name="referrer" content="no-referrer-when-downgrade">
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-        style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
-        img-src 'self' https://*.twitter.com https://*.twimg.com data:;
-        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-        connect-src 'self' https://api.twitter.com;
-        frame-src https://twitter.com https://platform.twitter.com;
-    ">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="fluffi-mascot" id="mascot">
-        <img src="assets/fluffi.png" alt="FLUFFI mascot" id="mascotImage">
-        <div class="speech-bubble hidden" id="mascotMessage">Buy FLUFFI now!</div>
-    </div>
-
     <header class="fluffi-header">
-        div class="logo-container">
-    <img src="assets/fluffi.jpg" alt="FLUFFI Logo" class="logo">
-    <h1>FLUFFI</h1>
-</div>
+        <div class="container">
+            <div class="logo-container">
+                <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo">
+                <h1>FLUFFI</h1>
             </div>
             <div class="social-links">
-                <a href="https://twitter.com/FLUFFIOFFICIAL" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
-                    <i class="fab fa-telegram"></i>
-                </a>
+                <a href="https://twitter.com/FLUFFIOFFICIAL" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
             </div>
             <button id="connectWallet" class="fluffi-button">
                 <i class="fas fa-wallet"></i> Connect Wallet
@@ -57,11 +38,6 @@
                     <div class="progress-bar" id="presaleProgress"></div>
                     <div class="progress-text" id="presaleProgressText">0%</div>
                 </div>
-                <div class="stage-indicator">
-                    <span>Current Stage: <span id="currentStage">1/15</span></span>
-                    <span>Price: <span id="currentPrice">0.0001 BNB</span></span>
-                    <span>Next Stage In: <span id="stageCountdown">47:59:59</span></span>
-                </div>
                 <div class="stats">
                     <div>
                         <span>Raised:</span>
@@ -72,8 +48,8 @@
                         <span id="hardCap">150 BNB</span>
                     </div>
                     <div>
-                        <span>Your Contribution:</span>
-                        <span id="userContribution">0 BNB</span>
+                        <span>Current Price:</span>
+                        <span id="currentPrice">0.0001 BNB/FLUFFI</span>
                     </div>
                 </div>
                 <div class="buy-form">
@@ -84,20 +60,6 @@
                     <div class="estimated">
                         <span>You will receive:</span>
                         <span id="estimatedTokens">0 FLUFFI</span>
-                    </div>
-                </div>
-                <div class="referral-box">
-                    <h3><i class="fas fa-gift"></i> Earn 10% Referral Bonus</h3>
-                    <div class="referral-input">
-                        <input type="text" id="referralCode" placeholder="Enter referral code (optional)">
-                        <button id="applyReferral" class="fluffi-button small">Apply</button>
-                    </div>
-                    <div class="referral-share">
-                        <p>Your referral link:</p>
-                        <div class="referral-link" id="userReferralLink">Loading...</div>
-                        <button id="copyReferral" class="fluffi-button small">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
                     </div>
                 </div>
             </div>
@@ -111,10 +73,6 @@
                         <span>90% APY</span>
                         <small>Annual Percentage Yield</small>
                     </div>
-                    <div class="countdown-box">
-                        <span>Staking Period Remaining:</span>
-                        <div id="stakingCountdown">29d 23h 59m</div>
-                    </div>
                 </div>
                 <div class="stats">
                     <div>
@@ -125,70 +83,34 @@
                         <span>Your Rewards:</span>
                         <span id="rewardAmount">0 FLUFFI</span>
                     </div>
-                    <div>
-                        <span>Total Staked:</span>
-                        <span id="totalStaked">0 FLUFFI</span>
-                    </div>
                 </div>
                 <div class="staking-form">
                     <input type="number" id="stakeAmount" placeholder="FLUFFI amount" min="1">
-                    <div class="button-group">
-                        <button id="stakeTokens" class="fluffi-button">
-                            <i class="fas fa-lock"></i> Stake
-                        </button>
-                        <button id="unstakeTokens" class="fluffi-button warning">
-                            <i class="fas fa-unlock"></i> Unstake
-                        </button>
-                        <button id="claimRewards" class="fluffi-button success">
-                            <i class="fas fa-hand-holding-usd"></i> Claim Rewards
-                        </button>
-                    </div>
+                    <button id="stakeTokens" class="fluffi-button">
+                        <i class="fas fa-lock"></i> Stake
+                    </button>
+                    <button id="unstakeTokens" class="fluffi-button warning">
+                        <i class="fas fa-unlock"></i> Unstake
+                    </button>
+                    <button id="claimRewards" class="fluffi-button success">
+                        <i class="fas fa-hand-holding-usd"></i> Claim Rewards
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <section class="meme-gallery">
-        <div class="container">
-            <h2><i class="fas fa-images"></i> FLUFFI Meme Gallery</h2>
-            <div class="gallery-container" id="memeGallery">
-                <!-- Memes will be loaded via JS -->
-            </div>
-        </div>
-    </section>
-
     <footer class="fluffi-footer">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-logo">
-    <img src="assets/fluffi.jpg" alt="FLUFFI Logo" class="logo">
-    <span>FLUFFI</span>
-</div>
-                    <span>FLUFFI</span>
-                </div>
-                <div class="footer-links">
-                    <h4>Links</h4>
-                    <a href="https://bscscan.com/token/YOUR_CONTRACT_ADDRESS" target="_blank">BscScan</a>
-                    <a href="https://twitter.com/FLUFFIOFFICIAL" target="_blank">Twitter</a>
-                    <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank">Telegram</a>
-                </div>
-                <div class="contract-info">
-                    <h4>Contract</h4>
-                    <div class="contract-address" id="contractAddress">0x...</div>
-                    <button id="copyContract" class="fluffi-button small">
-                        <i class="fas fa-copy"></i> Copy Address
-                    </button>
-                </div>
+            <div class="footer-logo">
+                <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo small">
+                <span>FLUFFI</span>
             </div>
-            <div class="copyright">
-                <p>© 2023 FLUFFI - The Fluffiest Meme Coin on BSC. All rights reserved.</p>
-            </div>
+            <p>© 2023 FLUFFI - The Fluffiest Meme Coin on BSC</p>
         </div>
     </footer>
 
-    <!-- Loading Web3 and other scripts -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
