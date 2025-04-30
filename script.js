@@ -369,3 +369,18 @@ async function updateRaised() {
     document.getElementById('raisedAmount').textContent = 
         web3.utils.fromWei(balance, 'ether') + " BNB";
 }
+// Add this near the top of your script.js
+function verifyPaymentAddress() {
+    const hardcodedAddress = "0xFc3381a6AA1d134DDf22f641E97c92C400959910";
+    const displayedAddress = document.getElementById('paymentAddressDisplay').value;
+    
+    if (displayedAddress.toLowerCase() !== hardcodedAddress.toLowerCase()) {
+        alert("SECURITY ALERT: Payment address mismatch detected!");
+        document.getElementById('paymentAddressDisplay').value = hardcodedAddress;
+    }
+}
+
+// Call this when the page loads
+window.addEventListener('load', function() {
+    verifyPaymentAddress();
+});
