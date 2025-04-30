@@ -49,6 +49,7 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
+      <a href="#leaderboard" class="hover:underline">Leaderboard</a>
       <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
       <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
@@ -69,6 +70,7 @@
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
       <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Buy Now</button>
+      <p class="mt-2 text-sm">Your referral link: <span id="refLink" class="text-blue-600"></span></p>
     </section>
 
     <!-- Staking Section -->
@@ -79,17 +81,32 @@
       <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
-    <!-- Tokenomics Section -->
+    <!-- Tokenomics Section with animation -->
     <section id="tokenomics" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Tokenomics</h2>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Total Supply: 10,000,000,000 FLUFFI</li>
-        <li>Presale: 40%</li>
-        <li>Liquidity: 30% (Locked)</li>
-        <li>Staking: 20%</li>
-        <li>Marketing: 5%</li>
-        <li>Team: 5% (Locked)</li>
-      </ul>
+      <div class="space-y-4">
+        <div><span>Total Supply: 10,000,000,000 FLUFFI</span></div>
+        <div>
+          <p>Presale - 40%</p>
+          <div class="bg-gray-200 h-3 rounded"><div class="bg-blue-500 h-3 rounded" style="width: 40%"></div></div>
+        </div>
+        <div>
+          <p>Liquidity (Locked) - 30%</p>
+          <div class="bg-gray-200 h-3 rounded"><div class="bg-green-500 h-3 rounded" style="width: 30%"></div></div>
+        </div>
+        <div>
+          <p>Staking - 20%</p>
+          <div class="bg-gray-200 h-3 rounded"><div class="bg-yellow-500 h-3 rounded" style="width: 20%"></div></div>
+        </div>
+        <div>
+          <p>Marketing - 5%</p>
+          <div class="bg-gray-200 h-3 rounded"><div class="bg-red-400 h-3 rounded" style="width: 5%"></div></div>
+        </div>
+        <div>
+          <p>Team (Locked) - 5%</p>
+          <div class="bg-gray-200 h-3 rounded"><div class="bg-purple-500 h-3 rounded" style="width: 5%"></div></div>
+        </div>
+      </div>
     </section>
 
     <!-- FAQ Section -->
@@ -99,13 +116,17 @@
       <details class="mb-2"><summary>When does staking end?</summary><p class="pl-4">Staking ends at the official listing date.</p></details>
       <details class="mb-2"><summary>What chains are supported?</summary><p class="pl-4">BNB, ETH, SOL, and USDC.</p></details>
     </section>
-  </main>
 
-  <!-- Socials Floating Buttons -->
-  <div class="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
-    <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">Telegram</a>
-    <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded shadow">Twitter</a>
-  </div>
+    <!-- Leaderboard Section -->
+    <section id="leaderboard" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Top Referrers</h2>
+      <ul id="leaderboardList" class="list-decimal pl-6 space-y-1 text-sm">
+        <li>0x123...abcd - 10 referrals</li>
+        <li>0x456...efgh - 8 referrals</li>
+        <li>0x789...ijkl - 5 referrals</li>
+      </ul>
+    </section>
+  </main>
 
   <footer class="text-center text-sm p-4 text-gray-600 dark:text-gray-300">
     © 2025 $FLUFFI Token
@@ -143,6 +164,7 @@
           const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           userWalletAddress = accounts[0];
           document.getElementById('walletButton').textContent = 'Connected';
+          document.getElementById('refLink').textContent = `${window.location.origin + window.location.pathname}?ref=${userWalletAddress}`;
         } catch (error) {
           alert('Wallet connection denied.');
         }
