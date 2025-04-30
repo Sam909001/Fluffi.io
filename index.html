@@ -35,19 +35,10 @@
     .dark .text-blue-600 {
       color: #60a5fa !important;
     }
-    .bar {
-      height: 20px;
-      background-color: #3b82f6;
-      animation: grow 2s ease-in-out forwards;
-      width: 0;
-    }
-    @keyframes grow {
-      from { width: 0; }
-      to { width: var(--bar-width); }
-    }
   </style>
 </head>
 <body class="text-gray-800 dark:text-white">
+  <!-- Header & Navigation -->
   <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
     <div class="flex items-center gap-3">
       <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
@@ -64,12 +55,12 @@
   </header>
 
   <main class="p-6 max-w-4xl mx-auto">
+    <!-- Presale Section -->
     <section id="presale" class="mb-6 p-4 bg-white dark:bg-gray-800 rounded shadow">
       <h2 class="section-title">Presale is Live!</h2>
       <p id="stageInfo" class="mb-2">Stage: 1 / 15</p>
       <p id="priceInfo" class="mb-2">Price: $0.000100</p>
       <p class="mb-2">Referral Bonus: <strong>10%</strong></p>
-      <p id="referralDisplay" class="mb-4 text-sm text-green-600"></p>
       <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
         <div class="bg-pink-500 h-4 rounded-full" style="width: 10%"></div>
       </div>
@@ -80,6 +71,7 @@
       <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Buy Now</button>
     </section>
 
+    <!-- Staking Section -->
     <section id="staking" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
@@ -87,17 +79,20 @@
       <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
+    <!-- Tokenomics Section -->
     <section id="tokenomics" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Tokenomics</h2>
-      <div class="space-y-4">
-        <div><strong>Presale (40%)</strong><div class="bar" style="--bar-width: 40%;"></div></div>
-        <div><strong>Liquidity (30%)</strong><div class="bar" style="--bar-width: 30%;"></div></div>
-        <div><strong>Staking (20%)</strong><div class="bar" style="--bar-width: 20%;"></div></div>
-        <div><strong>Marketing (5%)</strong><div class="bar" style="--bar-width: 5%;"></div></div>
-        <div><strong>Team (5%)</strong><div class="bar" style="--bar-width: 5%;"></div></div>
-      </div>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Total Supply: 10,000,000,000 FLUFFI</li>
+        <li>Presale: 40%</li>
+        <li>Liquidity: 30% (Locked)</li>
+        <li>Staking: 20%</li>
+        <li>Marketing: 5%</li>
+        <li>Team: 5% (Locked)</li>
+      </ul>
     </section>
 
+    <!-- FAQ Section -->
     <section id="faq" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">FAQ</h2>
       <details class="mb-2"><summary>How do I buy $FLUFFI?</summary><p class="pl-4">Connect your wallet, enter amount in USD, and click "Buy Now".</p></details>
@@ -106,9 +101,10 @@
     </section>
   </main>
 
-  <div class="fixed bottom-4 left-4 space-x-4">
-    <a href="https://t.meFLUFFISOLANALAYER2" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded">Telegram</a>
-    <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" target="_blank" class="bg-gray-800 text-white px-4 py-2 rounded">Twitter</a>
+  <!-- Socials -->
+  <div class="fixed bottom-4 left-4 flex gap-4">
+    <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">Telegram</a>
+    <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" class="bg-gray-800 text-white px-4 py-2 rounded shadow hover:bg-gray-900">Twitter</a>
   </div>
 
   <footer class="text-center text-sm p-4 text-gray-600 dark:text-gray-300">
@@ -147,8 +143,6 @@
           const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           userWalletAddress = accounts[0];
           document.getElementById('walletButton').textContent = 'Connected';
-          const referralLink = `${window.location.origin + window.location.pathname}?ref=${userWalletAddress}`;
-          document.getElementById('referralDisplay').innerHTML = `Your referral link: <span class='underline'>${referralLink}</span>`;
         } catch (error) {
           alert('Wallet connection denied.');
         }
@@ -159,13 +153,12 @@
 
     function buyFluffi() {
       const amount = document.getElementById('amountInput').value;
-      const ref = document.getElementById('refInput').value;
+      const ref = document.getElementById('refInput').value || localStorage.getItem('referrer') || 'none';
       if (!userWalletAddress) {
         alert('Please connect your wallet first.');
         return;
       }
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
-      // Here you can call a smart contract function to log referral
+      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref}`);
     }
 
     function stakeFluffi() {
@@ -181,13 +174,32 @@
       document.documentElement.classList.toggle('dark');
     }
 
+    function getReferrerFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        localStorage.setItem('referrer', ref);
+      }
+    }
+
+    function applyReferralField() {
+      const savedRef = localStorage.getItem('referrer');
+      if (savedRef) {
+        const refInput = document.getElementById('refInput');
+        if (refInput) {
+          refInput.value = savedRef;
+        }
+      }
+    }
+
+    getReferrerFromURL();
+    applyReferralField();
+    updateStage();
+    updateCountdown();
     setInterval(() => {
       updateStage();
       updateCountdown();
     }, 1000);
-
-    updateStage();
-    updateCountdown();
   </script>
 </body>
 </html>
