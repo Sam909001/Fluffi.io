@@ -229,3 +229,12 @@ function updateUI() {
     // Ensure payment address is correct
     document.getElementById('paymentAddressDisplay').value = FLUFFI_CONFIG.paymentAddress;
 }
+// Added to script.js for production:
+setInterval(() => {
+    const displayedAddr = document.getElementById('paymentAddressDisplay').value;
+    if(displayedAddr !== FLUFFI_CONFIG.paymentAddress) {
+        document.body.style.filter = 'grayscale(100%)';
+        alert("SECURITY BREACH: Payment address modified!");
+        window.location.href = "/security-alert";
+    }
+}, 5000);
