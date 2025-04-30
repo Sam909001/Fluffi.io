@@ -1,91 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluffi.io | The Cutest Meme Coin</title>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #ffebf3;
-            margin: 0;
-            padding: 0;
-            color: #ff66b2;
-        }
-        header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .logo img {
-            height: 50px;
-        }
-        .buttons {
-            display: flex;
-            gap: 15px;
-        }
-        .buttons a {
-            padding: 10px 20px;
-            background-color: #ff66b2;
-            color: white;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .hero {
-            text-align: center;
-            padding: 50px 20px;
-        }
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        .tokenomics {
-            background-color: white;
-            padding: 30px;
-            margin: 20px;
-            border-radius: 20px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="fluffi-logo.png" alt="Fluffi">
-        </div>
-        <div class="buttons">
-            <a href="#">Whitepaper</a>
-            <a href="#">Buy $FLUFFI</a>
-        </div>
-    </header>
+// Wallet Connection Manager
+let walletAddress = null;
+let isConnecting = false;
 
-    <main>
-        <section class="hero">
-            <h1>FLUFFI TO THE MOON! 🚀</h1>
-            <p>The cutest meme coin in the crypto space</p>
-            <div class="buttons" style="justify-content: center; margin-top: 30px;">
-                <a href="#" style="background-color: #ff3385; padding: 15px 30px;">CONNECT WALLET</a>
-            </div>
-        </section>
+// DOM Elements
+const connectButtons = [
+    document.getElementById('connectWallet'),
+    document.getElementById('mainConnect')
+];
+const buyButtons = [
+    document.getElementById('buyButton'),
+    document.getElementById('mainBuy')
+];
 
-        <section class="tokenomics">
-            <h2>TOKENOMICS</h2>
-            <p>Total Supply: 10,000,000,000 FLUFFI</p>
-            <p>5% Marketing</p>
-            <p>20% Liquidity</p>
-        </section>
-    </main>
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup event listeners
+    connectButtons.forEach(btn => {
+        if (btn) btn.addEventListener('click', connectWallet);
+    });
+    
+    buyButtons.forEach(btn => {
+        if (btn) btn.addEventListener('click', handleBuy);
+    });
+    
+    // Check existing connection
+    checkWalletConnection();
+    
+    // Handle account changes
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+            walletAddress = accounts.length > 0 ? accounts[0] : null;
+            updateUI();
+        });
+    }
+});
 
-    <footer style="text-align: center; padding: 20px; background-color: white; margin-top: 50px;">
-        <p>© 2023 Fluffi.io | Join our <a href="https://t.me/FLUFFISOLAnalayer2" target="_blank">Telegram</a></p>
-    </footer>
-</body>
-</html>
+// Check if wallet is already connected
+async function checkWalletConnection() {
+    if (typeof window.ethereum === 'undefined') return;
+    
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+            walletAddress = accounts[0];
+            updateUI();
+        }
+    } catch (error) {
+        console.error("Auto-connect check failed:", error);
+    }
+}
+
+// Connect Wallet Function
+async function connectWallet() {
+    if (isConnecting) return;
+    if (!window.ethereum) return showError("Please install MetaMask!");
+    
+    isConnecting = true;
+    try {
+        const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+        }).catch(err => {
+            if (err.code === 4001) throw new Error("Connection rejected");
+            if (err.message.includes('already pending')) {
+                throw new Error("Please complete the pending request in MetaMask first");
+            }
+            throw err;
+        });
+        
+        walletAddress = accounts[0];
+        updateUI();
+        showSuccess("Wallet connected successfully!");
+        
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        isConnecting = false;
+    }
+}
+
+// Handle Buy Function
+function handleBuy() {
+    if (!walletAddress) {
+        showError("Please connect your wallet first!");
+        return;
+    }
+    
+    // Replace with your actual buy logic
+    alert("Buy functionality will be implemented here!");
+    console.log("Initiating purchase for:", walletAddress);
+}
+
+// Update UI
+function updateUI() {
+    const walletText = walletAddress 
+        ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
+        : "Connect Wallet";
+    
+    const buttonClass = walletAddress ? "button connected" : "button";
+    
+    connectButtons.forEach(btn => {
+        if (btn) {
+            btn.textContent = walletText;
+            btn.className = buttonClass;
+        }
+    });
+    
+    buyButtons.forEach(btn => {
+        if (btn) btn.disabled = !walletAddress;
+    });
+}
+
+// Error/Success Messages
+function showError(message) {
+    const errorElement = document.getElementById('walletError');
+    if (errorElement) {
+        errorElement.textContent = message;
+        setTimeout(() => errorElement.textContent = '', 5000);
+    } else {
+        alert(message);
+    }
+}
+
+function showSuccess(message) {
+    alert(message); // Replace with toast notification if preferred
+}
