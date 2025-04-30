@@ -35,21 +35,6 @@
     .dark .text-blue-600 {
       color: #60a5fa !important;
     }
-    .stage-bar {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 1rem;
-    }
-    .stage-dot {
-      flex: 1;
-      height: 10px;
-      background: #d1d5db;
-      border-radius: 9999px;
-      transition: background 0.3s ease;
-    }
-    .stage-dot.active {
-      background: #ec4899;
-    }
   </style>
 </head>
 <body class="text-gray-800 dark:text-white">
@@ -80,13 +65,24 @@
       <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
         <div class="bg-pink-500 h-4 rounded-full" style="width: 10%"></div>
       </div>
-      <div class="stage-bar" id="stageTimeline"></div>
       <p class="mb-4 timer" id="countdown"></p>
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
       <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Buy Now</button>
     </section>
 
+    <!-- Live Stats Panel -->
+    <section class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6 animate-pulse">
+      <h2 class="section-title">📊 Live Stats</h2>
+      <ul class="space-y-1">
+        <li>Total Raised: <span id="totalRaised">$12,430</span></li>
+        <li>Buyers: <span id="buyerCount">112</span></li>
+        <li>Current Stage: <span id="liveStage">1</span></li>
+        <li>Time Left: <span id="liveCountdown">Loading...</span></li>
+      </ul>
+    </section>
+
+    <!-- Remaining Sections Unchanged -->
     <!-- Staking Section -->
     <section id="staking" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Stake Your $FLUFFI</h2>
@@ -119,19 +115,13 @@
     <!-- Socials Section -->
     <section id="socials" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Join Us</h2>
+      <a href="https://t.meFLUFFISOLANALAYER2" target="_blank" class="text-blue-600 block mb-2">Telegram</a>
+      <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" target="_blank" class="text-blue-600 block">Twitter</a>
     </section>
   </main>
 
   <footer class="text-center text-sm p-4 text-gray-600 dark:text-gray-300">
     © 2025 $FLUFFI Token
-    <div class="absolute bottom-4 left-4 flex gap-4">
-      <a href="https://t.meFLUFFISOLANALAYER2" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="w-6 h-6">
-      </a>
-      <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" class="w-6 h-6">
-      </a>
-    </div>
   </footer>
 
   <script>
@@ -148,17 +138,7 @@
       const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
       document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
       document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      updateStageTimeline(stage);
-    }
-
-    function updateStageTimeline(currentStage) {
-      const timeline = document.getElementById('stageTimeline');
-      timeline.innerHTML = '';
-      for (let i = 0; i < stages; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'stage-dot' + (i <= currentStage ? ' active' : '');
-        timeline.appendChild(dot);
-      }
+      document.getElementById('liveStage').textContent = stage + 1;
     }
 
     function updateCountdown() {
@@ -168,7 +148,9 @@
       const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((left / (1000 * 60)) % 60);
       const seconds = Math.floor((left / 1000) % 60);
-      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      const formatted = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      document.getElementById('countdown').textContent = formatted;
+      document.getElementById('liveCountdown').textContent = formatted;
     }
 
     async function connectWallet() {
