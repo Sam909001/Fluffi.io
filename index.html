@@ -1,132 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLUFFI - The Fluffiest Meme Coin on BSC</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <!-- Favicon Config -->
-<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
-<link rel="manifest" href="/favicons/site.webmanifest">
-<link rel="shortcut icon" href="/favicons/favicon.ico">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="theme-color" content="#ffffff">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fluffi - The cutest meme coin on Ethereum">
+  
+  <!-- Social Meta Tags -->
+  <meta property="og:title" content="Fluffi.io" />
+  <meta property="og:description" content="The cutest meme coin on Ethereum" />
+  <meta property="og:image" content="images/logo.png" />
+  <meta property="og:url" content="https://sam909001.github.io/Fluffi.io/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <title>Fluffi.io | Cute Meme Coin</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <header class="fluffi-header">
-        <div class="container">
-            <div class="logo-container">
-                <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo">
-                <h1>FLUFFI</h1>
-            </div>
-            <div class="wallet-connect">
-                <button id="connectWallet" class="fluffi-button">
-                    <i class="fas fa-wallet"></i> Connect Wallet
-                </button>
-                <div id="walletInfo" class="hidden">
-                    <span id="walletAddress"></span>
-                </div>
-            </div>
+  <header>
+    <div class="logo">
+      <img src="images/logo.png" alt="Fluffi Logo" width="150">
+    </div>
+    <nav>
+      <div class="header-buttons">
+        <a href="#" class="button">Whitepaper</a>
+        <button id="buyButton" class="button">Buy $FLUFFI</button>
+        <div class="wallet-connect">
+          <button id="connectWallet" class="button">Connect Wallet</button>
+          <div id="walletError"></div>
         </div>
-    </header>
+      </div>
+    </nav>
+  </header>
 
-    <main class="container">
-        <div class="tabs">
-            <button class="tab-button active" data-tab="presale">Presale</button>
-            <button class="tab-button" data-tab="staking">Staking</button>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>The Fluffiest Meme Coin</h1>
+        <p>Join the cutest revolution on Ethereum blockchain</p>
+        <div class="hero-buttons">
+          <button id="mainBuyButton" class="button large">Buy $FLUFFI</button>
+          <a href="#" class="button large outline">Learn More</a>
         </div>
+      </div>
+      <div class="hero-image">
+        <img src="images/fluffi-mascot.png" alt="Fluffi Mascot">
+      </div>
+    </section>
 
-        <div id="presale" class="tab-content active">
-            <div class="card">
-                <h2><i class="fas fa-coins"></i> FLUFFI Presale</h2>
-                    </div>
-                    </a>
-                </div>
+    <section class="features">
+      <!-- Your existing features sections here -->
+    </section>
+  </main>
 
-                <div class="progress-container">
-                    <div class="progress-bar" id="presaleProgress"></div>
-                    <div class="progress-text" id="presaleProgressText">0%</div>
-                </div>
-                <div class="stats">
-                    <div>
-                        <span>Raised:</span>
-                        <span id="raisedAmount">0 BNB</span>
-                    </div>
-                    <div>
-                        <span>Hard Cap:</span>
-                        <span id="hardCap">150 BNB</span>
-                    </div>
-                    <div>
-                        <span>Current Price:</span>
-                        <span id="currentPrice">0.0001 BNB/FLUFFI</span>
-                    </div>
-                </div>
-                <div class="buy-form">
-                    <input type="number" id="buyAmount" placeholder="BNB amount" min="0.01" step="0.01">
-                    <button id="buyTokens" class="fluffi-button">
-                        <i class="fas fa-shopping-cart"></i> Buy FLUFFI
-                    </button>
-                    <div class="estimated">
-                        <span>You will receive:</span>
-                        <span id="estimatedTokens">0 FLUFFI</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <footer>
+    <div class="social-links">
+      <a href="https://t.me/Fluffi" target="_blank" rel="noopener noreferrer">
+        <img src="images/telegram.svg" alt="Telegram">
+      </a>
+      <a href="https://twitter.com/FluffiCoin" target="_blank" rel="noopener noreferrer">
+        <img src="images/twitter.svg" alt="Twitter">
+      </a>
+    </div>
+    <p>© 2023 Fluffi.io | All rights reserved</p>
+  </footer>
 
-        <div id="staking" class="tab-content">
-            <div class="card">
-                <h2><i class="fas fa-lock"></i> FLUFFI Staking</h2>
-                <div class="staking-banner">
-                    <div class="apy-display">
-                        <span>90% APY</span>
-                        <small>Annual Percentage Yield</small>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div>
-                        <span>Your Staked:</span>
-                        <span id="stakedAmount">0 FLUFFI</span>
-                    </div>
-                    <div>
-                        <span>Your Rewards:</span>
-                        <span id="rewardAmount">0 FLUFFI</span>
-                    </div>
-                </div>
-                <div class="staking-form">
-                    <input type="number" id="stakeAmount" placeholder="FLUFFI amount" min="1">
-                    <button id="stakeTokens" class="fluffi-button">
-                        <i class="fas fa-lock"></i> Stake
-                    </button>
-                    <button id="unstakeTokens" class="fluffi-button warning">
-                        <i class="fas fa-unlock"></i> Unstake
-                    </button>
-                    <button id="claimRewards" class="fluffi-button success">
-                        <i class="fas fa-hand-holding-usd"></i> Claim Rewards
-                    </button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="fluffi-footer">
-        <div class="container">
-            <div class="footer-logo">
-                <img src="fluffi.jpg" alt="FLUFFI Logo" class="logo small">
-                <span>FLUFFI</span>
-            </div>
-            <p>© 2023 FLUFFI - The Fluffiest Meme Coin on BSC</p>
-        </div>
-    </footer>
-
-    <!-- Web3 and WalletConnect -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
-    <script src="script.js"></script>
+  <!-- JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>
