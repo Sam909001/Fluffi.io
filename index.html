@@ -1,158 +1,117 @@
-// Fluffi Presale and Staking Full Site Structure
-// Framework: React + TailwindCSS + Wagmi + ethers.js (for wallet connect and tx handling)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>$FLUFFI Presale & Staking</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    body { background: linear-gradient(to bottom, #fff0f5, #fff9e6); }
+    .timer { font-family: monospace; }
+  </style>
+</head>
+<body class="text-gray-800">
+  <header class="flex items-center justify-between px-4 py-3 bg-white shadow">
+    <div class="flex items-center gap-3">
+      <img src="fluffi-logo.png" alt="$FLUFFI Logo" class="w-10 h-10">
+      <h1 class="text-xl font-bold">$FLUFFI</h1>
+    </div>
+    <div>
+      <a href="https://t.me/FLUFFISOLANALAYER2" class="mr-4 text-blue-600">Telegram</a>
+      <a href="https://x.com/FLUFFIOFFICIAL" class="text-blue-600">Twitter</a>
+    </div>
+  </header>
 
-import React, { useState, useEffect } from 'react';
-import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { ConnectKitProvider, getDefaultClient } from 'connectkit';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ethers } from 'ethers';
-import FluffiLogo from './assets/fluffi-logo.png'; // Use uploaded logo file
+  <main class="p-6 max-w-4xl mx-auto">
+    <section class="mb-6 p-4 bg-white rounded shadow">
+      <h2 class="text-2xl font-bold mb-2">Presale is Live!</h2>
+      <p id="stageInfo" class="mb-2">Stage: 1 / 15</p>
+      <p id="priceInfo" class="mb-2">Price: $0.000100</p>
+      <p class="mb-2">Referral Bonus: <strong>10%</strong></p>
+      <p class="mb-4 timer" id="countdown"></p>
 
-const TOTAL_SUPPLY = 10_000_000_000;
-const PRESALE_SUPPLY = 0.4 * TOTAL_SUPPLY;
-const STAKING_SUPPLY = 0.2 * TOTAL_SUPPLY;
-const PRESALE_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
-const STAGE_DURATION = 48 * 60 * 60 * 1000; // 48 hours in ms
-const STAGE_COUNT = 15;
-const INITIAL_PRICE = 0.0001;
-const LISTING_PRICE = 0.002;
-const REFERRAL_BONUS = 0.1; // 10%
-const STAKING_APY = 0.9; // 90%
-const WALLET_ADDRESS = "0xFc3381a6AA1d134DDf22f641E97c92C400959910";
-
-const client = createClient(
-  getDefaultClient({
-    appName: 'Fluffi Token',
-    chains: [mainnet],
-    provider: publicProvider(),
-  })
-);
-
-const getCurrentStage = (startTime) => {
-  const now = Date.now();
-  const elapsed = now - startTime;
-  return Math.min(Math.floor(elapsed / STAGE_DURATION), STAGE_COUNT - 1);
-};
-
-const getStagePrice = (stage) => INITIAL_PRICE * Math.pow(1.05, stage);
-
-const App = () => {
-  const [presaleStart, setPresaleStart] = useState(Date.now());
-  const [currentStage, setCurrentStage] = useState(0);
-  const [price, setPrice] = useState(INITIAL_PRICE);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const stage = getCurrentStage(presaleStart);
-      setCurrentStage(stage);
-      setPrice(getStagePrice(stage));
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [presaleStart]);
-
-  return (
-    <WagmiConfig client={client}>
-      <ConnectKitProvider>
-        <div className="min-h-screen bg-gradient-to-b from-pink-50 to-yellow-100 text-gray-900">
-          <header className="flex items-center justify-between p-4 shadow-md">
-            <div className="flex items-center gap-2">
-              <img src={FluffiLogo} alt="$FLUFFI" className="h-10 w-10" />
-              <h1 className="text-xl font-bold">$FLUFFI</h1>
-            </div>
-            <ConnectKitProvider />
-          </header>
-
-          <main className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-            <Card>
-              <CardContent>
-                <h2 className="text-lg font-semibold">Presale Live</h2>
-                <p>Stage {currentStage + 1} / {STAGE_COUNT}</p>
-                <p>Current Price: ${price.toFixed(6)} USDT</p>
-                <BuyForm price={price} />
-                <ReferralInfo />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent>
-                <h2 className="text-lg font-semibold">Stake Your $FLUFFI</h2>
-                <StakingSection />
-              </CardContent>
-            </Card>
-          </main>
-
-          <footer className="p-4 text-center text-sm text-gray-600">
-            <p>Telegram: <a href="https://t.me/FLUFFISOLANALAYER2" className="text-blue-600">t.me/FLUFFISOLANALAYER2</a></p>
-            <p>Twitter: <a href="https://x.com/FLUFFIOFFICIAL" className="text-blue-600">@FLUFFIOFFICIAL</a></p>
-          </footer>
-        </div>
-      </ConnectKitProvider>
-    </WagmiConfig>
-  );
-};
-
-const BuyForm = ({ price }) => {
-  const [amount, setAmount] = useState('');
-  const [referral, setReferral] = useState('');
-
-  const handleBuy = () => {
-    // Implement wallet buy function
-    alert(`Buying ${amount} worth of $FLUFFI with referral ${referral}`);
-  };
-
-  return (
-    <div className="space-y-2">
-      <input
-        className="w-full border p-2"
-        type="number"
-        placeholder="Amount in USD"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <input
-        className="w-full border p-2"
-        type="text"
-        placeholder="Referral address (optional)"
-        value={referral}
-        onChange={(e) => setReferral(e.target.value)}
-      />
-      <Button onClick={handleBuy} className="w-full bg-pink-500 hover:bg-pink-600 text-white">
+      <div class="mb-2">
+        <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded" />
+      </div>
+      <div class="mb-4">
+        <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded" />
+      </div>
+      <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">
         Buy Now
-      </Button>
-    </div>
-  );
-};
+      </button>
+    </section>
 
-const ReferralInfo = () => (
-  <div className="mt-4 text-sm text-gray-700">
-    Refer friends and earn <strong>10%</strong> bonus in tokens on their purchase!
-  </div>
-);
-
-const StakingSection = () => {
-  const [stakeAmount, setStakeAmount] = useState('');
-
-  const handleStake = () => {
-    alert(`Staking ${stakeAmount} $FLUFFI with 90% APY`);
-  };
-
-  return (
-    <div className="space-y-2">
-      <input
-        className="w-full border p-2"
-        type="number"
-        placeholder="Amount to stake"
-        value={stakeAmount}
-        onChange={(e) => setStakeAmount(e.target.value)}
-      />
-      <Button onClick={handleStake} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white">
+    <section class="p-4 bg-white rounded shadow mb-6">
+      <h2 class="text-2xl font-bold mb-2">Stake Your $FLUFFI</h2>
+      <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
+      <div class="mb-2">
+        <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded" />
+      </div>
+      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">
         Stake
-      </Button>
-      <p className="text-xs text-gray-600">Staking ends on listing date. Rewards: 90% APY</p>
-    </div>
-  );
-};
+      </button>
+    </section>
 
-export default App;
+    <section class="p-4 bg-white rounded shadow">
+      <h2 class="text-lg font-semibold">Tokenomics</h2>
+      <ul class="list-disc pl-5">
+        <li>Total Supply: 10,000,000,000 FLUFFI</li>
+        <li>Presale: 40%</li>
+        <li>Liquidity: 30% (Locked)</li>
+        <li>Staking: 20%</li>
+        <li>Marketing: 5%</li>
+        <li>Team: 5% (Locked)</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="text-center text-sm p-4 text-gray-600">
+    Funds go to: <strong>0xFc3381a6AA1d134DDf22f641E97c92C400959910</strong>
+  </footer>
+
+  <script>
+    const initialPrice = 0.0001;
+    const stages = 15;
+    const stageDuration = 1000 * 60 * 60 * 48; // 48h
+    const startTime = Date.now();
+
+    function updateStage() {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
+      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
+      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
+      document.getElementById('priceInfo').textContent = `Price: $${price}`;
+    }
+
+    function updateCountdown() {
+      const end = startTime + 30 * 24 * 60 * 60 * 1000;
+      const left = end - Date.now();
+      const days = Math.floor(left / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((left / (1000 * 60)) % 60);
+      const seconds = Math.floor((left / 1000) % 60);
+      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    function buyFluffi() {
+      const amount = document.getElementById('amountInput').value;
+      const ref = document.getElementById('refInput').value;
+      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}\nSent to wallet: 0xFc3381a6AA1d134DDf22f641E97c92C400959910`);
+    }
+
+    function stakeFluffi() {
+      const amount = document.getElementById('stakeInput').value;
+      alert(`Staking ${amount} $FLUFFI with 90% APY`);
+    }
+
+    setInterval(() => {
+      updateStage();
+      updateCountdown();
+    }, 1000);
+
+    updateStage();
+    updateCountdown();
+  </script>
+</body>
+</html>
