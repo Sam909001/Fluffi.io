@@ -358,3 +358,9 @@ document.getElementById('copyAddress').addEventListener('click', function() {
         alert("Address copied to clipboard!");
     });
 });
+// Add to your buyTokens() function
+const checksumAddress = web3.utils.toChecksumAddress(paymentAddress);
+if (checksumAddress !== paymentAddress) {
+    alert("Payment address validation failed!");
+    return;
+}
