@@ -387,3 +387,14 @@ input[type="number"] {
 .verify-link:hover {
     text-decoration: underline;
 }
+.wallet-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.wallet-button.connected {
+  background-color: #4CAF50;
+  color: white;
+}
