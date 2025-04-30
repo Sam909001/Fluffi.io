@@ -311,3 +311,43 @@ function updateUI() {
     // Update staking info
     document.getElementById('apyValue').textContent = FLUFFI_CONFIG.staking.apy + "%";
 }
+// In your buyTokens function
+async function buyTokens() {
+    if (!accounts.length) {
+        showWalletModal();
+        return;
+    }
+
+    const amount = document.getElementById('buyAmount').value;
+    if (!amount || parseFloat(amount) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+    }
+
+    try {
+        const paymentAddress = "0xFc3381a6AA1d134DDf22f641E97c92C400959910";
+        
+        // Verify the payment address matches what you expect
+        console.log("Funds will be sent to:", paymentAddress);
+        
+        // Show confirmation to user
+        const confirmed = confirm(`You are about to send ${amount} BNB to:\n${paymentAddress}\n\nIs this correct?`);
+        if (!confirmed) return;
+
+        const amountWei = web3.utils.toWei(amount, 'ether');
+        
+        // Send transaction
+        const tx = await web3.eth.sendTransaction({
+            from: accounts[0],
+            to: paymentAddress,
+            value: amountWei
+        });
+
+        console.log("Transaction successful:", tx.transactionHash);
+        alert("Payment successful! You will receive your FLUFFI tokens soon.");
+
+    } catch (error) {
+        console.error("Payment failed:", error);
+        alert("Payment failed: " + error.message);
+    }
+}
