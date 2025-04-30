@@ -1,103 +1,126 @@
-// Fluffi.io Wallet Connection Manager
+// Wallet Connection Manager
 let walletAddress = null;
 let isConnecting = false;
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', async () => {
-  await checkConnectedWallet();
-  setupEventListeners();
+// DOM Elements
+const connectButtons = [
+    document.getElementById('connectWallet'),
+    document.getElementById('mainConnect')
+];
+const buyButtons = [
+    document.getElementById('buyButton'),
+    document.getElementById('mainBuy')
+];
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup event listeners
+    connectButtons.forEach(btn => {
+        if (btn) btn.addEventListener('click', connectWallet);
+    });
+    
+    buyButtons.forEach(btn => {
+        if (btn) btn.addEventListener('click', handleBuy);
+    });
+    
+    // Check existing connection
+    checkWalletConnection();
+    
+    // Handle account changes
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+            walletAddress = accounts.length > 0 ? accounts[0] : null;
+            updateUI();
+        });
+    }
 });
 
 // Check if wallet is already connected
-async function checkConnectedWallet() {
-  if (typeof window.ethereum === 'undefined') return;
-  
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-    if (accounts.length > 0) {
-      walletAddress = accounts[0];
-      updateWalletUI();
+async function checkWalletConnection() {
+    if (typeof window.ethereum === 'undefined') return;
+    
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+            walletAddress = accounts[0];
+            updateUI();
+        }
+    } catch (error) {
+        console.error("Auto-connect check failed:", error);
     }
-  } catch (error) {
-    console.error("Auto-connect failed:", error);
-  }
 }
 
-// Connect wallet button handler
+// Connect Wallet Function
 async function connectWallet() {
-  if (isConnecting) return;
-  if (!window.ethereum) return alert("MetaMask not installed!");
+    if (isConnecting) return;
+    if (!window.ethereum) return showError("Please install MetaMask!");
+    
+    isConnecting = true;
+    try {
+        const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+        }).catch(err => {
+            if (err.code === 4001) throw new Error("Connection rejected");
+            if (err.message.includes('already pending')) {
+                throw new Error("Please complete the pending request in MetaMask first");
+            }
+            throw err;
+        });
+        
+        walletAddress = accounts[0];
+        updateUI();
+        showSuccess("Wallet connected successfully!");
+        
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        isConnecting = false;
+    }
+}
 
-  isConnecting = true;
-  try {
-    const accounts = await window.ethereum.request({ 
-      method: 'eth_requestAccounts',
-    }).catch(err => {
-      if (err.code === 4001) throw new Error("Connection rejected");
-      if (err.message.includes('already pending')) {
-        throw new Error("Please complete the pending MetaMask request first");
-      }
-      throw err;
+// Handle Buy Function
+function handleBuy() {
+    if (!walletAddress) {
+        showError("Please connect your wallet first!");
+        return;
+    }
+    
+    // Replace with your actual buy logic
+    alert("Buy functionality will be implemented here!");
+    console.log("Initiating purchase for:", walletAddress);
+}
+
+// Update UI
+function updateUI() {
+    const walletText = walletAddress 
+        ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
+        : "Connect Wallet";
+    
+    const buttonClass = walletAddress ? "button connected" : "button";
+    
+    connectButtons.forEach(btn => {
+        if (btn) {
+            btn.textContent = walletText;
+            btn.className = buttonClass;
+        }
     });
-
-    walletAddress = accounts[0];
-    updateWalletUI();
     
-    // Initialize contract after connection
-    initContract();
-    
-  } catch (error) {
-    showError(error.message);
-  } finally {
-    isConnecting = false;
-  }
+    buyButtons.forEach(btn => {
+        if (btn) btn.disabled = !walletAddress;
+    });
 }
 
-// Update UI after connection
-function updateWalletUI() {
-  const walletBtn = document.getElementById('connectWallet');
-  if (!walletBtn) return;
-  
-  if (walletAddress) {
-    walletBtn.textContent = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
-    walletBtn.classList.add('connected');
-  } else {
-    walletBtn.textContent = "Connect Wallet";
-    walletBtn.classList.remove('connected');
-  }
-}
-
-// Error handling
+// Error/Success Messages
 function showError(message) {
-  const errorElement = document.getElementById('walletError') || createErrorElement();
-  errorElement.textContent = message;
-  setTimeout(() => errorElement.textContent = '', 5000);
+    const errorElement = document.getElementById('walletError');
+    if (errorElement) {
+        errorElement.textContent = message;
+        setTimeout(() => errorElement.textContent = '', 5000);
+    } else {
+        alert(message);
+    }
 }
 
-function createErrorElement() {
-  const div = document.createElement('div');
-  div.id = 'walletError';
-  div.style.color = 'red';
-  div.style.marginTop = '10px';
-  document.querySelector('.wallet-container').appendChild(div);
-  return div;
-}
-
-// Event listeners
-function setupEventListeners() {
-  const walletBtn = document.getElementById('connectWallet');
-  if (walletBtn) walletBtn.addEventListener('click', connectWallet);
-
-  // Handle account changes
-  window.ethereum?.on('accountsChanged', (accounts) => {
-    walletAddress = accounts.length > 0 ? accounts[0] : null;
-    updateWalletUI();
-    if (!walletAddress) showError("Wallet disconnected");
-  });
-}
-
-// Initialize contract (add your existing contract logic here)
-function initContract() {
-  console.log("Wallet connected, ready for contract interactions:", walletAddress);
-  // Your existing contract initialization code goes here
+function showSuccess(message) {
+    alert(message); // Replace with toast notification if preferred
 }
