@@ -1,172 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLUFFI - Solana Layer 2 Meme Coin</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <header>
+// Fluffi Presale and Staking Full Site Structure
+// Framework: React + TailwindCSS + Wagmi + ethers.js (for wallet connect and tx handling)
+
+import React, { useState, useEffect } from 'react';
+import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ethers } from 'ethers';
+import FluffiLogo from './assets/fluffi-logo.png'; // Use uploaded logo file
+
+const TOTAL_SUPPLY = 10_000_000_000;
+const PRESALE_SUPPLY = 0.4 * TOTAL_SUPPLY;
+const STAKING_SUPPLY = 0.2 * TOTAL_SUPPLY;
+const PRESALE_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
+const STAGE_DURATION = 48 * 60 * 60 * 1000; // 48 hours in ms
+const STAGE_COUNT = 15;
+const INITIAL_PRICE = 0.0001;
+const LISTING_PRICE = 0.002;
+const REFERRAL_BONUS = 0.1; // 10%
+const STAKING_APY = 0.9; // 90%
+const WALLET_ADDRESS = "0xFc3381a6AA1d134DDf22f641E97c92C400959910";
+
+const client = createClient(
+  getDefaultClient({
+    appName: 'Fluffi Token',
+    chains: [mainnet],
+    provider: publicProvider(),
+  })
+);
+
+const getCurrentStage = (startTime) => {
+  const now = Date.now();
+  const elapsed = now - startTime;
+  return Math.min(Math.floor(elapsed / STAGE_DURATION), STAGE_COUNT - 1);
+};
+
+const getStagePrice = (stage) => INITIAL_PRICE * Math.pow(1.05, stage);
+
+const App = () => {
+  const [presaleStart, setPresaleStart] = useState(Date.now());
+  const [currentStage, setCurrentStage] = useState(0);
+  const [price, setPrice] = useState(INITIAL_PRICE);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const stage = getCurrentStage(presaleStart);
+      setCurrentStage(stage);
+      setPrice(getStagePrice(stage));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [presaleStart]);
+
+  return (
+    <WagmiConfig client={client}>
+      <ConnectKitProvider>
+        <div className="min-h-screen bg-gradient-to-b from-pink-50 to-yellow-100 text-gray-900">
+          <header className="flex items-center justify-between p-4 shadow-md">
+            <div className="flex items-center gap-2">
+              <img src={FluffiLogo} alt="$FLUFFI" className="h-10 w-10" />
+              <h1 className="text-xl font-bold">$FLUFFI</h1>
+            </div>
+            <ConnectKitProvider />
+          </header>
+
+          <main className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+            <Card>
+              <CardContent>
+                <h2 className="text-lg font-semibold">Presale Live</h2>
+                <p>Stage {currentStage + 1} / {STAGE_COUNT}</p>
+                <p>Current Price: ${price.toFixed(6)} USDT</p>
+                <BuyForm price={price} />
+                <ReferralInfo />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent>
+                <h2 className="text-lg font-semibold">Stake Your $FLUFFI</h2>
+                <StakingSection />
+              </CardContent>
+            </Card>
+          </main>
+
+          <footer className="p-4 text-center text-sm text-gray-600">
+            <p>Telegram: <a href="https://t.me/FLUFFISOLANALAYER2" className="text-blue-600">t.me/FLUFFISOLANALAYER2</a></p>
+            <p>Twitter: <a href="https://x.com/FLUFFIOFFICIAL" className="text-blue-600">@FLUFFIOFFICIAL</a></p>
+          </footer>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#presale">Presale</a></li>
-                <li><a href="#staking">Staking</a></li>
-                <li><a href="#tokenomics">Tokenomics</a></li>
-                <li><a href="#about">About</a></li>
-            </ul>
-        </nav>
-        <div class="wallet-connect">
-            <button id="connectWallet">Connect Wallet</button>
-            <div class="wallet-options">
-                <button class="wallet-option" data-wallet="solana">Solana</button>
-                <button class="wallet-option" data-wallet="ethereum">Ethereum</button>
-                <button class="wallet-option" data-wallet="bnb">BNB</button>
-            </div>
-        </div>
-    </header>
+      </ConnectKitProvider>
+    </WagmiConfig>
+  );
+};
 
-    <main>
-        <section id="presale" class="presale-section">
-            <div class="presale-container">
-                <h2>FLUFFI Presale</h2>
-                <div class="timer-container">
-                    <div class="timer">
-                        <div class="timer-segment">
-                            <span id="days">00</span>
-                            <span>Days</span>
-                        </div>
-                        <div class="timer-segment">
-                            <span id="hours">00</span>
-                            <span>Hours</span>
-                        </div>
-                        <div class="timer-segment">
-                            <span id="minutes">00</span>
-                            <span>Minutes</span>
-                        </div>
-                        <div class="timer-segment">
-                            <span id="seconds">00</span>
-                            <span>Seconds</span>
-                        </div>
-                    </div>
-                    <div class="stage-info">
-                        <p>Current Stage: <span id="currentStage">1</span>/15</p>
-                        <p>Stage Ends In: <span id="stageTimeLeft">48:00:00</span></p>
-                    </div>
-                </div>
-                
-                <div class="price-info">
-                    <p>Current Price: <span id="currentPrice">0.0001</span> USD</p>
-                    <p>Next Stage Price: <span id="nextStagePrice">0.000105</span> USD (+5%)</p>
-                    <p>Listing Price: 0.002 USD</p>
-                </div>
-                
-                <div class="presale-form">
-                    <div class="input-group">
-                        <label for="buyAmount">Amount (USD)</label>
-                        <input type="number" id="buyAmount" placeholder="Enter amount">
-                    </div>
-                    <div class="input-group">
-                        <label for="referralCode">Referral Code (Optional)</label>
-                        <input type="text" id="referralCode" placeholder="Enter referral code">
-                    </div>
-                    <button id="buyTokens" class="cta-button">Buy FLUFFI Tokens</button>
-                    <p class="bonus-info">10% bonus when using referral!</p>
-                </div>
-                
-                <div class="presale-stats">
-                    <div class="stat">
-                        <span>Total Supply</span>
-                        <span>10,000,000,000 FLUFFI</span>
-                    </div>
-                    <div class="stat">
-                        <span>Presale Allocation</span>
-                        <span>4,000,000,000 FLUFFI (40%)</span>
-                    </div>
-                    <div class="stat">
-                        <span>Tokens Sold</span>
-                        <span id="tokensSold">0 FLUFFI</span>
-                    </div>
-                    <div class="stat">
-                        <span>Funds Raised</span>
-                        <span id="fundsRaised">0 USD</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+const BuyForm = ({ price }) => {
+  const [amount, setAmount] = useState('');
+  const [referral, setReferral] = useState('');
 
-        <section id="staking" class="staking-section">
-            <div class="staking-container">
-                <h2>FLUFFI Staking</h2>
-                <div class="staking-info">
-                    <div class="apy-display">
-                        <span>APY</span>
-                        <span class="apy-value">90%</span>
-                    </div>
-                    <p>Staking ends at listing date</p>
-                </div>
-                
-                <div class="staking-form">
-                    <div class="input-group">
-                        <label for="stakeAmount">Amount to Stake (FLUFFI)</label>
-                        <input type="number" id="stakeAmount" placeholder="Enter amount">
-                    </div>
-                    <button id="stakeTokens" class="cta-button">Stake FLUFFI</button>
-                </div>
-                
-                <div class="staking-stats">
-                    <div class="stat">
-                        <span>Your Staked</span>
-                        <span id="userStaked">0 FLUFFI</span>
-                    </div>
-                    <div class="stat">
-                        <span>Estimated Rewards</span>
-                        <span id="estimatedRewards">0 FLUFFI</span>
-                    </div>
-                    <div class="stat">
-                        <span>Total Staked</span>
-                        <span id="totalStaked">0 FLUFFI</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+  const handleBuy = () => {
+    // Implement wallet buy function
+    alert(`Buying ${amount} worth of $FLUFFI with referral ${referral}`);
+  };
 
-        <section id="tokenomics" class="tokenomics-section">
-            <h2>Tokenomics</h2>
-            <div class="tokenomics-chart">
-                <div class="chart-container">
-                    <canvas id="tokenomicsChart"></canvas>
-                </div>
-                <div class="tokenomics-details">
-                    <ul>
-                        <li><span class="color-presale"></span> Presale: 40% (4,000,000,000 FLUFFI)</li>
-                        <li><span class="color-liquidity"></span> Liquidity: 30% (3,000,000,000 FLUFFI) - Locked</li>
-                        <li><span class="color-staking"></span> Staking Rewards: 20% (2,000,000,000 FLUFFI)</li>
-                        <li><span class="color-marketing"></span> Marketing: 5% (500,000,000 FLUFFI)</li>
-                        <li><span class="color-team"></span> Team: 5% (500,000,000 FLUFFI) - Locked</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+  return (
+    <div className="space-y-2">
+      <input
+        className="w-full border p-2"
+        type="number"
+        placeholder="Amount in USD"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
+      <input
+        className="w-full border p-2"
+        type="text"
+        placeholder="Referral address (optional)"
+        value={referral}
+        onChange={(e) => setReferral(e.target.value)}
+      />
+      <Button onClick={handleBuy} className="w-full bg-pink-500 hover:bg-pink-600 text-white">
+        Buy Now
+      </Button>
+    </div>
+  );
+};
 
-        <section id="about" class="about-section">
-            <h2>About FLUFFI</h2>
-            <p>FLUFFI is a Solana Layer 2 meme coin bringing fun and profits to the crypto space. With a total supply of 10 billion tokens, FLUFFI offers a fair distribution through presale, staking rewards, and locked liquidity for stability.</p>
-            <div class="social-links">
-                <a href="t.me/FLUFFISOLANALAYER2" class="social-link telegram" target="_blank">Telegram</a>
-                <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" class="social-link twitter" target="_blank">Twitter</a>
-            </div>
-        </section>
-    </main>
+const ReferralInfo = () => (
+  <div className="mt-4 text-sm text-gray-700">
+    Refer friends and earn <strong>10%</strong> bonus in tokens on their purchase!
+  </div>
+);
 
-    <footer>
-        <p>© 2023 FLUFFI. All rights reserved.</p>
-        <p>Presale Wallet: 0xFc3381a6AA1d134DDf22f641E97c92C400959910</p>
-    </footer>
+const StakingSection = () => {
+  const [stakeAmount, setStakeAmount] = useState('');
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+  const handleStake = () => {
+    alert(`Staking ${stakeAmount} $FLUFFI with 90% APY`);
+  };
+
+  return (
+    <div className="space-y-2">
+      <input
+        className="w-full border p-2"
+        type="number"
+        placeholder="Amount to stake"
+        value={stakeAmount}
+        onChange={(e) => setStakeAmount(e.target.value)}
+      />
+      <Button onClick={handleStake} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white">
+        Stake
+      </Button>
+      <p className="text-xs text-gray-600">Staking ends on listing date. Rewards: 90% APY</p>
+    </div>
+  );
+};
+
+export default App;
