@@ -1,20 +1,85 @@
 // FLUFFI Configuration
 const FLUFFI_CONFIG = {
     presale: {
-        hardCap: 150,
-        initialPrice: 0.0001,
+        hardCap: 150, // BNB
+        initialPrice: 0.0001, // BNB per FLUFFI
         stages: 15
     },
     staking: {
-        apy: 90
+        apy: 90 // 90% APY
     }
 };
 
+// Global variables
+let web3;
+let accounts = [];
+
 // Initialize when page loads
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
+    await initWeb3();
     setupEventListeners();
     updateUI();
 });
+
+// Initialize Web3
+async function initWeb3() {
+    // Modern dapp browsers
+    if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+            // Request account access
+            accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            // Listen for account changes
+            window.ethereum.on('accountsChanged', function(newAccounts) {
+                accounts = newAccounts;
+                updateUI();
+            });
+            
+            // Listen for chain changes
+            window.ethereum.on('chainChanged', function(chainId) {
+                window.location.reload();
+            });
+            
+        } catch (error) {
+            console.error("User denied account access");
+        }
+    }
+    // Legacy dapp browsers
+    else if (window.web3) {
+        web3 = new Web3(window.web3.currentProvider);
+        accounts = await web3.eth.getAccounts();
+    }
+    // Non-dapp browsers
+    else {
+        console.log('Non-Ethereum browser detected. Consider trying MetaMask!');
+        document.getElementById('connectWallet').textContent = "Install MetaMask";
+        document.getElementById('connectWallet').onclick = function() {
+            window.open('https://metamask.io/', '_blank');
+        };
+    }
+}
+
+// Connect wallet function
+async function connectWallet() {
+    if (!window.ethereum) {
+        alert("Please install MetaMask or another Ethereum wallet");
+        return;
+    }
+    
+    try {
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        updateUI();
+        
+        // Update button text
+        const shortAddress = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+        document.getElementById('connectWallet').innerHTML = `<i class="fas fa-check"></i> ${shortAddress}`;
+        
+    } catch (error) {
+        console.error("Error connecting wallet:", error);
+        alert("Error connecting wallet: " + error.message);
+    }
+}
 
 // Setup event listeners
 function setupEventListeners() {
@@ -51,21 +116,37 @@ function switchTab(tabId) {
     document.getElementById(tabId).classList.add('active');
 }
 
-// Connect wallet
-function connectWallet() {
-    alert("Wallet connection would be implemented here with Web3");
-    // In a real implementation, this would connect to MetaMask or other wallet
-}
-
-// Buy tokens
-function buyTokens() {
-    const amount = document.getElementById('buyAmount').value;
-    if (!amount) {
-        alert("Please enter an amount");
+// Buy tokens function
+async function buyTokens() {
+    if (!accounts.length) {
+        alert("Please connect your wallet first");
         return;
     }
-    alert("Buying " + amount + " BNB worth of FLUFFI tokens");
-    // In a real implementation, this would interact with your smart contract
+    
+    const amount = document.getElementById('buyAmount').value;
+    if (!amount || parseFloat(amount) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+    }
+    
+    try {
+        // Convert amount to wei
+        const amountWei = web3.utils.toWei(amount, 'ether');
+        
+        // In a real implementation, you would call your presale contract here
+        // Example:
+        // await presaleContract.methods.buyTokens().send({
+        //     from: accounts[0],
+        //     value: amountWei
+        // });
+        
+        alert(`Success! You would receive ${amount / FLUFFI_CONFIG.presale.initialPrice} FLUFFI tokens`);
+        document.getElementById('buyAmount').value = '';
+        
+    } catch (error) {
+        console.error("Error buying tokens:", error);
+        alert("Error buying tokens: " + error.message);
+    }
 }
 
 // Update estimated tokens
@@ -77,7 +158,25 @@ function updateEstimatedTokens() {
 
 // Update UI
 function updateUI() {
+    const walletInfo = document.getElementById('walletInfo');
+    
+    if (accounts.length > 0) {
+        const shortAddress = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+        document.getElementById('connectWallet').innerHTML = `<i class="fas fa-check"></i> ${shortAddress}`;
+        
+        if (walletInfo) {
+            walletInfo.classList.remove('hidden');
+            document.getElementById('walletAddress').textContent = shortAddress;
+        }
+    } else {
+        document.getElementById('connectWallet').innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+        if (walletInfo) walletInfo.classList.add('hidden');
+    }
+    
+    // Update presale info
     document.getElementById('hardCap').textContent = FLUFFI_CONFIG.presale.hardCap + " BNB";
     document.getElementById('currentPrice').textContent = FLUFFI_CONFIG.presale.initialPrice + " BNB/FLUFFI";
+    
+    // Update staking info
     document.getElementById('apyValue').textContent = FLUFFI_CONFIG.staking.apy + "%";
 }
