@@ -364,3 +364,8 @@ if (checksumAddress !== paymentAddress) {
     alert("Payment address validation failed!");
     return;
 }
+async function updateRaised() {
+    const balance = await web3.eth.getBalance(paymentAddress);
+    document.getElementById('raisedAmount').textContent = 
+        web3.utils.fromWei(balance, 'ether') + " BNB";
+}
