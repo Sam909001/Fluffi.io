@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <style>
     body { background: linear-gradient(to bottom, #fff0f5, #fff9e6); }
     .timer { font-family: monospace; }
@@ -16,9 +17,10 @@
       <img src="fluffi-logo.png" alt="$FLUFFI Logo" class="w-10 h-10">
       <h1 class="text-xl font-bold">$FLUFFI</h1>
     </div>
-    <div>
-      <a href="https://t.me/FLUFFISOLANALAYER2" class="mr-4 text-blue-600">Telegram</a>
+    <div class="flex items-center gap-4">
+      <a href="https://t.me/FLUFFISOLANALAYER2" class="text-blue-600">Telegram</a>
       <a href="https://x.com/FLUFFIOFFICIAL" class="text-blue-600">Twitter</a>
+      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </div>
   </header>
 
@@ -66,10 +68,11 @@
   </main>
 
   <footer class="text-center text-sm p-4 text-gray-600">
-    Funds go to: <strong>0xFc3381a6AA1d134DDf22f641E97c92C400959910</strong>
+    © 2025 $FLUFFI Token
   </footer>
 
   <script>
+    let userWalletAddress = null;
     const initialPrice = 0.0001;
     const stages = 15;
     const stageDuration = 1000 * 60 * 60 * 48; // 48h
@@ -94,15 +97,41 @@
       document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          userWalletAddress = accounts[0];
+          document.getElementById('walletButton').textContent = 'Connected';
+          document.getElementById('walletButton').classList.remove('bg-green-500');
+          document.getElementById('walletButton').classList.add('bg-gray-600');
+        } catch (error) {
+          alert('Wallet connection denied.');
+        }
+      } else {
+        alert('MetaMask not detected.');
+      }
+    }
+
     function buyFluffi() {
       const amount = document.getElementById('amountInput').value;
       const ref = document.getElementById('refInput').value;
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}\nSent to wallet: 0xFc3381a6AA1d134DDf22f641E97c92C400959910`);
+      if (!userWalletAddress) {
+        alert('Please connect your wallet first.');
+        return;
+      }
+      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
+      // Here you'd send the transaction to: 0xFc3381a6AA1d134DDf22f641E97c92C400959910
     }
 
     function stakeFluffi() {
       const amount = document.getElementById('stakeInput').value;
+      if (!userWalletAddress) {
+        alert('Please connect your wallet first.');
+        return;
+      }
       alert(`Staking ${amount} $FLUFFI with 90% APY`);
+      // Add staking transaction logic here
     }
 
     setInterval(() => {
