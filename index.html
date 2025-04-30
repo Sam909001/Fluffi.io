@@ -35,15 +35,27 @@
     .dark .text-blue-600 {
       color: #60a5fa !important;
     }
-    .stage-circle {
-      width: 24px;
-      height: 24px;
+    .stage-dot {
+      width: 12px;
+      height: 12px;
       border-radius: 9999px;
-      background-color: #e5e7eb;
-      transition: background-color 0.5s;
+      background-color: #cbd5e0;
+      transition: background-color 0.3s;
     }
-    .stage-circle.active {
-      background-color: #ec4899;
+    .stage-dot.active {
+      background-color: #f472b6;
+    }
+    .staking-bar {
+      height: 12px;
+      background-color: #e5e7eb;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .staking-bar-fill {
+      height: 100%;
+      background-color: #facc15;
+      width: 0%;
+      transition: width 0.5s;
     }
   </style>
 </head>
@@ -59,7 +71,6 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <a href="#socials" class="hover:underline">Socials</a>
       <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
       <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
@@ -73,29 +84,56 @@
       <p id="priceInfo" class="mb-2">Price: $0.000100</p>
       <p class="mb-2">Referral Bonus: <strong>10%</strong></p>
       <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-        <div class="bg-pink-500 h-4 rounded-full" style="width: 10%" id="presaleProgress"></div>
+        <div class="bg-pink-500 h-4 rounded-full" style="width: 10%"></div>
       </div>
+      <div id="stageTimeline" class="flex gap-2 justify-between mb-4"></div>
       <p class="mb-4 timer" id="countdown"></p>
+
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
       <button onclick="buyFluffi()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded">Buy Now</button>
-
-      <!-- Animated Stage Timeline -->
-      <div class="mt-6">
-        <h3 class="font-semibold mb-2">Presale Stage Timeline</h3>
-        <div class="flex justify-between items-center space-x-1">
-          <div class="flex flex-1 items-center justify-between" id="stageTimeline">
-            <!-- Stage circles inserted by JS -->
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- Staking Section -->
-    <!-- ... existing staking section ... -->
-    
-    <!-- (unchanged sections remain) -->
+    <section id="staking" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Stake Your $FLUFFI</h2>
+      <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
+      <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
+      <div class="staking-bar mb-4">
+        <div id="stakingBarFill" class="staking-bar-fill"></div>
+      </div>
+      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+    </section>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Tokenomics</h2>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Total Supply: 10,000,000,000 FLUFFI</li>
+        <li>Presale: 40%</li>
+        <li>Liquidity: 30% (Locked)</li>
+        <li>Staking: 20%</li>
+        <li>Marketing: 5%</li>
+        <li>Team: 5% (Locked)</li>
+      </ul>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">FAQ</h2>
+      <details class="mb-2"><summary>How do I buy $FLUFFI?</summary><p class="pl-4">Connect your wallet, enter amount in USD, and click "Buy Now".</p></details>
+      <details class="mb-2"><summary>When does staking end?</summary><p class="pl-4">Staking ends at the official listing date.</p></details>
+      <details class="mb-2"><summary>What chains are supported?</summary><p class="pl-4">BNB, ETH, SOL, and USDC.</p></details>
+    </section>
   </main>
+
+  <footer class="text-sm text-gray-600 dark:text-gray-300 p-4 flex justify-between">
+    <div class="flex gap-4">
+      <a href="https://t.meFLUFFISOLANALAYER2" target="_blank" class="hover:text-pink-500">📣 Telegram</a>
+      <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" class="hover:text-blue-400">🐦 Twitter</a>
+    </div>
+    <div>© 2025 $FLUFFI Token</div>
+  </footer>
 
   <script>
     let userWalletAddress = null;
@@ -111,21 +149,11 @@
       const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
       document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
       document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      document.getElementById('presaleProgress').style.width = `${((stage + 1) / stages) * 100}%`;
-      const stageCircles = document.querySelectorAll('.stage-circle');
-      stageCircles.forEach((circle, idx) => {
-        circle.classList.toggle('active', idx === stage);
+      
+      const dots = document.querySelectorAll('.stage-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === stage);
       });
-    }
-
-    function generateStageTimeline() {
-      const container = document.getElementById('stageTimeline');
-      container.innerHTML = '';
-      for (let i = 0; i < stages; i++) {
-        const div = document.createElement('div');
-        div.className = 'stage-circle';
-        container.appendChild(div);
-      }
     }
 
     function updateCountdown() {
@@ -168,6 +196,8 @@
         alert('Please connect your wallet first.');
         return;
       }
+      const fill = Math.min(100, amount).toFixed(0);
+      document.getElementById('stakingBarFill').style.width = `${fill}%`;
       alert(`Staking ${amount} $FLUFFI with 90% APY`);
     }
 
@@ -175,11 +205,21 @@
       document.documentElement.classList.toggle('dark');
     }
 
-    generateStageTimeline();
+    function createStageTimeline() {
+      const timeline = document.getElementById('stageTimeline');
+      for (let i = 0; i < stages; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'stage-dot';
+        timeline.appendChild(dot);
+      }
+    }
+
+    createStageTimeline();
     setInterval(() => {
       updateStage();
       updateCountdown();
     }, 1000);
+
     updateStage();
     updateCountdown();
   </script>
