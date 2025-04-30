@@ -1,126 +1,175 @@
-// Wallet Connection Manager
-let walletAddress = null;
-let isConnecting = false;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUFFI - Solana Layer 2 Meme Coin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="assets/fluffi.jpg" alt="FLUFFI Logo" class="logo">
+            <h1>$FLUFFI</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#presale">Presale</a></li>
+                <li><a href="#staking">Staking</a></li>
+                <li><a href="#tokenomics">Tokenomics</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+        <div class="wallet-connect">
+            <button id="connectWallet">Connect Wallet</button>
+            <div class="wallet-options">
+                <button class="wallet-option" data-wallet="solana">Solana</button>
+                <button class="wallet-option" data-wallet="ethereum">Ethereum</button>
+                <button class="wallet-option" data-wallet="bnb">BNB</button>
+            </div>
+        </div>
+    </header>
 
-// DOM Elements
-const connectButtons = [
-    document.getElementById('connectWallet'),
-    document.getElementById('mainConnect')
-];
-const buyButtons = [
-    document.getElementById('buyButton'),
-    document.getElementById('mainBuy')
-];
+    <main>
+        <section id="presale" class="presale-section">
+            <div class="presale-container">
+                <h2>FLUFFI Presale</h2>
+                <div class="timer-container">
+                    <div class="timer">
+                        <div class="timer-segment">
+                            <span id="days">00</span>
+                            <span>Days</span>
+                        </div>
+                        <div class="timer-segment">
+                            <span id="hours">00</span>
+                            <span>Hours</span>
+                        </div>
+                        <div class="timer-segment">
+                            <span id="minutes">00</span>
+                            <span>Minutes</span>
+                        </div>
+                        <div class="timer-segment">
+                            <span id="seconds">00</span>
+                            <span>Seconds</span>
+                        </div>
+                    </div>
+                    <div class="stage-info">
+                        <p>Current Stage: <span id="currentStage">1</span>/15</p>
+                        <p>Stage Ends In: <span id="stageTimeLeft">48:00:00</span></p>
+                    </div>
+                </div>
+                
+                <div class="price-info">
+                    <p>Current Price: <span id="currentPrice">0.0001</span> USD</p>
+                    <p>Next Stage Price: <span id="nextStagePrice">0.000105</span> USD (+5%)</p>
+                    <p>Listing Price: 0.002 USD</p>
+                </div>
+                
+                <div class="presale-form">
+                    <div class="input-group">
+                        <label for="buyAmount">Amount (USD)</label>
+                        <input type="number" id="buyAmount" placeholder="Enter amount">
+                    </div>
+                    <div class="input-group">
+                        <label for="referralCode">Referral Code (Optional)</label>
+                        <input type="text" id="referralCode" placeholder="Enter referral code">
+                    </div>
+                    <button id="buyTokens" class="cta-button">Buy FLUFFI Tokens</button>
+                    <p class="bonus-info">10% bonus when using referral!</p>
+                </div>
+                
+                <div class="presale-stats">
+                    <div class="stat">
+                        <span>Total Supply</span>
+                        <span>10,000,000,000 FLUFFI</span>
+                    </div>
+                    <div class="stat">
+                        <span>Presale Allocation</span>
+                        <span>4,000,000,000 FLUFFI (40%)</span>
+                    </div>
+                    <div class="stat">
+                        <span>Tokens Sold</span>
+                        <span id="tokensSold">0 FLUFFI</span>
+                    </div>
+                    <div class="stat">
+                        <span>Funds Raised</span>
+                        <span id="fundsRaised">0 USD</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    // Setup event listeners
-    connectButtons.forEach(btn => {
-        if (btn) btn.addEventListener('click', connectWallet);
-    });
-    
-    buyButtons.forEach(btn => {
-        if (btn) btn.addEventListener('click', handleBuy);
-    });
-    
-    // Check existing connection
-    checkWalletConnection();
-    
-    // Handle account changes
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', (accounts) => {
-            walletAddress = accounts.length > 0 ? accounts[0] : null;
-            updateUI();
-        });
-    }
-});
+        <section id="staking" class="staking-section">
+            <div class="staking-container">
+                <h2>FLUFFI Staking</h2>
+                <div class="staking-info">
+                    <div class="apy-display">
+                        <span>APY</span>
+                        <span class="apy-value">90%</span>
+                    </div>
+                    <p>Staking ends at listing date</p>
+                </div>
+                
+                <div class="staking-form">
+                    <div class="input-group">
+                        <label for="stakeAmount">Amount to Stake (FLUFFI)</label>
+                        <input type="number" id="stakeAmount" placeholder="Enter amount">
+                    </div>
+                    <button id="stakeTokens" class="cta-button">Stake FLUFFI</button>
+                </div>
+                
+                <div class="staking-stats">
+                    <div class="stat">
+                        <span>Your Staked</span>
+                        <span id="userStaked">0 FLUFFI</span>
+                    </div>
+                    <div class="stat">
+                        <span>Estimated Rewards</span>
+                        <span id="estimatedRewards">0 FLUFFI</span>
+                    </div>
+                    <div class="stat">
+                        <span>Total Staked</span>
+                        <span id="totalStaked">0 FLUFFI</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-// Check if wallet is already connected
-async function checkWalletConnection() {
-    if (typeof window.ethereum === 'undefined') return;
-    
-    try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts.length > 0) {
-            walletAddress = accounts[0];
-            updateUI();
-        }
-    } catch (error) {
-        console.error("Auto-connect check failed:", error);
-    }
-}
+        <section id="tokenomics" class="tokenomics-section">
+            <h2>Tokenomics</h2>
+            <div class="tokenomics-chart">
+                <div class="chart-container">
+                    <canvas id="tokenomicsChart"></canvas>
+                </div>
+                <div class="tokenomics-details">
+                    <ul>
+                        <li><span class="color-presale"></span> Presale: 40% (4,000,000,000 FLUFFI)</li>
+                        <li><span class="color-liquidity"></span> Liquidity: 30% (3,000,000,000 FLUFFI) - Locked</li>
+                        <li><span class="color-staking"></span> Staking Rewards: 20% (2,000,000,000 FLUFFI)</li>
+                        <li><span class="color-marketing"></span> Marketing: 5% (500,000,000 FLUFFI)</li>
+                        <li><span class="color-team"></span> Team: 5% (500,000,000 FLUFFI) - Locked</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-// Connect Wallet Function
-async function connectWallet() {
-    if (isConnecting) return;
-    if (!window.ethereum) return showError("Please install MetaMask!");
-    
-    isConnecting = true;
-    try {
-        const accounts = await window.ethereum.request({ 
-            method: 'eth_requestAccounts' 
-        }).catch(err => {
-            if (err.code === 4001) throw new Error("Connection rejected");
-            if (err.message.includes('already pending')) {
-                throw new Error("Please complete the pending request in MetaMask first");
-            }
-            throw err;
-        });
-        
-        walletAddress = accounts[0];
-        updateUI();
-        showSuccess("Wallet connected successfully!");
-        
-    } catch (error) {
-        showError(error.message);
-    } finally {
-        isConnecting = false;
-    }
-}
+        <section id="about" class="about-section">
+            <h2>About FLUFFI</h2>
+            <p>FLUFFI is a Solana Layer 2 meme coin bringing fun and profits to the crypto space. With a total supply of 10 billion tokens, FLUFFI offers a fair distribution through presale, staking rewards, and locked liquidity for stability.</p>
+            <div class="social-links">
+                <a href="t.me/FLUFFISOLANALAYER2" class="social-link telegram" target="_blank">Telegram</a>
+                <a href="https://x.com/i/flow/login?redirect_after_login=%2FFLUFFIOFFICIAL" class="social-link twitter" target="_blank">Twitter</a>
+            </div>
+        </section>
+    </main>
 
-// Handle Buy Function
-function handleBuy() {
-    if (!walletAddress) {
-        showError("Please connect your wallet first!");
-        return;
-    }
-    
-    // Replace with your actual buy logic
-    alert("Buy functionality will be implemented here!");
-    console.log("Initiating purchase for:", walletAddress);
-}
+    <footer>
+        <p>© 2023 FLUFFI. All rights reserved.</p>
+        <p>Presale Wallet: 0xFc3381a6AA1d134DDf22f641E97c92C400959910</p>
+    </footer>
 
-// Update UI
-function updateUI() {
-    const walletText = walletAddress 
-        ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`
-        : "Connect Wallet";
-    
-    const buttonClass = walletAddress ? "button connected" : "button";
-    
-    connectButtons.forEach(btn => {
-        if (btn) {
-            btn.textContent = walletText;
-            btn.className = buttonClass;
-        }
-    });
-    
-    buyButtons.forEach(btn => {
-        if (btn) btn.disabled = !walletAddress;
-    });
-}
-
-// Error/Success Messages
-function showError(message) {
-    const errorElement = document.getElementById('walletError');
-    if (errorElement) {
-        errorElement.textContent = message;
-        setTimeout(() => errorElement.textContent = '', 5000);
-    } else {
-        alert(message);
-    }
-}
-
-function showSuccess(message) {
-    alert(message); // Replace with toast notification if preferred
-}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
