@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUFFI Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #4e44ce, #35a7ff);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .refresh-btn {
+            background: #FECA57;
+            color: #1A1A2E;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1><i class="fas fa-lock"></i> FLUFFI Admin Dashboard</h1>
+        
+        <div class="stats-card">
+            <h2><i class="fas fa-wallet"></i> Payment Monitoring</h2>
+            <div id="paymentStats">
+                <p>Contract Balance: <span id="contractBalance">Loading...</span> BNB</p>
+                <p>Total Contributors: <span id="contributorCount">0</span></p>
+                <p>Last Transaction: <span id="lastTx">None yet</span></p>
+            </div>
+            <button id="refreshData" class="fluffi-button refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+        </div>
+
+        <div class="stats-card">
+            <h2><i class="fas fa-users"></i> Recent Contributors</h2>
+            <div id="contributorList">
+                Loading contributors...
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
