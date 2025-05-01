@@ -136,10 +136,10 @@
     const initialPrice = 0.0001;
     const stages = 15;
     const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+    const startTime = 05/05/2025();
 
     function updateStage() {
-      const now = Date.now();
+      const now = 05/05/2025();
       const elapsed = now - startTime;
       const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
       const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
