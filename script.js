@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', renderLeaderboard);
   const initialPrice = 0.0001;
   const stages = 15;
   const stageDuration = 1000 * 60 * 60 * 48;
-  const startTime = Date.now();
+// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
+const startTime = new Date("2025-05-05T12:00:00Z").getTime();
 
   function updateStage() {
     const now = Date.now();
