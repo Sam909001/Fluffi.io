@@ -51,23 +51,93 @@
     .text-green-fluffi {
       color: #00cc66;
     }
-  </style>
-</head>
-<body class="text-gray-800 dark:text-white">
-  <!-- Header & Navigation -->
-  <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
-    <div class="flex items-center gap-3">
-      <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
-      <h1 class="text-xl font-bold text-green-fluffi">$FLUFFI</h1>
-    </div>
-    <nav class="flex flex-wrap gap-4 mt-2 md:mt-0 text-sm">
-      <a href="#presale" class="hover:underline">Presale</a>
-      <a href="#staking" class="hover:underline">Staking</a>
-      <a href="#tokenomics" class="hover:underline">Tokenomics</a>
-      <a href="#faq" class="hover:underline">FAQ</a>
-      <a href="#socials" class="hover:underline">Socials</a>
-      <button onclick="toggleDarkMode()" class="ml-2 bg-green-200 hover:bg-green-300 px-2 rounded">🌙</button>
-      <button onclick="connectWallet()" id="walletButton" class="bg-green-fluffi hover:bg-green-fluffi-dark text-white py-1 px-3 rounded">Connect Wallet</button>
+<style>
+  body {
+    background: linear-gradient(to bottom, #000000, #003300);
+    color: white;
+  }
+
+  .timer {
+    font-family: monospace;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold mb-4;
+  }
+
+  .dark {
+    background: #000000;
+    color: white;
+  }
+
+  .dark .text-gray-800 {
+    color: white !important;
+  }
+
+  .dark .bg-white {
+    background-color: #003300 !important;
+  }
+
+  .dark .text-gray-600 {
+    color: #d1d5db !important;
+  }
+
+  .dark .bg-gray-200 {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark .text-blue-600 {
+    color: #66ff66 !important;
+  }
+
+  .bg-white {
+    background-color: #e6ffe6 !important;
+  }
+
+  .text-gray-800 {
+    color: #000000;
+  }
+
+  .bg-gray-200 {
+    background-color: #c6f6c6;
+  }
+
+  .text-blue-600 {
+    color: #006600;
+  }
+
+  .bg-pink-500 {
+    background-color: #00cc00;
+  }
+
+  .hover\:bg-pink-600:hover {
+    background-color: #009900;
+  }
+
+  .bg-yellow-500 {
+    background-color: #66cc00;
+  }
+
+  .hover\:bg-yellow-600:hover {
+    background-color: #4d9900;
+  }
+
+  .bg-gray-300 {
+    background-color: #aaffaa;
+  }
+
+  .hover\:bg-gray-400:hover {
+    background-color: #99dd99;
+  }
+
+  .text-white {
+    color: white;
+  }
+
+  .text-black {
+    color: #000000 !important;
+  }
+</style>
     </nav>
   </header>
 
