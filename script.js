@@ -1,3 +1,29 @@
+// Connect to the presale smart contract
+const presaleContractAddress = "0xfcc8e15857AeFee92FE761Bfe5a7300C7D44AdB5";
+const presaleAbi = [
+    // Replace this with your actual ABI
+    // Example:
+    // {
+    //   "inputs": [],
+    //   "name": "buyTokens",
+    //   "outputs": [],
+    //   "stateMutability": "payable",
+    //   "type": "function"
+    // }
+];
+
+let presaleContract;
+
+async function connectContract() {
+    if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        presaleContract = new ethers.Contract(presaleContractAddress, presaleAbi, signer);
+        console.log("Connected to presale contract");
+    } else {
+        alert("Please install MetaMask!");
+    }
+}
 const initialPrice = 0.0001;
 const stages = 15;
 const stageDuration = 1000 * 60 * 60 * 48; // 48 hours
