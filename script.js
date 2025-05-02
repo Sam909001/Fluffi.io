@@ -2,7 +2,7 @@
 // Connect to BNB Testnet
 const web3 = new Web3(window.ethereum);
 
-const presaleContractAddress = "0xE47565637b477dc1De60dfcCB98015806fd22176";
+const presaleContractAddress = "0xfcc8e15857AeFee92FE761Bfe5a7300C7D44AdB5";
 
 // ABI (simplified for buyTokens function only)
 const presaleABI = [
