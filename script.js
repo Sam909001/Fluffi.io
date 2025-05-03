@@ -98,3 +98,4 @@ function handleBuy() {
   const ref = document.getElementById("referral").value || ethers.constants.AddressZero;
   buyFluffi(bnb, ref);
 }
+document.getElementById('buyButton').addEventListener('click', buyTokens);
