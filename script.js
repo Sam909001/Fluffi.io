@@ -93,3 +93,8 @@ async function buyFluffi(amountBNB, referrerAddress = ethers.constants.AddressZe
     alert("Transaction failed. See console for details.");
   }
 }
+function handleBuy() {
+  const bnb = document.getElementById("bnbAmount").value;
+  const ref = document.getElementById("referral").value || ethers.constants.AddressZero;
+  buyFluffi(bnb, ref);
+}
