@@ -99,3 +99,33 @@ function handleBuy() {
   buyFluffi(bnb, ref);
 }
 document.getElementById('buyButton').addEventListener('click', buyTokens);
+async function buyTokens() {
+    if (!window.ethereum || !window.ethereum.selectedAddress) {
+        alert("Please connect your wallet first.");
+        return;
+    }
+
+    const web3 = new Web3(window.ethereum);
+    const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+    const abi = [/* your ABI here */]; // Replace with full ABI
+    const contract = new web3.eth.Contract(abi, contractAddress);
+
+    const referrer = "0x0000000000000000000000000000000000000000"; // Replace with valid referrer
+    const amountInBNB = 0.01; // or get from input
+    const amountInWei = web3.utils.toWei(amountInBNB.toString(), "ether");
+
+    try {
+        const receipt = await contract.methods
+            .contribute(referrer)
+            .send({
+                from: window.ethereum.selectedAddress,
+                value: amountInWei,
+            });
+
+        console.log("Transaction successful:", receipt);
+        alert("Purchase successful!");
+    } catch (error) {
+        console.error("Transaction failed:", error);
+        alert("Transaction failed: " + error.message);
+    }
+}
