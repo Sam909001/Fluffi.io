@@ -1,132 +1,147 @@
-<script>
-// Connect to BNB Testnet
-const web3 = new Web3(window.ethereum);
-
-const presaleContractAddress = "0xfcc8e15857AeFee92FE761Bfe5a7300C7D44AdB5";
-
-// ABI (simplified for buyTokens function only)
-const presaleABI = [
-  {
-    "inputs": [],
-    "name": "buyTokens",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  }
-];
-
-const presaleContract = new web3.eth.Contract(presaleABI, presaleContractAddress);
-
-async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      const chainId = await ethereum.request({ method: 'eth_chainId' });
-      const bnbTestnetId = "0x61"; // BNB Testnet Chain ID (97)
-      if (chainId !== bnbTestnetId) {
-        await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: bnbTestnetId }],
-        });
-      }
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
-    } catch (error) {
-      console.error("Wallet connection failed:", error);
-    }
-  } else {
-    alert("Please install MetaMask to use this feature.");
-  }
+// --- Referral Tracking ---
+const urlParams = new URLSearchParams(window.location.search);
+const refWallet = urlParams.get('ref');
+if (refWallet) {
+  localStorage.setItem('fluffiRef', refWallet);
 }
 
-async function buyWithBNB() {
-  const account = await connectWallet();
-  if (!account) return;
+// --- Simulated Leaderboard Data ---
+let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
-  const amount = document.getElementById("bnbAmount").value;
-  if (!amount || isNaN(amount)) {
-    alert("Please enter a valid BNB amount.");
+// --- Buy Function With Referral ---
+function buyFluffi() {
+  const amount = parseFloat(document.getElementById('amountInput').value);
+  const ref = localStorage.getItem('fluffiRef');
+
+  if (!userWalletAddress) {
+    alert('Please connect your wallet first.');
     return;
   }
 
-  const amountInWei = web3.utils.toWei(amount, 'ether');
-  try {
-    await presaleContract.methods.buyTokens().send({
-      from: account,
-      value: amountInWei
-    });
-    alert("Purchase successful! Tokens will be claimable after listing.");
-  } catch (err) {
-    console.error("Transaction failed:", err);
-    alert("Transaction failed: " + err.message);
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+
+  // Simulated Referral Reward
+  if (ref && ref !== userWalletAddress) {
+    const reward = amount * 0.10; // 10% bonus to referrer
+    leaderboard[ref] = (leaderboard[ref] || 0) + reward;
+    localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
+    alert(`You are buying $${amount} of FLUFFI. Referrer ${ref} earns $${reward.toFixed(2)} bonus.`);
+  } else {
+    alert(`You are buying $${amount} of FLUFFI.`);
   }
 }
-</script>
-import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-const ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+// --- Render Leaderboard ---
+function renderLeaderboard() {
+  const container = document.getElementById('leaderboard');
+  container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
+  const sorted = Object.entries(leaderboard)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
-async function buyFluffi(amountBNB, referrerAddress = ethers.constants.AddressZero) {
-  try {
-    if (!window.ethereum) {
-      alert("Please install MetaMask to proceed.");
+  if (sorted.length === 0) {
+    container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
+  } else {
+    sorted.forEach(([address, amount], index) => {
+      container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderLeaderboard);
+<script>
+  let userWalletAddress = null;
+  const initialPrice = 0.0001;
+  const stages = 15;
+  const stageDuration = 1000 * 60 * 60 * 48;
+// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
+const startTime = new Date("2025-05-05T12:00:00Z").getTime();
+
+  function updateStage() {
+    const now = Date.now();
+    const elapsed = now - startTime;
+    const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
+    const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
+    document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
+    document.getElementById('priceInfo').textContent = `Price: $${price}`;
+  }
+
+  function updateCountdown() {
+    const end = startTime + 30 * 24 * 60 * 60 * 1000;
+    const left = end - Date.now();
+    const days = Math.floor(left / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((left / (1000 * 60)) % 60);
+    const seconds = Math.floor((left / 1000) % 60);
+    document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userWalletAddress = accounts[0];
+        document.getElementById('walletButton').textContent = 'Connected';
+      } catch (error) {
+        alert('Wallet connection denied.');
+      }
+    } else {
+      alert('MetaMask not detected.');
+    }
+  }
+
+  function buyFluffi() {
+    const amount = document.getElementById('amountInput').value;
+    const ref = document.getElementById('refInput').value || localStorage.getItem('referrer') || 'none';
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
       return;
     }
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-
-    // Convert BNB amount to wei
-    const amountInWei = ethers.utils.parseEther(amountBNB.toString());
-
-    const tx = await contract.contribute(referrerAddress, {
-      value: amountInWei,
-    });
-
-    console.log("Transaction sent:", tx.hash);
-    await tx.wait();
-    alert("Success! You bought FLUFFI tokens.");
-  } catch (err) {
-    console.error("Buy failed:", err);
-    alert("Transaction failed. See console for details.");
+    alert(`Buying $FLUFFI worth $${amount} with referral: ${ref}`);
   }
-}
-function handleBuy() {
-  const bnb = document.getElementById("bnbAmount").value;
-  const ref = document.getElementById("referral").value || ethers.constants.AddressZero;
-  buyFluffi(bnb, ref);
-}
-document.getElementById('buyButton').addEventListener('click', buyTokens);
-async function buyTokens() {
-    if (!window.ethereum || !window.ethereum.selectedAddress) {
-        alert("Please connect your wallet first.");
-        return;
+
+  function stakeFluffi() {
+    const amount = document.getElementById('stakeInput').value;
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
     }
+    alert(`Staking ${amount} $FLUFFI with 90% APY`);
+  }
 
-    const web3 = new Web3(window.ethereum);
-    const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-    const abi = [/* your ABI here */]; // Replace with full ABI
-    const contract = new web3.eth.Contract(abi, contractAddress);
+  function toggleDarkMode() {
+    document.documentElement.classList.toggle('dark');
+  }
 
-    const referrer = "0x0000000000000000000000000000000000000000"; // Replace with valid referrer
-    const amountInBNB = 0.01; // or get from input
-    const amountInWei = web3.utils.toWei(amountInBNB.toString(), "ether");
-
-    try {
-        const receipt = await contract.methods
-            .contribute(referrer)
-            .send({
-                from: window.ethereum.selectedAddress,
-                value: amountInWei,
-            });
-
-        console.log("Transaction successful:", receipt);
-        alert("Purchase successful!");
-    } catch (error) {
-        console.error("Transaction failed:", error);
-        alert("Transaction failed: " + error.message);
+  // --- Referral Logic ---
+  function getReferrerFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      localStorage.setItem('referrer', ref);
     }
-}
-<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  }
+
+  function applyReferralField() {
+    const savedRef = localStorage.getItem('referrer');
+    if (savedRef) {
+      const refInput = document.getElementById('refInput');
+      if (refInput) {
+        refInput.value = savedRef;
+      }
+    }
+  }
+
+  // Initial setup
+  getReferrerFromURL();
+  applyReferralField();
+  updateStage();
+  updateCountdown();
+  setInterval(() => {
+    updateStage();
+    updateCountdown();
+  }, 1000);
+</script>
