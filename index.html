@@ -76,7 +76,15 @@
         <div class="bg-green-500 h-4 rounded-full transition-all duration-700 ease-in-out" id="progressBar" style="width: 10%"></div>
       </div>
       <p class="mb-4 timer" id="countdown"></p>
-
+  <div 
+    class="presale-box">
+    <h2>Buy FLUFFI Tokens</h2>
+    <input type="text" id="bnbAmount" placeholder="Enter BNB amount">
+    <br><br>
+    <input type="text" id="referral" placeholder="Referral address (optional)">
+    <br><br>
+    <button id="buyButton">Buy FLUFFI</button>
+  </div>
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
       <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
@@ -204,4 +212,6 @@
     updateCountdown();
   </script>
 </body>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
+<script src="script.js"></script>
 </html>
