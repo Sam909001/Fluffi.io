@@ -1,55 +1,61 @@
-const CONTRACT_ADDRESS = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-const ABI = [
-  {
-    "inputs":[{"internalType":"address","name":"referrer","type":"address"}],
-    "name":"contribute",
-    "outputs":[],
-    "stateMutability":"payable",
-    "type":"function"
-  }
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FLUFFI Presale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-// Connect wallet and trigger transaction
-async function connectWalletAndBuy() {
-  if (!window.ethereum) {
-    alert("Please install MetaMask to continue.");
-    return;
-  }
-
-  const web3 = new Web3(window.ethereum);
-
-  try {
-    await ethereum.request({ method: "eth_requestAccounts" });
-
-    const accounts = await web3.eth.getAccounts();
-    const user = accounts[0];
-
-    const bnbAmount = document.getElementById("bnbAmount").value;
-    const referrer = document.getElementById("referral").value || "0x0000000000000000000000000000000000000000";
-
-    if (!bnbAmount || isNaN(bnbAmount) || Number(bnbAmount) <= 0) {
-      alert("Please enter a valid BNB amount.");
-      return;
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+      padding: 30px;
     }
 
-    const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-    const valueInWei = web3.utils.toWei(bnbAmount, 'ether');
+    .presale-box {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
 
-    const tx = await contract.methods.contribute(referrer).send({
-      from: user,
-      value: valueInWei
-    });
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+    }
 
-    alert("Success! Tokens will be claimable after listing.");
-    console.log("Transaction successful:", tx.transactionHash);
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
 
-  } catch (err) {
-    console.error("Transaction failed:", err);
-    alert("Transaction failed: " + err.message);
-  }
-}
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
 
-// Bind to button
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("buyButton").addEventListener("click", connectWalletAndBuy);
-});
+  <div class="presale-box">
+    <h2>Buy FLUFFI Tokens</h2>
+    <input type="text" id="bnbAmount" placeholder="Enter BNB amount">
+    <input type="text" id="referral" placeholder="Referral address (optional)">
+    <button id="buyButton">Buy FLUFFI</button>
+  </div>
+
+  <!-- Web3.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
+
+  <!-- Your logic -->
+  <script src="script.js"></script>
+
+</body>
+</html>
