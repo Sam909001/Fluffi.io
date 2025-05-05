@@ -129,3 +129,4 @@ async function buyTokens() {
         alert("Transaction failed: " + error.message);
     }
 }
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
