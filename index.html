@@ -1,148 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>$FLUFFI Presale & Staking</title>
-  <meta name="description" content="$FLUFFI is a Solana Layer 2 meme token with presale and staking features. Join the community and earn rewards." />
-  <meta name="keywords" content="Fluffi, $FLUFFI, crypto, presale, staking, Solana, meme token" />
-  <meta name="author" content="FLUFFI Team" />
-  <link rel="icon" href="fluffi.jpg" type="image/jpeg">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <style>
-    body {
-      background: linear-gradient(to bottom, #fff0f5, #fff9e6);
-    }
-    .timer {
-      font-family: monospace;
-    }
-    .section-title {
-      @apply text-2xl font-bold mb-4;
-    }
-    .dark {
-      background: #111827;
-      color: white;
-    }
-    .dark .text-gray-800 {
-      color: white !important;
-    }
-    .dark .bg-white {
-      background-color: #1f2937 !important;
-    }
-    .dark .text-gray-600 {
-      color: #d1d5db !important;
-    }
-    .dark .bg-gray-200 {
-      background-color: #374151 !important;
-    }
-    .dark .text-blue-600 {
-      color: #60a5fa !important;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fluffi Token Presale</title>
 </head>
-<body class="text-gray-800 dark:text-white">
-  <!-- Header and Main remain unchanged -->
+<body>
+  <h2>Buy FLUFFI Tokens</h2>
 
-  <!-- Existing site code continues... -->
+  <label for="bnbAmount">BNB Amount:</label>
+  <input type="text" id="bnbAmount" placeholder="e.g. 0.05" /><br><br>
 
+  <label for="referral">Referral Address (optional):</label>
+  <input type="text" id="referral" placeholder="0x... (optional)" /><br><br>
+
+  <button id="buyButton">Buy FLUFFI</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
   <script>
-    let userWalletAddress = null;
-    const initialPrice = 0.0001;
-    const stages = 15;
-    const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+    window.addEventListener('load', async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        const web3 = new Web3(window.ethereum);
 
-    const presaleAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-    const presaleABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+        const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+        const abi = [
+          {
+            "inputs": [
+              { "internalType": "address", "name": "referrer", "type": "address" }
+            ],
+            "name": "contribute",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          }
+        ];
 
-    function updateStage() {
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-      document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
-    }
+        const contract = new web3.eth.Contract(abi, contractAddress);
 
-    function updateCountdown() {
-      const end = startTime + 30 * 24 * 60 * 60 * 1000;
-      const left = end - Date.now();
-      const days = Math.floor(left / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((left / (1000 * 60)) % 60);
-      const seconds = Math.floor((left / 1000) % 60);
-      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
+        document.getElementById('buyButton').addEventListener('click', async () => {
+          try {
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await web3.eth.getAccounts();
+            const userAddress = accounts[0];
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
-          window.web3 = new Web3(window.ethereum);
-        } catch (error) {
-          alert('Wallet connection denied.');
-        }
-      } else {
-        alert('MetaMask not detected.');
-      }
-    }
+            const bnbAmount = document.getElementById('bnbAmount').value;
+            const referrerInput = document.getElementById('referral').value;
+            const referrer = web3.utils.isAddress(referrerInput)
+              ? referrerInput
+              : "0x0000000000000000000000000000000000000000";
 
-    async function buyFluffi() {
-      const amount = parseFloat(document.getElementById('amountInput').value);
-      const ref = document.getElementById('refInput').value || '0x0000000000000000000000000000000000000000';
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      if (!amount || amount <= 0) {
-        alert('Enter a valid amount.');
-        return;
-      }
-      const contract = new web3.eth.Contract(presaleABI, presaleAddress);
-      try {
-        const tx = await contract.methods.contribute(ref).send({
-          from: userWalletAddress,
-          value: web3.utils.toWei(amount.toString(), 'ether')
+            if (!bnbAmount || isNaN(bnbAmount)) {
+              alert("Please enter a valid BNB amount.");
+              return;
+            }
+
+            const amountInWei = web3.utils.toWei(bnbAmount, 'ether');
+
+            const tx = await contract.methods.contribute(referrer).send({
+              from: userAddress,
+              value: amountInWei
+            });
+
+            console.log("Transaction successful:", tx);
+            alert("Success! You bought FLUFFI tokens.");
+          } catch (err) {
+            console.error("Transaction error:", err);
+            alert("Transaction failed: " + err.message);
+          }
         });
-        alert('Transaction successful!');
-      } catch (err) {
-        console.error(err);
-        alert('Transaction failed.');
+      } else {
+        alert("MetaMask not detected. Please install it to continue.");
       }
-    }
-
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
-    }
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
-
-    setInterval(() => {
-      updateStage();
-      updateCountdown();
-    }, 1000);
-
-    updateStage();
-    updateCountdown();
+    });
   </script>
 </body>
 </html>
