@@ -1,4 +1,5 @@
 const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+
 const abi = [
   {
     "inputs":[{"internalType":"address","name":"referrer","type":"address"}],
@@ -22,7 +23,7 @@ async function connectWallet() {
     if (chainId !== "0x38" && chainId !== "0x61") {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: "0x61" }], // BSC Testnet
+        params: [{ chainId: "0x61" }], // BSC Testnet (0x61), use "0x38" for BSC mainnet
       });
     }
 
@@ -55,18 +56,17 @@ async function buyTokens() {
       value: amountInWei,
     });
 
-    console.log("TX success:", tx);
-    alert("Success! You purchased FLUFFI tokens.");
+    console.log("Transaction success:", tx);
+    alert("Success! You bought FLUFFI tokens.");
   } catch (error) {
-    console.error("TX failed:", error);
+    console.error("Transaction failed:", error);
     alert("Transaction failed: " + error.message);
   }
 }
 
-// Attach to button after DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("buyButton");
-  if (btn) {
-    btn.addEventListener("click", buyTokens);
+  const buyBtn = document.getElementById("buyButton");
+  if (buyBtn) {
+    buyBtn.addEventListener("click", buyTokens);
   }
 });
