@@ -70,3 +70,29 @@ document.addEventListener("DOMContentLoaded", () => {
     buyBtn.addEventListener("click", buyTokens);
   }
 });
+const BSC_PARAMS = {
+  chainId: '0x38', // 56 in hex (Mainnet). Use '0x61' (97) for Testnet
+  chainName: 'Binance Smart Chain',
+  nativeCurrency: {
+    name: 'BNB',
+    symbol: 'BNB',
+    decimals: 18
+  },
+  rpcUrls: ['https://bsc-dataseed.binance.org/'],
+  blockExplorerUrls: ['https://bscscan.com/']
+};
+
+async function switchToBSC() {
+  if (window.ethereum) {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [BSC_PARAMS]
+      });
+    } catch (switchError) {
+      console.error('Switch to BSC failed:', switchError);
+    }
+  } else {
+    alert('Please install MetaMask!');
+  }
+}
