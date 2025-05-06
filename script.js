@@ -102,4 +102,11 @@ function handleBuy() {
   buyFluffi(bnb, ref);
 }
 
-document.getElementById("buyButton").addEventListener("click", handleBuy);
+document.addEventListener('DOMContentLoaded', () => {
+  updateStage();
+  updateCountdown();
+  setInterval(() => {
+    updateStage();
+    updateCountdown();
+  }, 1000);
+});
