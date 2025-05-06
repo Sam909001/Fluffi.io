@@ -48,17 +48,25 @@ async function switchToBSC() {
 async function connectWallet() {
   if (window.ethereum) {
     try {
-      const chainId = await ethereum.request({ method: 'eth_chainId' });
-      if (chainId !== BSC_PARAMS.chainId) {
-        await switchToBSC();
-      }
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
+      // Prompt wallet to switch to BNB Smart Chain
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }] // BSC Mainnet
+      });
+
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      userWalletAddress = accounts[0];
+      document.getElementById('walletButton').textContent = 'Connected';
     } catch (error) {
-      console.error("Wallet connection failed:", error);
+      if (error.code === 4902) {
+        alert('Please add BNB Smart Chain to MetaMask manually.');
+      } else {
+        alert('Wallet connection failed.');
+        console.error(error);
+      }
     }
   } else {
-    alert("Please install MetaMask to use this feature.");
+    alert('MetaMask not detected.');
   }
 }
 
