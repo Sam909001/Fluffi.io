@@ -95,18 +95,3 @@ function handleBuy() {
 }
 
 document.getElementById("buyButton").addEventListener("click", handleBuy);
-async function testWalletConnection() {
-  if (typeof window.ethereum !== 'undefined') {
-    try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      console.log('Connected account:', accounts[0]);
-      alert('Wallet connected: ' + accounts[0]);
-    } catch (error) {
-      console.error('User rejected the connection request');
-    }
-  } else {
-    alert('MetaMask is not installed');
-  }
-}
-
-testWalletConnection();
