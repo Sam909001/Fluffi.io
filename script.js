@@ -18,7 +18,6 @@ function buyFluffi() {
     return;
   }
 
-
   if (isNaN(amount) || amount <= 0) {
     alert('Please enter a valid amount.');
     return;
@@ -54,111 +53,46 @@ function renderLeaderboard() {
 
 document.addEventListener('DOMContentLoaded', renderLeaderboard);
 <script>
- let userWalletAddress = null;
-let isWalletConnected = false;
+  let userWalletAddress = null;
+  const initialPrice = 0.0001;
+  const stages = 15;
+  const stageDuration = 1000 * 60 * 60 * 48;
+// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
+const startTime = new Date("2025-05-05T12:00:00Z").getTime();
 
-async function connectWallet() {
-  const walletButton = document.getElementById('walletButton');
-  
-  // Don't proceed if already connected
-  if (isWalletConnected) return;
+  function updateStage() {
+    const now = Date.now();
+    const elapsed = now - startTime;
+    const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
+    const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
+    document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
+    document.getElementById('priceInfo').textContent = `Price: $${price}`;
+  }
 
-  try {
-    // Check if Ethereum provider exists
-    if (typeof window.ethereum === 'undefined') {
-      alert('Please install MetaMask!');
-      window.open('https://metamask.io/download.html', '_blank');
-      return;
-    }
+  function updateCountdown() {
+    const end = startTime + 30 * 24 * 60 * 60 * 1000;
+    const left = end - Date.now();
+    const days = Math.floor(left / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((left / (1000 * 60)) % 60);
+    const seconds = Math.floor((left / 1000) % 60);
+    document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
 
-    // Request accounts
-    const accounts = await window.ethereum.request({ 
-      method: 'eth_requestAccounts' 
-    });
-
-    // Validate response
-    if (!accounts || accounts.length === 0) {
-      throw new Error('No accounts returned');
-    }
-
-    // Update connection state
-    userWalletAddress = accounts[0];
-    isWalletConnected = true;
-    
-    // Update UI
-    walletButton.textContent = `Connected: ${shortenAddress(userWalletAddress)}`;
-    walletButton.classList.add('connected');
-    walletButton.classList.remove('hover:bg-green-600');
-    walletButton.style.backgroundColor = '#4CAF50';
-
-  } catch (error) {
-    console.error('Wallet connection error:', error);
-    walletButton.textContent = 'Connect Wallet';
-    walletButton.style.backgroundColor = '';
-    isWalletConnected = false;
-    
-    if (error.code === 4001) {
-      alert('Please connect your wallet to continue');
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userWalletAddress = accounts[0];
+        document.getElementById('walletButton').textContent = 'Connected';
+      } catch (error) {
+        alert('Wallet connection denied.');
+      }
     } else {
-      alert(`Connection error: ${error.message}`);
+      alert('MetaMask not detected.');
     }
   }
-}
 
-// Helper function to shorten address
-function shortenAddress(address) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
-
-// Listen for account changes
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', (accounts) => {
-    const walletButton = document.getElementById('walletButton');
-    
-    if (accounts.length === 0) {
-      // Wallet disconnected
-      walletButton.textContent = 'Connect Wallet';
-      walletButton.style.backgroundColor = '';
-      isWalletConnected = false;
-      userWalletAddress = null;
-    } else {
-      // Account changed
-      userWalletAddress = accounts[0];
-      walletButton.textContent = `Connected: ${shortenAddress(userWalletAddress)}`;
-    }
-  });
-}
-    // Fallback if no wallet detected
-    alert('Please install MetaMask or another Ethereum wallet.');
-    window.open('https://metamask.io/download.html', '_blank');
-  } catch (error) {
-    console.error('Connection error:', error);
-    walletButton.textContent = 'Connect Wallet'; // Reset on error
-    walletButton.style.backgroundColor = ''; // Revert color
-    if (error.code === 4001) {
-      alert('You declined the connection.');
-    } else {
-      alert('Connection error: ' + error.message);
-    }
-  }
-}
-
-// Listen for account changes (e.g., user switches wallet)
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', (accounts) => {
-    const walletButton = document.getElementById('walletButton');
-    if (accounts.length === 0) {
-      // Disconnected
-      walletButton.textContent = 'Connect Wallet';
-      walletButton.style.backgroundColor = '';
-      userWalletAddress = null;
-    } else {
-      // Switched account
-      userWalletAddress = accounts[0];
-      walletButton.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
-    }
-  });
-}
   function buyFluffi() {
     const amount = document.getElementById('amountInput').value;
     const ref = document.getElementById('refInput').value || localStorage.getItem('referrer') || 'none';
