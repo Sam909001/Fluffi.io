@@ -79,20 +79,53 @@ const startTime = new Date("2025-05-05T12:00:00Z").getTime();
     document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
   }
 
-  async function connectWallet() {
+let userWalletAddress = null;
+
+async function connectWallet() {
+  const walletButton = document.getElementById('walletButton');
+  
+  try {
     if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      
+      if (accounts && accounts.length > 0) {
         userWalletAddress = accounts[0];
-        document.getElementById('walletButton').textContent = 'Connected';
-      } catch (error) {
-        alert('Wallet connection denied.');
+        walletButton.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`; // Shows shortened address
+        walletButton.style.backgroundColor = '#4CAF50'; // Visual feedback
+        return;
       }
+    }
+    // Fallback if no wallet detected
+    alert('Please install MetaMask or another Ethereum wallet.');
+    window.open('https://metamask.io/download.html', '_blank');
+  } catch (error) {
+    console.error('Connection error:', error);
+    walletButton.textContent = 'Connect Wallet'; // Reset on error
+    walletButton.style.backgroundColor = ''; // Revert color
+    if (error.code === 4001) {
+      alert('You declined the connection.');
     } else {
-      alert('MetaMask not detected.');
+      alert('Connection error: ' + error.message);
     }
   }
+}
 
+// Listen for account changes (e.g., user switches wallet)
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', (accounts) => {
+    const walletButton = document.getElementById('walletButton');
+    if (accounts.length === 0) {
+      // Disconnected
+      walletButton.textContent = 'Connect Wallet';
+      walletButton.style.backgroundColor = '';
+      userWalletAddress = null;
+    } else {
+      // Switched account
+      userWalletAddress = accounts[0];
+      walletButton.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+    }
+  });
+}
   function buyFluffi() {
     const amount = document.getElementById('amountInput').value;
     const ref = document.getElementById('refInput').value || localStorage.getItem('referrer') || 'none';
