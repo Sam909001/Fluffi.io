@@ -206,47 +206,33 @@
   <script src="script.js"></script>
   </body>
 const walletManager = {
-  // State
-  address: null,
+address: null,
   isConnected: false,
-  
-  // Initialize
   init: function() {
     this.bindEvents();
     this.checkInitialConnection();
   },
-  
-  // Event binding (safe for existing handlers)
-  bindEvents: function() {
+)
+bindEvents: function() {
     const btn = document.getElementById('walletButton');
     if (btn) {
       btn.addEventListener('click', () => this.connect());
-      // Clean up any duplicate handlers
       btn.onclick = null; 
     }
   },
-  
-  // Connection logic
   connect: async function() {
     if (this.isConnected) return;
     
     try {
-      // 1. Validate provider
-      if (!window.ethereum) {
+   if (!window.ethereum) {
         throw new Error('Please install MetaMask!');
       }
-      
-      // 2. Request connection
       const accounts = await window.ethereum.request({ 
         method: 'eth_requestAccounts' 
       });
-      
-      // 3. Validate response
       if (!accounts || accounts.length === 0) {
         throw new Error('No accounts returned');
       }
-      
-      // 4. Update state
       this.updateState(accounts[0], true);
       
     } catch (error) {
@@ -260,16 +246,12 @@ const walletManager = {
       }
     }
   },
-  
-  // State management
   updateState: function(address, isConnected) {
     const btn = document.getElementById('walletButton');
     if (!btn) return;
     
     this.address = address;
     this.isConnected = isConnected;
-    
-    // Update UI without changing your styles
     if (isConnected && address) {
       btn.textContent = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
       btn.classList.add('connected'); // Add this class to your CSS
@@ -278,8 +260,6 @@ const walletManager = {
       btn.classList.remove('connected');
     }
   },
-  
-  // Check existing connection
   checkInitialConnection: async function() {
     if (!window.ethereum) return;
     
@@ -296,12 +276,8 @@ const walletManager = {
     }
   }
 };
-
-// Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
   walletManager.init();
-  
-  // Account change listener
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
       walletManager.updateState(accounts[0] || null, accounts.length > 0);
