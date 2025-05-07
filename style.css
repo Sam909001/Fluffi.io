@@ -1,1 +1,28 @@
-
+body {
+  background: linear-gradient(to bottom, #fff0f5, #fff9e6);
+}
+.timer {
+  font-family: monospace;
+}
+.section-title {
+  @apply text-2xl font-bold mb-4;
+}
+.dark {
+  background: #111827;
+  color: white;
+}
+.dark .text-gray-800 {
+  color: white !important;
+}
+.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+.dark .bg-gray-200 {
+  background-color: #374151 !important;
+}
+.dark .text-blue-600 {
+  color: #60a5fa !important;
+}
