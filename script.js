@@ -18,6 +18,7 @@ function buyFluffi() {
     return;
   }
 
+
   if (isNaN(amount) || amount <= 0) {
     alert('Please enter a valid amount.');
     return;
