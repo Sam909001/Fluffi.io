@@ -1,60 +1,88 @@
-// --- Wallet Connection Manager ---
 let userWalletAddress = null;
 let isWalletConnected = false;
 
-// Helper function
-function shortenAddress(address) {
-  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  checkInitialConnection();
+});
+
+// Check if already connected
+async function checkInitialConnection() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      if (accounts.length > 0) {
+        userWalletAddress = accounts[0];
+        isWalletConnected = true;
+        updateWalletButton();
+      }
+    } catch (error) {
+      console.error("Initial connection check failed:", error);
+    }
+  }
 }
 
+// Main connection function
 async function connectWallet() {
-  const walletButton = document.getElementById('walletButton');
-  
-  // Early return if already connected
-  if (isWalletConnected) {
-    console.log("Wallet already connected");
-    return;
-  }
+  if (isWalletConnected) return;
 
   try {
-    // Check if Ethereum provider exists
     if (!window.ethereum) {
-      throw new Error("No Ethereum provider detected");
+      throw new Error("Please install MetaMask!");
     }
 
-    // Request accounts
     const accounts = await window.ethereum.request({ 
       method: 'eth_requestAccounts' 
     });
 
-    // Validate response
     if (!accounts || accounts.length === 0) {
-      throw new Error("No accounts returned");
+      throw new Error("Connection rejected");
     }
 
-    // Update state
     userWalletAddress = accounts[0];
     isWalletConnected = true;
-    
-    // Update UI
-    walletButton.textContent = `Connected: ${shortenAddress(userWalletAddress)}`;
-    walletButton.style.backgroundColor = '#4CAF50';
-    
+    updateWalletButton();
+
   } catch (error) {
     console.error("Connection failed:", error);
-    walletButton.textContent = 'Connect Wallet';
-    walletButton.style.backgroundColor = '';
     isWalletConnected = false;
     userWalletAddress = null;
-
+    updateWalletButton();
+    
     if (error.code === 4001) {
-      alert("You declined the connection request");
+      alert("You declined the connection");
     } else {
-      alert(`Connection error: ${error.message}`);
+      alert("Connection error: " + error.message);
     }
   }
 }
 
+// Update button UI
+function updateWalletButton() {
+  const button = document.getElementById('walletButton');
+  if (isWalletConnected && userWalletAddress) {
+    button.textContent = `Connected: ${userWalletAddress.slice(0, 6)}...${userWalletAddress.slice(-4)}`;
+    button.style.backgroundColor = '#4CAF50';
+  } else {
+    button.textContent = 'Connect Wallet';
+    button.style.backgroundColor = '';
+  }
+}
+// Handle account changes
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', (accounts) => {
+    if (accounts.length === 0) {
+      // Disconnected
+      isWalletConnected = false;
+      userWalletAddress = null;
+    } else {
+      // Account changed
+      userWalletAddress = accounts[0];
+      isWalletConnected = true;
+    }
+    updateWalletButton();
+  });
+}
 // Account change listener
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', (accounts) => {
