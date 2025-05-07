@@ -122,6 +122,11 @@ function shortenAddress(address) {
 }
 
 // Account change listener
+if (!window.ethereum.isMetaMask) {
+  alert("Please ensure MetaMask is installed and enabled");
+  window.open('https://metamask.io/download.html', '_blank');
+  return;
+}
 if (window.ethereum) {
   window.ethereum.on('accountsChanged', (accounts) => {
     const walletButton = document.getElementById('walletButton');
