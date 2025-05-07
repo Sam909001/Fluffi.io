@@ -112,6 +112,15 @@ async function connectWallet() {
       alert("You declined the connection request");
     } else {
       alert(`Connection error: ${error.message}`);
+      // Add parallel Solana connection logic
+async function connectPhantom() {
+  if (window.solana?.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      userWalletAddress = response.publicKey.toString();
+      // Update UI similarly...
+    } catch (err) {
+      console.error("Phantom error:", err);
     }
   }
 }
