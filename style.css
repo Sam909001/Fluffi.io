@@ -19,6 +19,15 @@
   box-sizing: border-box;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+#walletButton.connected {
+  background-color: #4CAF50 !important;
+  cursor: default;
+}
+
+#walletButton.connected:hover {
+  background-color: #4CAF50 !important;
+  transform: none;
+}
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
