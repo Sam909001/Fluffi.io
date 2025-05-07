@@ -50,48 +50,98 @@ function renderLeaderboard() {
     });
   }
 }
-
 document.addEventListener('DOMContentLoaded', renderLeaderboard);
 <script>
-  let userWalletAddress = null;
-  const initialPrice = 0.0001;
-  const stages = 15;
-  const stageDuration = 1000 * 60 * 60 * 48;
-// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
-const startTime = new Date("2025-05-05T12:00:00Z").getTime();
+// Wallet Connection Manager
+let userWalletAddress = null;
+let isWalletConnected = false;
 
-  function updateStage() {
-    const now = Date.now();
-    const elapsed = now - startTime;
-    const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-    const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-    document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-    document.getElementById('priceInfo').textContent = `Price: $${price}`;
+async function connectWallet() {
+  const walletButton = document.getElementById('walletButton');
+  
+  // Debug: Log initial state
+  console.log("Connect Wallet clicked. Current state:", { 
+    isWalletConnected, 
+    userWalletAddress 
+  });
+
+  // Early return if already connected
+  if (isWalletConnected) {
+    console.log("Wallet already connected");
+    return;
   }
 
-  function updateCountdown() {
-    const end = startTime + 30 * 24 * 60 * 60 * 1000;
-    const left = end - Date.now();
-    const days = Math.floor(left / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((left / (1000 * 60)) % 60);
-    const seconds = Math.floor((left / 1000) % 60);
-    document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
+  try {
+    // 1. Check if Ethereum provider exists
+    if (!window.ethereum) {
+      throw new Error("No Ethereum provider detected");
+    }
 
-  async function connectWallet() {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        userWalletAddress = accounts[0];
-        document.getElementById('walletButton').textContent = 'Connected';
-      } catch (error) {
-        alert('Wallet connection denied.');
-      }
+    // 2. Request accounts - THIS is where MetaMask pops up
+    const accounts = await window.ethereum.request({ 
+      method: 'eth_requestAccounts' 
+    });
+
+    // 3. Validate the response
+    if (!accounts || accounts.length === 0) {
+      throw new Error("No accounts returned");
+    }
+
+    // 4. Update connection state
+    userWalletAddress = accounts[0];
+    isWalletConnected = true;
+    
+    // 5. Update UI
+    walletButton.textContent = `Connected: ${shortenAddress(userWalletAddress)}`;
+    walletButton.style.backgroundColor = '#4CAF50';
+    walletButton.onclick = null; // Disable further clicks
+    
+    console.log("Successfully connected:", userWalletAddress);
+
+  } catch (error) {
+    // 6. Handle all possible errors
+    console.error("Connection failed:", error);
+    
+    walletButton.textContent = 'Connect Wallet';
+    walletButton.style.backgroundColor = '';
+    isWalletConnected = false;
+    userWalletAddress = null;
+
+    // Specific error messages
+    if (error.code === 4001) {
+      alert("You declined the connection request");
     } else {
-      alert('MetaMask not detected.');
+      alert(`Connection error: ${error.message}`);
     }
   }
+}
+
+// Helper function
+function shortenAddress(address) {
+  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+}
+
+// Account change listener
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', (accounts) => {
+    const walletButton = document.getElementById('walletButton');
+    
+    if (accounts.length === 0) {
+      // Disconnected
+      walletButton.textContent = 'Connect Wallet';
+      walletButton.style.backgroundColor = '';
+      walletButton.onclick = connectWallet; // Re-enable clicks
+      isWalletConnected = false;
+      userWalletAddress = null;
+      console.log("Wallet disconnected");
+    } else {
+      // Account changed
+      userWalletAddress = accounts[0];
+      walletButton.textContent = `Connected: ${shortenAddress(userWalletAddress)}`;
+      console.log("Account changed to:", userWalletAddress);
+    }
+  });
+}
 
   function buyFluffi() {
     const amount = document.getElementById('amountInput').value;
