@@ -281,3 +281,9 @@ footer {
 .social-icon:hover {
   opacity: 1;
 }
+#walletButton {
+  transition: background-color 0.3s ease;
+}
+#walletButton.connected {
+  background-color: #4CAF50 !important;
+}
