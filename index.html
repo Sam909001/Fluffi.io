@@ -204,5 +204,112 @@
     updateCountdown();
   </script>
   <script src="script.js"></script>
+  // Add this script RIGHT BEFORE </body> in your existing HTML
+// This won't affect any existing styles or layout
+
+// Wallet Connection Manager
+const walletManager = {
+  // State
+  address: null,
+  isConnected: false,
+  
+  // Initialize
+  init: function() {
+    this.bindEvents();
+    this.checkInitialConnection();
+  },
+  
+  // Event binding (safe for existing handlers)
+  bindEvents: function() {
+    const btn = document.getElementById('walletButton');
+    if (btn) {
+      btn.addEventListener('click', () => this.connect());
+      // Clean up any duplicate handlers
+      btn.onclick = null; 
+    }
+  },
+  
+  // Connection logic
+  connect: async function() {
+    if (this.isConnected) return;
+    
+    try {
+      // 1. Validate provider
+      if (!window.ethereum) {
+        throw new Error('Please install MetaMask!');
+      }
+      
+      // 2. Request connection
+      const accounts = await window.ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      });
+      
+      // 3. Validate response
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts returned');
+      }
+      
+      // 4. Update state
+      this.updateState(accounts[0], true);
+      
+    } catch (error) {
+      console.error('Connection failed:', error);
+      this.updateState(null, false);
+      
+      if (error.code === 4001) {
+        alert('Connection rejected');
+      } else {
+        alert(`Wallet error: ${error.message}`);
+      }
+    }
+  },
+  
+  // State management
+  updateState: function(address, isConnected) {
+    const btn = document.getElementById('walletButton');
+    if (!btn) return;
+    
+    this.address = address;
+    this.isConnected = isConnected;
+    
+    // Update UI without changing your styles
+    if (isConnected && address) {
+      btn.textContent = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
+      btn.classList.add('connected'); // Add this class to your CSS
+    } else {
+      btn.textContent = 'Connect Wallet';
+      btn.classList.remove('connected');
+    }
+  },
+  
+  // Check existing connection
+  checkInitialConnection: async function() {
+    if (!window.ethereum) return;
+    
+    try {
+      const accounts = await window.ethereum.request({ 
+        method: 'eth_accounts' 
+      });
+      
+      if (accounts.length > 0) {
+        this.updateState(accounts[0], true);
+      }
+    } catch (error) {
+      console.error('Initial check failed:', error);
+    }
+  }
+};
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+  walletManager.init();
+  
+  // Account change listener
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      walletManager.updateState(accounts[0] || null, accounts.length > 0);
+    });
+  }
+});
 </body>
 </html>
