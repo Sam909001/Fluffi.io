@@ -1,8 +1,5 @@
-// script.js for FLUFFI Presale on BSC
-
 const CONTRACT_ADDRESS = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-const ABI = [
-  {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+const ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
   {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},
   {"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},
   {"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
