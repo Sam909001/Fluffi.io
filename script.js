@@ -50,7 +50,7 @@ function renderLeaderboard() {
     });
   }
 }
-
+document.getElementById("walletButton").addEventListener("click", connectWallet);
 document.addEventListener('DOMContentLoaded', renderLeaderboard);
 <script>
   let userWalletAddress = null;
