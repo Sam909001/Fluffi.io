@@ -1,141 +1,89 @@
-// --- Referral Tracking ---
-const urlParams = new URLSearchParams(window.location.search);
-const refWallet = urlParams.get('ref');
-if (refWallet) {
-  localStorage.setItem('fluffiRef', refWallet);
-}
+// --- Added: Wallet Connection State Management ---
+let userWalletAddress = null;
 
-// --- Simulated Leaderboard Data ---
-let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
-
-// --- Buy Function With Referral ---
-function buyFluffi() {
-  const amount = parseFloat(document.getElementById('amountInput').value);
-  const ref = localStorage.getItem('fluffiRef');
-
-  if (!userWalletAddress) {
-    alert('Please connect your wallet first.');
-    return;
-  }
-
-  if (isNaN(amount) || amount <= 0) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-
-  // Simulated Referral Reward
-  if (ref && ref !== userWalletAddress) {
-    const reward = amount * 0.10; // 10% bonus to referrer
-    leaderboard[ref] = (leaderboard[ref] || 0) + reward;
-    localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
-    alert(`You are buying $${amount} of FLUFFI. Referrer ${ref} earns $${reward.toFixed(2)} bonus.`);
-  } else {
-    alert(`You are buying $${amount} of FLUFFI.`);
-  }
-}
-
-// --- Render Leaderboard ---
-function renderLeaderboard() {
-  const container = document.getElementById('leaderboard');
-  container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
-  const sorted = Object.entries(leaderboard)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  if (sorted.length === 0) {
-    container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
-  } else {
-    sorted.forEach(([address, amount], index) => {
-      container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
-    });
-  }
-}
-
-document.addEventListener('DOMContentLoaded', renderLeaderboard);
-<script>
-  let userWalletAddress = null;
-  const initialPrice = 0.0001;
-  const stages = 15;
-  const stageDuration = 1000 * 60 * 60 * 48;
-// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
-const startTime = new Date("2025-05-05T12:00:00Z").getTime();
-
-  function updateStage() {
-    const now = Date.now();
-    const elapsed = now - startTime;
-    const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-    const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-    document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-    document.getElementById('priceInfo').textContent = `Price: $${price}`;
-  }
-
-  function updateCountdown() {
-    const end = startTime + 30 * 24 * 60 * 60 * 1000;
-    const left = end - Date.now();
-    const days = Math.floor(left / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((left / (1000 * 60)) % 60);
-    const seconds = Math.floor((left / 1000) % 60);
-    document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-
-  async function connectWallet() {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+// --- Modified: Check Existing Connection on Page Load ---
+async function checkExistingConnection() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      if (accounts.length > 0) {
         userWalletAddress = accounts[0];
-        document.getElementById('walletButton').textContent = 'Connected';
-      } catch (error) {
-        alert('Wallet connection denied.');
+        updateWalletButton(true);
       }
+    } catch (error) {
+      console.error('Connection check failed:', error);
+    }
+  }
+}
+
+// --- Modified: Robust Connect Wallet Function ---
+async function connectWallet() {
+  if (!window.ethereum) {
+    alert('MetaMask not detected.');
+    return;
+  }
+
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (accounts.length === 0) {
+      throw new Error('No accounts found');
+    }
+    
+    // --- Added: Network Validation ---
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if (chainId !== '0x1') { // Replace with your expected chain ID
+      alert('Please connect to Ethereum Mainnet');
+      return;
+    }
+
+    userWalletAddress = accounts[0];
+    updateWalletButton(true);
+    
+    // --- Added: Wallet Event Listeners ---
+    window.ethereum.on('accountsChanged', (newAccounts) => {
+      if (newAccounts.length === 0) {
+        // Disconnected
+        userWalletAddress = null;
+        updateWalletButton(false);
+      } else {
+        // Account changed
+        userWalletAddress = newAccounts[0];
+      }
+    });
+
+    window.ethereum.on('chainChanged', (chainId) => {
+      window.location.reload(); // Reload on network change
+    });
+
+  } catch (error) {
+    console.error('Connection failed:', error);
+    updateWalletButton(false);
+    if (error.code === 4001) {
+      alert('Connection request rejected');
     } else {
-      alert('MetaMask not detected.');
+      alert('Connection failed. Please try again.');
     }
   }
+}
 
-  function buyFluffi() {
-    const amount = document.getElementById('amountInput').value;
-    const ref = document.getElementById('refInput').value || localStorage.getItem('referrer') || 'none';
-    if (!userWalletAddress) {
-      alert('Please connect your wallet first.');
-      return;
-    }
-    alert(`Buying $FLUFFI worth $${amount} with referral: ${ref}`);
+// --- Added: UI State Management ---
+function updateWalletButton(isConnected) {
+  const button = document.getElementById('walletButton');
+  if (isConnected) {
+    button.textContent = 'Connected';
+    button.classList.add('connected');
+    button.classList.remove('connecting');
+  } else {
+    button.textContent = 'Connect Wallet';
+    button.classList.remove('connected');
+    button.classList.remove('connecting');
   }
+}
 
-  function stakeFluffi() {
-    const amount = document.getElementById('stakeInput').value;
-    if (!userWalletAddress) {
-      alert('Please connect your wallet first.');
-      return;
-    }
-    alert(`Staking ${amount} $FLUFFI with 90% APY`);
-  }
-
-  function toggleDarkMode() {
-    document.documentElement.classList.toggle('dark');
-  }
-
-  // --- Referral Logic ---
-  function getReferrerFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get('ref');
-    if (ref) {
-      localStorage.setItem('referrer', ref);
-    }
-  }
-
-  function applyReferralField() {
-    const savedRef = localStorage.getItem('referrer');
-    if (savedRef) {
-      const refInput = document.getElementById('refInput');
-      if (refInput) {
-        refInput.value = savedRef;
-      }
-    }
-  }
-
-  // Initial setup
+// --- Modified Initial Setup ---
+document.addEventListener('DOMContentLoaded', () => {
+  checkExistingConnection(); // Check existing connection on load
+  renderLeaderboard();
   getReferrerFromURL();
   applyReferralField();
   updateStage();
@@ -144,4 +92,4 @@ const startTime = new Date("2025-05-05T12:00:00Z").getTime();
     updateStage();
     updateCountdown();
   }, 1000);
-</script>
+});
