@@ -215,3 +215,5 @@ if (document.readyState === 'complete') {
 } else {
   document.addEventListener('DOMContentLoaded', () => walletManager.init());
 }
+document.getElementById("walletButton").textContent = 
+  userWalletAddress.slice(0, 6) + "..." + userWalletAddress.slice(-4);
