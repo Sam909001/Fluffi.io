@@ -53,22 +53,26 @@ function renderLeaderboard() {
 document.getElementById("walletButton").addEventListener("click", connectWallet);
 document.addEventListener('DOMContentLoaded', renderLeaderboard);
 <script>
-  let userWalletAddress = null;
-  const initialPrice = 0.0001;
-  const stages = 15;
-  const stageDuration = 1000 * 60 * 60 * 48;
-// Example: Fixed start date (e.g. May 5, 2025, at 12:00 UTC)
-const startTime = new Date("2025-05-05T12:00:00Z").getTime();
+let userWalletAddress = null;
 
-  function updateStage() {
-    const now = Date.now();
-    const elapsed = now - startTime;
-    const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-    const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-    document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-    document.getElementById('priceInfo').textContent = `Price: $${price}`;
+async function connectWallet() {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      userWalletAddress = await signer.getAddress();
+
+      document.getElementById("walletButton").textContent = "Connected";
+      console.log("Wallet connected:", userWalletAddress);
+    } catch (error) {
+      console.error("User rejected connection:", error);
+      alert("Wallet connection rejected.");
+    }
+  } else {
+    alert("MetaMask not found. Please install MetaMask.");
   }
-
+}
   function updateCountdown() {
     const end = startTime + 30 * 24 * 60 * 60 * 1000;
     const left = end - Date.now();
