@@ -12,13 +12,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
-      <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.ethers.io https://www.googletagmanager.com;">
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-XXXXXXXXXX');
   </script>
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.ethers.io https://www.googletagmanager.com;"
   <style>
     body {
       background: linear-gradient(to bottom, #fff0f5, #fff9e6);
@@ -62,8 +60,8 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <button id="darkModeToggle" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
+      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
   </header>
 
@@ -81,7 +79,7 @@
 
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
-      <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
+      <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
     </section>
 
     <!-- Claim Section -->
@@ -96,7 +94,7 @@
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
       <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
     <!-- Tokenomics -->
@@ -196,11 +194,6 @@
     function toggleDarkMode() {
       document.documentElement.classList.toggle('dark');
     }
-
-    document.getElementById('walletButton').addEventListener('click', connectWallet);
-    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-    document.getElementById('buyButton').addEventListener('click', buyFluffi);
-    document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
 
     setInterval(() => {
       updateStage();
