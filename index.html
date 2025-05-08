@@ -204,85 +204,107 @@
     updateCountdown();
   </script>
   <script src="script.js"></script>
-  </body>
-const walletManager = {
-address: null,
-  isConnected: false,
-  init: function() {
-    this.bindEvents();
-    this.checkInitialConnection();
-  },
-)
-bindEvents: function() {
-    const btn = document.getElementById('walletButton');
-    if (btn) {
-      btn.addEventListener('click', () => this.connect());
-      btn.onclick = null; 
-    }
-  },
-  connect: async function() {
-    if (this.isConnected) return;
+<script>
+  // ===== Wallet Connection Core =====
+  let walletConnection = {
+    address: null,
+    isConnected: false,
     
-    try {
-   if (!window.ethereum) {
-        throw new Error('Please install MetaMask!');
-      }
-      const accounts = await window.ethereum.request({ 
-        method: 'eth_requestAccounts' 
-      });
-      if (!accounts || accounts.length === 0) {
-        throw new Error('No accounts returned');
-      }
-      this.updateState(accounts[0], true);
-      
-    } catch (error) {
-      console.error('Connection failed:', error);
-      this.updateState(null, false);
-      
-      if (error.code === 4001) {
-        alert('Connection rejected');
-      } else {
-        alert(`Wallet error: ${error.message}`);
-      }
-    }
-  },
-  updateState: function(address, isConnected) {
-    const btn = document.getElementById('walletButton');
-    if (!btn) return;
+    init: function() {
+      this.setupButton();
+      this.checkInitialConnection();
+      this.setupListeners();
+    },
     
-    this.address = address;
-    this.isConnected = isConnected;
-    if (isConnected && address) {
-      btn.textContent = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
-      btn.classList.add('connected'); // Add this class to your CSS
-    } else {
-      btn.textContent = 'Connect Wallet';
-      btn.classList.remove('connected');
-    }
-  },
-  checkInitialConnection: async function() {
-    if (!window.ethereum) return;
+    setupButton: function() {
+      const btn = document.getElementById('walletButton');
+      if (btn) {
+        // Clean any existing handlers
+        btn.onclick = null;
+        btn.addEventListener('click', () => this.connect());
+      }
+    },
     
-    try {
-      const accounts = await window.ethereum.request({ 
-        method: 'eth_accounts' 
-      });
+    connect: async function() {
+      if (this.isConnected) return;
       
-      if (accounts.length > 0) {
+      try {
+        // 1. Validate provider
+        if (!window.ethereum) {
+          throw new Error('Wallet not detected');
+        }
+        
+        // 2. Request connection (triggers popup)
+        const accounts = await window.ethereum.request({ 
+          method: 'eth_requestAccounts' 
+        });
+        
+        // 3. Validate response
+        if (!accounts?.length) {
+          throw new Error('No accounts returned');
+        }
+        
+        // 4. Update state
         this.updateState(accounts[0], true);
+        
+      } catch (error) {
+        console.error('Connection failed:', error);
+        this.updateState(null, false);
+        
+        // User-friendly messages
+        if (error.code === 4001) {
+          alert('Please connect your wallet to continue');
+        } else {
+          alert(`Error: ${error.message}`);
+        }
       }
-    } catch (error) {
-      console.error('Initial check failed:', error);
+    },
+    
+    updateState: function(address, isConnected) {
+      const btn = document.getElementById('walletButton');
+      if (!btn) return;
+      
+      this.address = address;
+      this.isConnected = isConnected;
+      
+      // Update button without changing styles
+      if (isConnected) {
+        btn.textContent = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
+        btn.setAttribute('data-connected', 'true');
+      } else {
+        btn.textContent = 'Connect Wallet';
+        btn.setAttribute('data-connected', 'false');
+      }
+    },
+    
+    checkInitialConnection: async function() {
+      if (!window.ethereum) return;
+      
+      try {
+        const accounts = await window.ethereum.request({ 
+          method: 'eth_accounts' 
+        });
+        if (accounts?.length) {
+          this.updateState(accounts[0], true);
+        }
+      } catch (error) {
+        console.error('Initial check failed:', error);
+      }
+    },
+    
+    setupListeners: function() {
+      if (!window.ethereum) return;
+      
+      window.ethereum.on('accountsChanged', (accounts) => {
+        this.updateState(accounts[0] || null, accounts.length > 0);
+      });
     }
-  }
-};
-document.addEventListener('DOMContentLoaded', () => {
-  walletManager.init();
-  if (window.ethereum) {
-    window.ethereum.on('accountsChanged', (accounts) => {
-      walletManager.updateState(accounts[0] || null, accounts.length > 0);
-    });
-  }
-});
+  };
+
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    walletConnection.init();
+  });
+</script>
 </body>
 </html>
