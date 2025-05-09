@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Security-Policy" 
+<meta http-equiv="Content-Security-Policy" 
         content="default-src 'self';
                  script-src 'self' 
                    https://cdn.jsdelivr.net 
                    https://www.googletagmanager.com 
                    'unsafe-eval' 
-                   'wasm-unsafe-eval';
-                 connect-src 'self' 
-                   https://*.google-analytics.com 
-                   https://*.metamask.io;
-                 img-src 'self' 
-                   data: 
-                   https://cdn.jsdelivr.net;
+                   'wasm-unsafe-eval'
+                   'sha256-Zn+46W7yJO9L7jzZvqzH3c8X5D6Q6ZJ6Y6B7fP8J8E='; <!-- Add your hash here -->
                  style-src 'self' 
                    'unsafe-inline' 
                    https://cdn.jsdelivr.net;
+                 img-src 'self' 
+                   data: 
+                   https://cdn.jsdelivr.net;
+                 connect-src 'self' 
+                   https://*.google-analytics.com 
+                   https://*.metamask.io;
                  font-src 'self';
                  frame-src 'none';
                  object-src 'none';
                  base-uri 'self';">
+</head>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
