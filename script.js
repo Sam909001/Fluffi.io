@@ -93,3 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCountdown();
   }, 1000);
 });
+// Event listener setup
+document.addEventListener('DOMContentLoaded', () => {
+  // Wallet connection
+  document.getElementById('walletButton').addEventListener('click', connectWallet);
+  
+  // Dark mode toggle
+  document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+  
+  // Buy button
+  document.getElementById('buyButton').addEventListener('click', buyFluffi);
+  
+  // Stake button
+  document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
+});
