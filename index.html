@@ -1,28 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self';
-                 script-src 'self' 
-                   https://cdn.jsdelivr.net 
-                   https://www.googletagmanager.com 
-                   'unsafe-eval' 
-                   'wasm-unsafe-eval'
-                   'sha256-Zn+46W7yJO9L7jzZvqzH3c8X5D6Q6ZJ6Y6B7fP8J8E='; <!-- Add your hash here -->
-                 style-src 'self' 
-                   'unsafe-inline' 
-                   https://cdn.jsdelivr.net;
-                 img-src 'self' 
-                   data: 
-                   https://cdn.jsdelivr.net;
-                 connect-src 'self' 
-                   https://*.google-analytics.com 
-                   https://*.metamask.io;
-                 font-src 'self';
-                 frame-src 'none';
-                 object-src 'none';
-                 base-uri 'self';">
-</head>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -82,8 +60,8 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
+      <button id="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button id="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
   </header>
 
@@ -116,7 +94,7 @@
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
       <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+      <button id="stakeButton()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
     <!-- Tokenomics -->
