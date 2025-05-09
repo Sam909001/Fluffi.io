@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self';
+                 script-src 'self' 
+                   https://cdn.jsdelivr.net 
+                   https://www.googletagmanager.com 
+                   'unsafe-eval' 
+                   'wasm-unsafe-eval';
+                 connect-src 'self' 
+                   https://*.google-analytics.com 
+                   https://*.metamask.io;
+                 img-src 'self' 
+                   data: 
+                   https://cdn.jsdelivr.net;
+                 style-src 'self' 
+                   'unsafe-inline' 
+                   https://cdn.jsdelivr.net;
+                 font-src 'self';
+                 frame-src 'none';
+                 object-src 'none';
+                 base-uri 'self';">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
