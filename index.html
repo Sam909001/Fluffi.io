@@ -2,173 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FLUFFI Token Presale</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f8ff;
-      padding: 20px;
-      color: #222;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      padding: 30px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    #wallet-address {
-      margin: 10px 0;
-      font-size: 0.9rem;
-      color: green;
-      text-align: center;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .leaderboard-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 0.95rem;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLUFFI Presale</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <div class="container">
-    <h1>🔥 FLUFFI Token Presale 🔥</h1>
-    <div id="wallet-address">Not connected</div>
-    <button id="connectButton">Connect Wallet</button>
+<body class="bg-white text-black dark:bg-gray-900 dark:text-white">
 
-    <input type="number" id="amountInput" placeholder="Enter amount in BNB" />
+  <!-- Your presale content here -->
+  <div>
+    <h1>FLUFFI Presale</h1>
+    <p id="stageInfo"></p>
+    <p id="priceInfo"></p>
+    <input type="number" id="amountInput" placeholder="Amount in USD" class="text-black" />
+    <input type="text" id="refInput" placeholder="Referrer (optional)" />
     <button id="buyButton">Buy FLUFFI</button>
-
-    <h2>🏆 Top Referrers</h2>
+    <button id="walletButton" onclick="connectWallet()">Connect Wallet</button>
+    <p id="countdown"></p>
     <div id="leaderboard"></div>
   </div>
 
+  <!-- Your entire script goes here -->
   <script>
-    const contractAddress = '0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297';
-    const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+    let userWalletAddress = null;
+    const initialPrice = 0.0001;
+    const stages = 15;
+    const stageDuration = 1000 * 60 * 60 * 48;
+    const startTime = new Date("2025-05-05T12:00:00Z").getTime();
 
-    let provider;
-    let signer;
-    let contract;
-    let userWalletAddress = '';
-    const referralKey = 'fluffiRef';
-    let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
+    const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+    const contractABI = [/* your ABI goes here */];
 
-    async function initWeb3() {
+    let signer, contract;
+
+    async function connectWallet() {
       if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        contract = new ethers.Contract(contractAddress, contractABI, signer);
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = provider.getSigner();
+          userWalletAddress = await signer.getAddress();
+          contract = new ethers.Contract(contractAddress, contractABI, signer);
+          document.getElementById('walletButton').textContent = 'Connected';
+        } catch (error) {
+          alert('Wallet connection denied.');
+        }
       } else {
         alert('MetaMask not detected.');
       }
     }
 
-    async function connectWallet() {
-      try {
-        await initWeb3();
-        const accounts = await provider.send('eth_requestAccounts', []);
-        userWalletAddress = accounts[0];
-        document.getElementById('wallet-address').innerText = `Connected: ${userWalletAddress}`;
-      } catch (err) {
-        console.error(err);
-        alert('Failed to connect wallet.');
-      }
+    function updateStage() {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
+      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
+      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
+      document.getElementById('priceInfo').textContent = `Price: $${price}`;
     }
 
-    async function buyFluffi() {
-      const amount = parseFloat(document.getElementById('amountInput').value);
-      const ref = localStorage.getItem(referralKey);
-
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-
-      if (isNaN(amount) || amount <= 0) {
-        alert('Please enter a valid amount.');
-        return;
-      }
-
-      try {
-        await initWeb3();
-        const value = ethers.utils.parseEther(amount.toString());
-        const tx = await contract.contribute(ref || ethers.constants.AddressZero, { value });
-        await tx.wait();
-
-        if (ref && ref !== userWalletAddress) {
-          const reward = amount * 0.1;
-          leaderboard[ref] = (leaderboard[ref] || 0) + reward;
-          localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
-          renderLeaderboard();
-          alert(`You bought ${amount} BNB of FLUFFI.\nYour referrer earned ${reward.toFixed(2)} BNB.`);
-        } else {
-          alert(`You bought ${amount} BNB of FLUFFI.`);
-        }
-      } catch (err) {
-        console.error('Buy failed:', err);
-        alert('Transaction failed.');
-      }
+    function updateCountdown() {
+      const end = startTime + 30 * 24 * 60 * 60 * 1000;
+      const left = end - Date.now();
+      const days = Math.floor(left / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((left / (1000 * 60)) % 60);
+      const seconds = Math.floor((left / 1000) % 60);
+      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
+    // --- Referral Tracking ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const refWallet = urlParams.get('ref');
+    if (refWallet) {
+      localStorage.setItem('fluffiRef', refWallet);
+    }
+
+    // --- Simulated Leaderboard Data ---
+    let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
+
+    // --- Render Leaderboard ---
     function renderLeaderboard() {
-      const leaderboardDiv = document.getElementById('leaderboard');
-      leaderboardDiv.innerHTML = '';
-      const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]);
-      sorted.forEach(([address, reward], index) => {
-        const item = document.createElement('div');
-        item.className = 'leaderboard-item';
-        item.innerHTML = `
-          <span>#${index + 1}</span>
-          <span>${address.slice(0, 6)}...${address.slice(-4)}</span>
-          <span>${reward.toFixed(2)} BNB</span>
-        `;
-        leaderboardDiv.appendChild(item);
-      });
+      const container = document.getElementById('leaderboard');
+      container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
+      const sorted = Object.entries(leaderboard)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      if (sorted.length === 0) {
+        container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
+      } else {
+        sorted.forEach(([address, amount], index) => {
+          container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
+        });
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderLeaderboard();
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const ref = urlParams.get('ref');
-      if (ref && ethers.utils.isAddress(ref)) {
-        localStorage.setItem(referralKey, ref);
+      // Apply referral
+      const savedRef = localStorage.getItem('fluffiRef');
+      if (savedRef) {
+        const refInput = document.getElementById('refInput');
+        if (refInput) {
+          refInput.value = savedRef;
+        }
       }
 
-      document.getElementById('connectButton').addEventListener('click', connectWallet);
-      document.getElementById('buyButton').addEventListener('click', buyFluffi);
+      updateStage();
+      updateCountdown();
+      renderLeaderboard();
+      setInterval(() => {
+        updateStage();
+        updateCountdown();
+      }, 1000);
+
+      const amountInput = document.getElementById('amountInput');
+      const buyButton = document.getElementById('buyButton');
+
+      if (amountInput && buyButton) {
+        buyButton.addEventListener('click', async () => {
+          const amount = parseFloat(amountInput.value);
+          const ref = document.getElementById('refInput').value || localStorage.getItem('fluffiRef') || ethers.constants.AddressZero;
+
+          if (!signer || !contract) {
+            alert('Please connect your wallet first.');
+            return;
+          }
+
+          if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+          }
+
+          try {
+            const valueInWei = ethers.utils.parseEther(amount.toString());
+            const tx = await contract.contribute(ref, { value: valueInWei });
+            await tx.wait();
+            alert('Purchase successful!');
+          } catch (err) {
+            console.error('Transaction failed:', err);
+            alert('Transaction failed. See console for details.');
+          }
+        });
+      }
     });
   </script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 </body>
 </html>
