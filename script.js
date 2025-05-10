@@ -104,17 +104,14 @@ async function buyFluffi() {
   ];
 
   try {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+    const provider = new ethers.BrowserProvider(window.ethereum);
+  const signer = await provider.getSigner();
     const contract = new ethers.Contract(presaleContractAddress, presaleContractABI, signer);
 
-    // Convert amount to the token's equivalent (depends on your contract logic)
-    const amountInWei = ethers.utils.parseUnits(amountInTokens.toString(), 18); // assuming 18 decimal places
-
     // Call the contract's buy function with the referral address
-    const tx = await contract.buyTokens(amountInWei, ref ? ref : '0x0000000000000000000000000000000000000000', {
-      value: ethers.utils.parseEther(amount) // Amount in ETH (or BNB)
-    });
+const tx = await contract.contribute(ref ? ref : '0x0000000000000000000000000000000000000000', {
+  value: ethers.parseEther(amount)
+});
 
     // Wait for transaction to be mined
     await tx.wait();
