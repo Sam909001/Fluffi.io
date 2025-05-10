@@ -68,40 +68,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Buy Function ---
 async function buyFluffi() {
-  const amount = parseFloat(document.getElementById('amountInput').value);
-  const ref = localStorage.getItem('fluffiRef');
+  const amount = document.getElementById('amountInput').value;
+  const ref = document.getElementById('refInput').value;
 
   if (!userWalletAddress) {
     alert('Please connect your wallet first.');
-    await initWeb3();
     return;
   }
 
-  if (isNaN(amount) || amount <= 0) {
+  // Convert the amount in USD to the token's equivalent amount
+  // You would need to implement this conversion based on the current price of $FLUFFI
+  const amountInTokens = convertUSDToTokens(amount);
+
+  // Check if the amount is valid
+  if (amountInTokens <= 0) {
     alert('Please enter a valid amount.');
     return;
   }
 
+  // Assuming your presale smart contract is deployed on Ethereum or Binance Smart Chain
+  const presaleContractAddress = '0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297';
+  const presaleContractABI = [[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+    {
+      "constant": false,
+      "inputs": [
+        { "name": "amount", "type": "uint256" },
+        { "name": "referral", "type": "address" }
+      ],
+      "name": "buyTokens",
+      "outputs": [{ "name": "", "type": "bool" }],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ];
+
   try {
-    const value = ethers.parseEther(amount.toString());
-    const tx = await contract.buyTokens(ref || ethers.ZeroAddress, { value });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(presaleContractAddress, presaleContractABI, signer);
+
+    // Convert amount to the token's equivalent (depends on your contract logic)
+    const amountInWei = ethers.utils.parseUnits(amountInTokens.toString(), 18); // assuming 18 decimal places
+
+    // Call the contract's buy function with the referral address
+    const tx = await contract.buyTokens(amountInWei, ref ? ref : '0x0000000000000000000000000000000000000000', {
+      value: ethers.utils.parseEther(amount) // Amount in ETH (or BNB)
+    });
+
+    // Wait for transaction to be mined
     await tx.wait();
 
-    if (ref && ref !== userWalletAddress) {
-      const reward = amount * 0.1;
-      leaderboard[ref] = (leaderboard[ref] || 0) + reward;
-      localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
-      renderLeaderboard();
-      alert(`You bought $${amount} of FLUFFI. Referrer earned $${reward.toFixed(2)} bonus.`);
-    } else {
-      alert(`You bought $${amount} of FLUFFI.`);
-    }
+    // Notify the user
+    alert('Transaction successful! You have bought $FLUFFI.');
   } catch (err) {
-    console.error('Buy failed:', err);
-    alert('Transaction failed.');
+    console.error(err);
+    alert('Transaction failed. Please try again.');
   }
 }
-
+function convertUSDToTokens(usdAmount) {
+  const pricePerToken = 0.0001;
+  return usdAmount / pricePerToken;
+}
 // --- Staking Function ---
 async function stakeFluffi() {
   const stakeAmount = parseFloat(document.getElementById('stakeInput').value);
