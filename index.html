@@ -1,240 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>$FLUFFI Presale & Staking</title>
-  <meta name="description" content="$FLUFFI is a Solana Layer 2 meme token with presale and staking features. Join the community and earn rewards." />
-  <meta name="keywords" content="Fluffi, $FLUFFI, crypto, presale, staking, Solana, meme token" />
-  <meta name="author" content="FLUFFI Team" />
-  <link rel="icon" href="fluffi.jpg" type="image/jpeg">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FLUFFI Token Presale</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
   <style>
     body {
-      background: linear-gradient(to bottom, #fff0f5, #fff9e6);
+      font-family: Arial, sans-serif;
+      background: #f8f8ff;
+      padding: 20px;
+      color: #222;
     }
-    .timer {
-      font-family: monospace;
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
-    .section-title {
-      @apply text-2xl font-bold mb-4;
+    h1, h2 {
+      text-align: center;
     }
-    .dark {
-      background: #111827;
+    #wallet-address {
+      margin: 10px 0;
+      font-size: 0.9rem;
+      color: green;
+      text-align: center;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
       color: white;
+      cursor: pointer;
     }
-    .dark .text-gray-800 {
-      color: white !important;
+    button:hover {
+      background-color: #45a049;
     }
-    .dark .bg-white {
-      background-color: #1f2937 !important;
-    }
-    .dark .text-gray-600 {
-      color: #d1d5db !important;
-    }
-    .dark .bg-gray-200 {
-      background-color: #374151 !important;
-    }
-    .dark .text-blue-600 {
-      color: #60a5fa !important;
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
     }
   </style>
 </head>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<body class="text-gray-800 dark:text-white">
-  <!-- Header -->
-  <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
-    <div class="flex items-center gap-3">
-      <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
-      <h1 class="text-xl font-bold">$FLUFFI</h1>
-    </div>
-    <nav class="flex flex-wrap gap-4 mt-2 md:mt-0 text-sm">
-      <a href="#presale" class="hover:underline">Presale</a>
-      <a href="#staking" class="hover:underline">Staking</a>
-      <a href="#tokenomics" class="hover:underline">Tokenomics</a>
-      <a href="#faq" class="hover:underline">FAQ</a>
-      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
-    </nav>
-  </header>
+<body>
+  <div class="container">
+    <h1>🔥 FLUFFI Token Presale 🔥</h1>
+    <div id="wallet-address">Not connected</div>
+    <button id="connectButton">Connect Wallet</button>
 
-  <main class="p-6 max-w-4xl mx-auto">
-    <!-- Presale Section -->
-    <section id="presale" class="mb-6 p-4 bg-white dark:bg-gray-800 rounded shadow">
-      <h2 class="section-title">Presale is Live!</h2>
-      <p id="stageInfo" class="mb-2">Stage: 1 / 15</p>
-      <p id="priceInfo" class="mb-2">Price: $0.000100</p>
-      <p class="mb-2">Referral Bonus: <strong>10%</strong></p>
-      <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-        <div class="bg-green-500 h-4 rounded-full transition-all duration-700 ease-in-out" id="progressBar" style="width: 10%"></div>
-      </div>
-      <p class="mb-4 timer" id="countdown"></p>
+    <input type="number" id="amountInput" placeholder="Enter amount in BNB" />
+    <button id="buyButton">Buy FLUFFI</button>
 
-      <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
-      <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
-    </section>
+    <h2>🏆 Top Referrers</h2>
+    <div id="leaderboard"></div>
+  </div>
 
-    <!-- Claim Section -->
-    <section class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
-      <h2 class="section-title">Claim $FLUFFI</h2>
-      <p class="mb-2">Once the presale ends, you can claim your purchased tokens here.</p>
-      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Claim Tokens</button>
-    </section>
+  <script>
+    const contractAddress = '0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297';
+    const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 
-    <!-- Staking Section -->
-    <section id="staking" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
-      <h2 class="section-title">Stake Your $FLUFFI</h2>
-      <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
-      <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
-    </section>
+    let provider;
+    let signer;
+    let contract;
+    let userWalletAddress = '';
+    const referralKey = 'fluffiRef';
+    let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
-    <!-- Tokenomics -->
-    <section id="tokenomics" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
-      <h2 class="section-title">Tokenomics</h2>
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Total Supply: 10,000,000,000 FLUFFI</li>
-        <li>Presale: 40%</li>
-        <li>Liquidity: 30% (Locked)</li>
-        <li>Staking: 20%</li>
-        <li>Marketing: 5%</li>
-        <li>Team: 5% (Locked)</li>
-      </ul>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
-      <h2 class="section-title">FAQ</h2>
-      <details class="mb-2"><summary>How do I buy $FLUFFI?</summary><p class="pl-4">Connect your wallet, enter amount in USD, and click "Buy Now".</p></details>
-      <details class="mb-2"><summary>When does staking end?</summary><p class="pl-4">Staking ends at the official listing date.</p></details>
-      <details class="mb-2"><summary>What chains are supported?</summary><p class="pl-4">BNB, ETH, SOL, and USDC.</p></details>
-    </section>
-  </main>
-
-  <footer class="flex justify-between px-4 py-4 text-sm text-gray-600 dark:text-gray-300">
-    <div>© 2025 $FLUFFI Token</div>
-    <div class="flex gap-4">
-      <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" title="Telegram">
-        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" class="w-5 h-5">
-      </a>
-      <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" title="Twitter">
-        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="Twitter" class="w-5 h-5">
-      </a>
-    </div>
-  </footer>
-<script>
-  const contractAddress = 'YOUR_CONTRACT_ADDRESS_HERE'; // Replace with actual deployed address
-  const contractABI = [/* Your ABI Here */];
-
-  let provider;
-  let signer;
-  let contract;
-  let userWalletAddress = '';
-  const referralKey = 'fluffiRef';
-  let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
-
-  // Initialize Web3
-  async function initWeb3() {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      signer = provider.getSigner();
-      contract = new ethers.Contract(contractAddress, contractABI, signer);
-    } else {
-      alert('MetaMask not detected.');
-    }
-  }
-
-  // Connect wallet
-  async function connectWallet() {
-    try {
-      await initWeb3();
-      const accounts = await provider.send('eth_requestAccounts', []);
-      userWalletAddress = accounts[0];
-      document.getElementById('wallet-address').innerText = `Connected: ${userWalletAddress}`;
-    } catch (err) {
-      console.error(err);
-      alert('Failed to connect wallet.');
-    }
-  }
-
-  // Buy function
-  async function buyFluffi() {
-    const amount = parseFloat(document.getElementById('amountInput').value);
-    const ref = localStorage.getItem(referralKey);
-
-    if (!userWalletAddress) {
-      alert('Please connect your wallet first.');
-      return;
-    }
-
-    if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount.');
-      return;
-    }
-
-    try {
-      await initWeb3();
-      const value = ethers.utils.parseEther(amount.toString());
-      const tx = await contract.contribute(ref || ethers.constants.AddressZero, { value });
-      await tx.wait();
-
-      // Simulate referral reward tracking
-      if (ref && ref !== userWalletAddress) {
-        const reward = amount * 0.1;
-        leaderboard[ref] = (leaderboard[ref] || 0) + reward;
-        localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
-        renderLeaderboard();
-        alert(`You bought ${amount} BNB of FLUFFI.\nYour referrer earned ${reward.toFixed(2)} BNB.`);
+    async function initWeb3() {
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        contract = new ethers.Contract(contractAddress, contractABI, signer);
       } else {
-        alert(`You bought ${amount} BNB of FLUFFI.`);
+        alert('MetaMask not detected.');
       }
-    } catch (err) {
-      console.error('Buy failed:', err);
-      alert('Transaction failed.');
     }
-  }
 
-  // Render leaderboard
-  function renderLeaderboard() {
-    const leaderboardDiv = document.getElementById('leaderboard');
-    leaderboardDiv.innerHTML = '';
-    const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]);
-    sorted.forEach(([address, reward], index) => {
-      const item = document.createElement('div');
-      item.className = 'leaderboard-item';
-      item.innerHTML = `
-        <span>#${index + 1}</span>
-        <span>${address.slice(0, 6)}...${address.slice(-4)}</span>
-        <span>${reward.toFixed(2)} BNB</span>
-      `;
-      leaderboardDiv.appendChild(item);
+    async function connectWallet() {
+      try {
+        await initWeb3();
+        const accounts = await provider.send('eth_requestAccounts', []);
+        userWalletAddress = accounts[0];
+        document.getElementById('wallet-address').innerText = `Connected: ${userWalletAddress}`;
+      } catch (err) {
+        console.error(err);
+        alert('Failed to connect wallet.');
+      }
+    }
+
+    async function buyFluffi() {
+      const amount = parseFloat(document.getElementById('amountInput').value);
+      const ref = localStorage.getItem(referralKey);
+
+      if (!userWalletAddress) {
+        alert('Please connect your wallet first.');
+        return;
+      }
+
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      try {
+        await initWeb3();
+        const value = ethers.utils.parseEther(amount.toString());
+        const tx = await contract.contribute(ref || ethers.constants.AddressZero, { value });
+        await tx.wait();
+
+        if (ref && ref !== userWalletAddress) {
+          const reward = amount * 0.1;
+          leaderboard[ref] = (leaderboard[ref] || 0) + reward;
+          localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
+          renderLeaderboard();
+          alert(`You bought ${amount} BNB of FLUFFI.\nYour referrer earned ${reward.toFixed(2)} BNB.`);
+        } else {
+          alert(`You bought ${amount} BNB of FLUFFI.`);
+        }
+      } catch (err) {
+        console.error('Buy failed:', err);
+        alert('Transaction failed.');
+      }
+    }
+
+    function renderLeaderboard() {
+      const leaderboardDiv = document.getElementById('leaderboard');
+      leaderboardDiv.innerHTML = '';
+      const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]);
+      sorted.forEach(([address, reward], index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+          <span>#${index + 1}</span>
+          <span>${address.slice(0, 6)}...${address.slice(-4)}</span>
+          <span>${reward.toFixed(2)} BNB</span>
+        `;
+        leaderboardDiv.appendChild(item);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLeaderboard();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref && ethers.utils.isAddress(ref)) {
+        localStorage.setItem(referralKey, ref);
+      }
+
+      document.getElementById('connectButton').addEventListener('click', connectWallet);
+      document.getElementById('buyButton').addEventListener('click', buyFluffi);
     });
-  }
-
-  // On load
-  document.addEventListener('DOMContentLoaded', () => {
-    renderLeaderboard();
-
-    // Handle referral from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    if (ref && ethers.utils.isAddress(ref)) {
-      localStorage.setItem(referralKey, ref);
-    }
-
-    // Bind wallet connect and buy button
-    document.getElementById('connectButton').addEventListener('click', connectWallet);
-    document.getElementById('buyButton').addEventListener('click', buyFluffi);
-  });
-</script>
+  </script>
 </body>
 </html>
