@@ -1,7 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self';
+                 script-src 'self' 
+                   https://cdn.jsdelivr.net 
+                   https://www.googletagmanager.com 
+                   https://www.google-analytics.com 
+                   'unsafe-eval' 
+                   'wasm-unsafe-eval';
+                 style-src 'self' 
+                   'unsafe-inline' 
+                   https://cdn.jsdelivr.net;
+                 img-src 'self' 
+                   data: 
+                   https://cdn.jsdelivr.net 
+                   https://www.googletagmanager.com 
+                   https://x.com 
+                   https://t.me;
+                 font-src 'self';
+                 connect-src 'self' 
+                   https://*.google-analytics.com 
+                   https://*.googletagmanager.com 
+                   https://*.metamask.io;
+                 frame-src 'none';
+                 object-src 'none';
+                 base-uri 'self';
+                 form-action 'self';">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
@@ -203,5 +228,6 @@
     updateStage();
     updateCountdown();
   </script>
+   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </body>
 </html>
