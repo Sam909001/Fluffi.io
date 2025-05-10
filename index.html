@@ -1,32 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self';
-                 script-src 'self' 
-                   https://cdn.jsdelivr.net 
-                   https://www.googletagmanager.com 
-                   https://www.google-analytics.com 
-                   'unsafe-eval' 
-                   'wasm-unsafe-eval';
-                 style-src 'self' 
-                   'unsafe-inline' 
-                   https://cdn.jsdelivr.net;
-                 img-src 'self' 
-                   data: 
-                   https://cdn.jsdelivr.net 
-                   https://www.googletagmanager.com 
-                   https://x.com 
-                   https://t.me;
-                 font-src 'self';
-                 connect-src 'self' 
-                   https://*.google-analytics.com 
-                   https://*.googletagmanager.com 
-                   https://*.metamask.io;
-                 frame-src 'none';
-                 object-src 'none';
-                 base-uri 'self';
-                 form-action 'self';">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
@@ -85,8 +60,8 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <button id="darkModeToggle" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
+      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
   </header>
 
@@ -104,14 +79,14 @@
 
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
-      <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
+      <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
     </section>
 
     <!-- Claim Section -->
     <section class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
       <h2 class="section-title">Claim $FLUFFI</h2>
       <p class="mb-2">Once the presale ends, you can claim your purchased tokens here.</p>
-      <button id="claimButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Claim Tokens</button>
+      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Claim Tokens</button>
     </section>
 
     <!-- Staking Section -->
@@ -119,7 +94,7 @@
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
       <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
     <!-- Tokenomics -->
@@ -220,26 +195,6 @@
       document.documentElement.classList.toggle('dark');
     }
 
-    // Event listeners setup
-    document.addEventListener('DOMContentLoaded', function() {
-      // Wallet connection
-      document.getElementById('walletButton').addEventListener('click', connectWallet);
-      
-      // Buy button
-      document.getElementById('buyButton').addEventListener('click', buyFluffi);
-      
-      // Claim button
-      document.getElementById('claimButton').addEventListener('click', function() {
-        alert('Claim functionality would go here');
-      });
-      
-      // Stake button
-      document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
-      
-      // Dark mode toggle
-      document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-    });
-
     setInterval(() => {
       updateStage();
       updateCountdown();
@@ -248,6 +203,5 @@
     updateStage();
     updateCountdown();
   </script>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </body>
 </html>
