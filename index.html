@@ -132,102 +132,109 @@
     </div>
   </footer>
 <script>
+  const contractAddress = 'YOUR_CONTRACT_ADDRESS_HERE'; // Replace with actual deployed address
+  const contractABI = [/* Your ABI Here */];
+
   let provider;
   let signer;
+  let contract;
+  let userWalletAddress = '';
+  const referralKey = 'fluffiRef';
+  let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
-  async function connectWallet() {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-
-        const address = await signer.getAddress();
-        document.getElementById("walletAddress").innerText = "Wallet: " + address;
-
-        console.log("Wallet connected:", address);
-      } catch (err) {
-        console.error("User rejected wallet connection:", err);
-        alert("Wallet connection failed.");
-      }
+  // Initialize Web3
+  async function initWeb3() {
+    if (window.ethereum) {
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      contract = new ethers.Contract(contractAddress, contractABI, signer);
     } else {
-      alert("MetaMask not found. Please install it.");
+      alert('MetaMask not detected.');
     }
   }
 
-  document.getElementById("connectWallet").addEventListener("click", connectWallet);
-</script>
-  <script>
-    let userWalletAddress = null;
-    const initialPrice = 0.0001;
-    const stages = 15;
-    const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+  // Connect wallet
+  async function connectWallet() {
+    try {
+      await initWeb3();
+      const accounts = await provider.send('eth_requestAccounts', []);
+      userWalletAddress = accounts[0];
+      document.getElementById('wallet-address').innerText = `Connected: ${userWalletAddress}`;
+    } catch (err) {
+      console.error(err);
+      alert('Failed to connect wallet.');
+    }
+  }
 
-    function updateStage() {
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-      document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
+  // Buy function
+  async function buyFluffi() {
+    const amount = parseFloat(document.getElementById('amountInput').value);
+    const ref = localStorage.getItem(referralKey);
+
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
     }
 
-    function updateCountdown() {
-      const end = startTime + 30 * 24 * 60 * 60 * 1000;
-      const left = end - Date.now();
-      const days = Math.floor(left / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((left / (1000 * 60)) % 60);
-      const seconds = Math.floor((left / 1000) % 60);
-      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount.');
+      return;
     }
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
-        } catch (error) {
-          alert('Wallet connection denied.');
-        }
+    try {
+      await initWeb3();
+      const value = ethers.utils.parseEther(amount.toString());
+      const tx = await contract.contribute(ref || ethers.constants.AddressZero, { value });
+      await tx.wait();
+
+      // Simulate referral reward tracking
+      if (ref && ref !== userWalletAddress) {
+        const reward = amount * 0.1;
+        leaderboard[ref] = (leaderboard[ref] || 0) + reward;
+        localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
+        renderLeaderboard();
+        alert(`You bought ${amount} BNB of FLUFFI.\nYour referrer earned ${reward.toFixed(2)} BNB.`);
       } else {
-        alert('MetaMask not detected.');
+        alert(`You bought ${amount} BNB of FLUFFI.`);
       }
+    } catch (err) {
+      console.error('Buy failed:', err);
+      alert('Transaction failed.');
+    }
+  }
+
+  // Render leaderboard
+  function renderLeaderboard() {
+    const leaderboardDiv = document.getElementById('leaderboard');
+    leaderboardDiv.innerHTML = '';
+    const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]);
+    sorted.forEach(([address, reward], index) => {
+      const item = document.createElement('div');
+      item.className = 'leaderboard-item';
+      item.innerHTML = `
+        <span>#${index + 1}</span>
+        <span>${address.slice(0, 6)}...${address.slice(-4)}</span>
+        <span>${reward.toFixed(2)} BNB</span>
+      `;
+      leaderboardDiv.appendChild(item);
+    });
+  }
+
+  // On load
+  document.addEventListener('DOMContentLoaded', () => {
+    renderLeaderboard();
+
+    // Handle referral from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref && ethers.utils.isAddress(ref)) {
+      localStorage.setItem(referralKey, ref);
     }
 
-    function buyFluffi() {
-      const amount = document.getElementById('amountInput').value;
-      const ref = document.getElementById('refInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
-    }
-
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
-    }
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
-
-    setInterval(() => {
-      updateStage();
-      updateCountdown();
-    }, 1000);
-
-    updateStage();
-    updateCountdown();
-  </script>
+    // Bind wallet connect and buy button
+    document.getElementById('connectButton').addEventListener('click', connectWallet);
+    document.getElementById('buyButton').addEventListener('click', buyFluffi);
+  });
+</script>
 </body>
 </html>
