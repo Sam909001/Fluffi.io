@@ -10,7 +10,13 @@ let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
 // --- Buy Function With Referral ---
 function buyFluffi() {
-  const amount = parseFloat(document.getElementById('amountInput').value);
+ const amountInput = document.getElementById('amountInput');
+if (amountInput) {
+  const amount = parseFloat(amountInput.value);
+  // continue logic...
+} else {
+  console.error('Element with id "amountInput" not found.');
+}
   const ref = localStorage.getItem('fluffiRef');
 
   if (!userWalletAddress) {
