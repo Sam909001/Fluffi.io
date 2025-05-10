@@ -204,4 +204,33 @@
     updateCountdown();
   </script>
 </body>
+  <div id="walletWarning" style="display: none; background: #fff3cd; color: #856404; padding: 10px; border: 1px solid #ffeeba; border-radius: 5px; margin: 10px 0; font-size: 14px;">
+  ⚠️ Wallet not detected or blocked by browser extension. Please disable ad-blockers and ensure MetaMask is installed.
+</div>
+
+<script>
+  async function checkWalletAvailability() {
+    const warning = document.getElementById('walletWarning');
+    
+    // Check for MetaMask
+    if (!window.ethereum) {
+      warning.style.display = 'block';
+      return;
+    }
+
+    try {
+      // Try requesting accounts
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if (!accounts || accounts.length === 0) {
+        warning.style.display = 'block';
+      }
+    } catch (err) {
+      // Show warning if connection was denied or blocked
+      warning.style.display = 'block';
+    }
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', checkWalletAvailability);
+</script>
 </html>
