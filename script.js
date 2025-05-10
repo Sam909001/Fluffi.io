@@ -175,3 +175,28 @@ const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constru
     "type": "function"
   }
 ];
+async function stakeFluffi() {
+  const stakeInput = document.getElementById('stakeInput').value;
+  const stakeAmount = parseFloat(stakeInput);
+
+  if (!signer || !contract) {
+    alert('Please connect your wallet first.');
+    return;
+  }
+
+  if (isNaN(stakeAmount) || stakeAmount <= 0) {
+    alert('Please enter a valid staking amount.');
+    return;
+  }
+
+  try {
+    // Convert staking amount to the token's smallest unit (e.g., wei)
+    const tokenAmount = ethers.utils.parseUnits(stakeAmount.toString(), 18); // Adjust decimals as per your token
+    const tx = await contract.stakeTokens(tokenAmount);
+    await tx.wait();
+    alert('Staking successful!');
+  } catch (error) {
+    console.error('Staking failed:', error);
+    alert('Staking failed. See console for details.');
+  }
+}
