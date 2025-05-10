@@ -112,39 +112,40 @@ function updateCountdown() {
   if (countdown) countdown.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      userWalletAddress = accounts[0];
-      document.getElementById('walletButton').textContent = 'Connected';
-    } catch (error) {
-      alert('Wallet connection denied.');
-    }
-  } else {
-    alert('MetaMask not detected.');
+async function buyFluffi() {
+  const amount = parseFloat(document.getElementById('amountInput').value);
+  const ref = localStorage.getItem('fluffiRef');
+
+  if (!userWalletAddress) {
+    alert('Please connect your wallet first.');
+    return;
   }
-}
 
-function toggleDarkMode() {
-  document.documentElement.classList.toggle('dark');
-}
-
-function getReferrerFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
-  if (ref) {
-    localStorage.setItem('referrer', ref);
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid amount.');
+    return;
   }
-}
 
-function applyReferralField() {
-  const savedRef = localStorage.getItem('referrer');
-  if (savedRef) {
-    const refInput = document.getElementById('refInput');
-    if (refInput) {
-      refInput.value = savedRef;
+  try {
+    await initWeb3();
+
+    const value = ethers.utils.parseEther(amount.toString()); // BNB amount
+    const tx = await contract.contribute(ref || ethers.constants.AddressZero, { value });
+    await tx.wait();
+
+    // Simulate leaderboard
+    if (ref && ref !== userWalletAddress) {
+      const reward = amount * 0.1;
+      leaderboard[ref] = (leaderboard[ref] || 0) + reward;
+      localStorage.setItem('fluffiLeaderboard', JSON.stringify(leaderboard));
+      renderLeaderboard();
+      alert(`You bought $${amount} of FLUFFI. Referrer earned $${reward.toFixed(2)} bonus.`);
+    } else {
+      alert(`You bought $${amount} of FLUFFI.`);
     }
+  } catch (err) {
+    console.error('Buy failed:', err);
+    alert('Transaction failed.');
   }
 }
 
