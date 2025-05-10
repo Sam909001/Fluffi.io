@@ -10,7 +10,7 @@ let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
 // --- Buy Function With Referral ---
 function buyFluffi() {
-document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
   // Example values for stage and price – replace with your actual logic if needed
   const stage = 0; // Stage 1 (0-based index)
   const stages = 15; // Total stages
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle buy button click
   const amountInput = document.getElementById('amountInput');
   const buyButton = document.getElementById('buyButton');
+
   if (amountInput && buyButton) {
     buyButton.addEventListener('click', () => {
       const amount = parseFloat(amountInput.value);
@@ -42,6 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('❌ amountInput or buyButton not found in the DOM.');
   }
 });
+
+  if (!userWalletAddress) {
+    alert('Please connect your wallet first.');
+    return;
+  }
+
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+
   // Simulated Referral Reward
   if (ref && ref !== userWalletAddress) {
     const reward = amount * 0.10; // 10% bonus to referrer
