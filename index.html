@@ -131,7 +131,32 @@
       </a>
     </div>
   </footer>
+<script>
+  let provider;
+  let signer;
 
+  async function connectWallet() {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+
+        const address = await signer.getAddress();
+        document.getElementById("walletAddress").innerText = "Wallet: " + address;
+
+        console.log("Wallet connected:", address);
+      } catch (err) {
+        console.error("User rejected wallet connection:", err);
+        alert("Wallet connection failed.");
+      }
+    } else {
+      alert("MetaMask not found. Please install it.");
+    }
+  }
+
+  document.getElementById("connectWallet").addEventListener("click", connectWallet);
+</script>
   <script>
     let userWalletAddress = null;
     const initialPrice = 0.0001;
