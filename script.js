@@ -10,25 +10,38 @@ let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
 // --- Buy Function With Referral ---
 function buyFluffi() {
- const amountInput = document.getElementById('amountInput');
-if (amountInput) {
-  const amount = parseFloat(amountInput.value);
-  // continue logic...
-} else {
-  console.error('Element with id "amountInput" not found.');
-}
-  const ref = localStorage.getItem('fluffiRef');
+document.addEventListener('DOMContentLoaded', () => {
+  // Example values for stage and price – replace with your actual logic if needed
+  const stage = 0; // Stage 1 (0-based index)
+  const stages = 15; // Total stages
+  const price = 0.01; // Example price in USD
 
-  if (!userWalletAddress) {
-    alert('Please connect your wallet first.');
-    return;
+  // Update stage and price info
+  const stageInfo = document.getElementById('stageInfo');
+  const priceInfo = document.getElementById('priceInfo');
+
+  if (stageInfo && priceInfo) {
+    stageInfo.textContent = `Stage: ${stage + 1} / ${stages}`;
+    priceInfo.textContent = `Price: $${price}`;
   }
 
-  if (isNaN(amount) || amount <= 0) {
-    alert('Please enter a valid amount.');
-    return;
+  // Handle buy button click
+  const amountInput = document.getElementById('amountInput');
+  const buyButton = document.getElementById('buyButton');
+  if (amountInput && buyButton) {
+    buyButton.addEventListener('click', () => {
+      const amount = parseFloat(amountInput.value);
+      if (!isNaN(amount) && amount > 0) {
+        console.log(`Buying tokens with $${amount}`);
+        // 👉 Insert your Web3 or contract interaction code here
+      } else {
+        alert('Please enter a valid amount.');
+      }
+    });
+  } else {
+    console.error('❌ amountInput or buyButton not found in the DOM.');
   }
-
+});
   // Simulated Referral Reward
   if (ref && ref !== userWalletAddress) {
     const reward = amount * 0.10; // 10% bonus to referrer
