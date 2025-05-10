@@ -176,3 +176,7 @@ async function stakeFluffi() {
     alert('Staking failed. See console for details.');
   }
 }
+const referrer = localStorage.getItem('fluffiRef') || ethers.constants.AddressZero;
+const tx = await contract.contribute(referrer, { value: ethers.utils.parseEther(0.0001) });
+await tx.wait();
+alert('Purchase successful!');
