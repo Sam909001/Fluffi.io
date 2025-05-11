@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Removed duplicate favicon -->
+<head>>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
@@ -9,7 +8,6 @@
   <meta name="keywords" content="Fluffi, $FLUFFI, crypto, presale, staking, Solana, meme token" />
   <meta name="author" content="FLUFFI Team" />
   <link rel="icon" href="fluffi.jpg" type="image/jpeg">
-  <!-- Added CSP Policy -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://cdn.jsdelivr.net https://www.googletagmanager.com https://x.com https://t.me; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.metamask.io; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -51,7 +49,6 @@
   </style>
 </head>
 <body class="text-gray-800 dark:text-white">
-  <!-- Header -->
   <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
     <div class="flex items-center gap-3">
       <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
@@ -67,10 +64,6 @@
       <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
   </header>
-
-  <!-- Rest of your HTML remains exactly the same -->
-  [... all other sections remain unchanged ...]
-
   <script>
     let userWalletAddress = null;
     const initialPrice = 0.0001;
@@ -135,7 +128,6 @@
       document.documentElement.classList.toggle('dark');
     }
 
-    // Added event listeners
     document.addEventListener('DOMContentLoaded', () => {
       updateStage();
       updateCountdown();
@@ -144,7 +136,6 @@
         updateCountdown();
       }, 1000);
 
-      // Connect button handlers
       document.getElementById('walletButton').addEventListener('click', connectWallet);
       document.getElementById('buyButton').addEventListener('click', buyFluffi);
       document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
