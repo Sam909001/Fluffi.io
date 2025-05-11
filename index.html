@@ -140,106 +140,171 @@
     </div>
   </footer>
 
-  <script>
-    let userWalletAddress = null;
-    const initialPrice = 0.0001;
-    const stages = 15;
-    const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+  <<script type="module">
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.8.1/+esm";
 
-    function updateStage() {
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-      document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
-    }
+// --- Global Variables ---
+let provider, signer, contract, userWalletAddress = null;
+const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+const contractABI = [
+  {
+    "inputs": [{ "internalType": "address", "name": "referrer", "type": "address" }],
+    "name": "contribute",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }],
+    "name": "stakeTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
-    function updateCountdown() {
-      const end = startTime + 30 * 24 * 60 * 60 * 1000;
-      const left = end - Date.now();
-      const days = Math.floor(left / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((left / (1000 * 60)) % 60);
-      const seconds = Math.floor((left / 1000) % 60);
-      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
+// --- Referral Tracking ---
+const urlParams = new URLSearchParams(window.location.search);
+const refWallet = urlParams.get('ref');
+if (refWallet) {
+  localStorage.setItem('fluffiRef', refWallet);
+}
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
-        } catch (error) {
-          alert('Wallet connection denied.');
-        }
-      } else {
-        alert('MetaMask not detected.');
-      }
-    }
+// --- Leaderboard Simulation (Local Only) ---
+let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
 
-    function buyFluffi() {
-      const amount = document.getElementById('amountInput').value;
-      const ref = document.getElementById('refInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
-    }
-
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
-    }
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
-
-    setInterval(() => {
-      updateStage();
-      updateCountdown();
-    }, 1000);
-
-    updateStage();
-    updateCountdown();
-  </script>
-</body>
-  <div id="walletWarning" style="display: none; background: #fff3cd; color: #856404; padding: 10px; border: 1px solid #ffeeba; border-radius: 5px; margin: 10px 0; font-size: 14px;">
-  ⚠️ Wallet not detected or blocked by browser extension. Please disable ad-blockers and ensure MetaMask is installed.
-</div>
-
-<script>
-  async function checkWalletAvailability() {
-    const warning = document.getElementById('walletWarning');
-    
-    // Check for MetaMask
-    if (!window.ethereum) {
-      warning.style.display = 'block';
-      return;
-    }
-
-    try {
-      // Try requesting accounts
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      if (!accounts || accounts.length === 0) {
-        warning.style.display = 'block';
-      }
-    } catch (err) {
-      // Show warning if connection was denied or blocked
-      warning.style.display = 'block';
-    }
+// --- Initialize Wallet Connection ---
+async function initWeb3() {
+  if (!window.ethereum) {
+    alert("MetaMask not detected");
+    return;
   }
 
-  // Run on page load
-  document.addEventListener('DOMContentLoaded', checkWalletAvailability);
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  provider = new ethers.BrowserProvider(window.ethereum);
+  signer = await provider.getSigner();
+  userWalletAddress = await signer.getAddress();
+  contract = new ethers.Contract(contractAddress, contractABI, signer);
+  console.log('✅ Wallet connected:', userWalletAddress);
+}
+
+// --- DOM Ready ---
+document.addEventListener('DOMContentLoaded', () => {
+  updateStage();
+  updateCountdown();
+  renderLeaderboard();
+
+  setInterval(() => {
+    updateStage();
+    updateCountdown();
+  }, 1000);
+
+  const buyButton = document.getElementById('buyButton');
+  const amountInput = document.getElementById('amountInput');
+  if (buyButton && amountInput) {
+    buyButton.addEventListener('click', buyFluffi);
+  }
+
+  const stakeBtn = document.getElementById('stakeButton');
+  if (stakeBtn) stakeBtn.addEventListener('click', stakeFluffi);
+});
+
+// --- Buy Function (BNB/ETH Based) ---
+async function buyFluffi() {
+  const amount = document.getElementById('amountInput').value;
+  const ref = document.getElementById('refInput')?.value || localStorage.getItem('fluffiRef') || '0x0000000000000000000000000000000000000000';
+
+  if (!userWalletAddress || !contract) {
+    alert('Please connect your wallet first.');
+    await initWeb3();
+    return;
+  }
+
+  const ethAmount = parseFloat(amount);
+  if (isNaN(ethAmount) || ethAmount <= 0) {
+    alert('Please enter a valid amount (in BNB or ETH).');
+    return;
+  }
+
+  try {
+    const tx = await contract.contribute(ref, {
+      value: ethers.parseEther(ethAmount.toString())
+    });
+
+    await tx.wait();
+    alert('✅ Transaction successful! You have bought $FLUFFI.');
+  } catch (err) {
+    console.error('❌ Transaction failed:', err);
+    alert('Transaction failed. Please try again.');
+  }
+}
+
+// --- Staking Function ---
+async function stakeFluffi() {
+  const stakeAmount = parseFloat(document.getElementById('stakeInput').value);
+  if (!userWalletAddress || !contract) {
+    alert('Please connect your wallet first.');
+    await initWeb3();
+    return;
+  }
+  if (isNaN(stakeAmount) || stakeAmount <= 0) {
+    alert('Please enter a valid staking amount.');
+    return;
+  }
+
+  try {
+    const tokenAmount = ethers.parseUnits(stakeAmount.toString(), 18);
+    const tx = await contract.stakeTokens(tokenAmount);
+    await tx.wait();
+    alert('✅ Staking successful!');
+  } catch (err) {
+    console.error('Staking failed:', err);
+    alert('Staking failed.');
+  }
+}
+
+// --- Dynamic Stage Pricing ---
+const initialPrice = 0.0001;
+const stages = 15;
+const stageDuration = 1000 * 60 * 60 * 48; // 48 hours
+const startTime = new Date("2025-05-05T12:00:00Z").getTime();
+
+function updateStage() {
+  const now = Date.now();
+  const elapsed = now - startTime;
+  const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
+  const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
+  const stageInfo = document.getElementById('stageInfo');
+  const priceInfo = document.getElementById('priceInfo');
+  if (stageInfo) stageInfo.textContent = `Stage: ${stage + 1} / ${stages}`;
+  if (priceInfo) priceInfo.textContent = `Price: $${price}`;
+}
+
+// --- Countdown Timer ---
+function updateCountdown() {
+  const end = startTime + 30 * 24 * 60 * 60 * 1000;
+  const left = end - Date.now();
+  const days = Math.floor(left / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((left / (1000 * 60)) % 60);
+  const seconds = Math.floor((left / 1000) % 60);
+  const countdown = document.getElementById('countdown');
+  if (countdown) countdown.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+// --- Render Leaderboard (Local) ---
+function renderLeaderboard() {
+  const container = document.getElementById('leaderboard');
+  if (!container) return;
+  container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
+  const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (sorted.length === 0) {
+    container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
+  } else {
+    sorted.forEach(([address, amount], index) => {
+      container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
+    });
+  }
+}
 </script>
 </html>
