@@ -69,47 +69,50 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Buy Function ---
 async function buyFluffi() {
   if (!userWalletAddress) {
-    alert('Please connect your wallet first.');
-    return;
+    await initWeb3(); // Initialize if not connected
+    if (!userWalletAddress) return;
   }
 
+  const contractABI = [
+  {
+    "inputs": [{"name": "referrer", "type": "address"}],
+    "name": "contribute",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  // ... keep other necessary functions
+];
   const usdAmount = parseFloat(document.getElementById('amountInput').value);
-  const ref = document.getElementById('refInput').value || 'none';
-
-  if (isNaN(usdAmount)) { // Fixed missing parenthesis
-    alert('Please enter a valid number');
+  if (isNaN(usdAmount) || usdAmount <= 0) {
+    alert('Please enter valid amount');
     return;
   }
 
   try {
-    // 1. Initialize Web3
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
-    const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
-    
-    // 3. Adjust pricing (edit these formulas)
+    // Use the globally initialized contract
     const ethAmount = usdAmount * 0.0004;
-    const tokensToReceive = usdAmount * 1000;
+    const ref = document.getElementById('refInput').value || ethers.ZeroAddress;
 
-    // 4. Create contract instance
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    // Call the CORRECT function from your ABI
+    const tx = await contract.contribute(ref, {
+      value: ethers.parseEther(ethAmount.toString())
+    });
 
-    // 5. Send transaction (adjust function name if needed)
-    const tx = await contract.buyTokens(
-      ethers.utils.parseUnits(tokensToReceive.toString(), 18),
-      { value: ethers.utils.parseEther(ethAmount.toString()) }
-    );
-
-    alert(`Transaction sent! TX Hash: ${tx.hash}`);
-    
-    // 6. Wait for confirmation (optional)
+    console.log('Transaction sent:', tx.hash);
     const receipt = await tx.wait();
-    alert('Purchase confirmed!');
+    console.log('Confirmed:', receipt);
+    alert('Purchase successful!');
     
   } catch (error) {
     console.error('Purchase failed:', error);
     alert(`Error: ${error.message}`);
+    // Update UI during tx processing
+document.getElementById('buyButton').disabled = true;
+// Re-enable after confirmation
+receipt.wait().then(() => {
+  document.getElementById('buyButton').disabled = false;
+});
   }
 }
 // --- Price + Stage Update ---
