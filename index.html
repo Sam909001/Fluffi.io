@@ -48,7 +48,6 @@
   </style>
 </head>
 <body class="text-gray-800 dark:text-white">
-  <!-- Your existing body content remains unchanged -->
 
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script>
@@ -103,9 +102,7 @@
       if (isNaN(amount) || amount <= 0) return alert('Enter a valid amount.');
       if (ref && !isValidAddress(ref)) return alert('Invalid referral address.');
       alert(`Initiating purchase of $FLUFFI worth $${amount}... (referral: ${ref || 'none'})`);
-
-      // Placeholder for contract call
-      // e.g., const tx = await contract.buyFluffi({ value: ethers.utils.parseEther(amount.toString()) });
+      
     }
 
     async function stakeFluffi() {
@@ -114,8 +111,6 @@
       if (isNaN(amount) || amount <= 0) return alert('Enter a valid amount.');
       alert(`Staking ${amount} $FLUFFI at 90% APY.`);
 
-      // Placeholder for staking logic
-      // e.g., const tx = await stakingContract.stake(ethers.utils.parseUnits(amount.toString(), 18));
     }
 
     function toggleDarkMode() {
