@@ -6,14 +6,14 @@ let provider, signer, contract, userWalletAddress = null;
 const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
 const contractABI = [
   {
-    "inputs": [{ "internalType": "address", "name": "referrer", "type": "address" }],
-    "name": "buyTokens",
+    "inputs": [{"internalType": "address", "name": "referrer", "type": "address"}],
+    "name": "contribute",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }],
+    "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
     "name": "stakeTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -66,35 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (stakeBtn) stakeBtn.addEventListener('click', stakeFluffi);
 });
 
-// --- Buy Function ---
+// --- Fixed Buy Function ---
 async function buyFluffi() {
-  if (!userWalletAddress) {
-    await initWeb3(); // Initialize if not connected
-    if (!userWalletAddress) return;
-  }
-
-  const contractABI = [
-  {
-    "inputs": [{"name": "referrer", "type": "address"}],
-    "name": "contribute",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  // ... keep other necessary functions
-];
-  const usdAmount = parseFloat(document.getElementById('amountInput').value);
-  if (isNaN(usdAmount) || usdAmount <= 0) {
-    alert('Please enter valid amount');
-    return;
-  }
-
+  const buyButton = document.getElementById('buyButton');
+  buyButton.disabled = true;
+  
   try {
-    // Use the globally initialized contract
+    if (!userWalletAddress) {
+      await initWeb3();
+      if (!userWalletAddress) return;
+    }
+
+    const usdAmount = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(usdAmount) {
+      alert('Please enter valid amount');
+      return;
+    }
+
     const ethAmount = usdAmount * 0.0004;
     const ref = document.getElementById('refInput').value || ethers.ZeroAddress;
 
-    // Call the CORRECT function from your ABI
     const tx = await contract.contribute(ref, {
       value: ethers.parseEther(ethAmount.toString())
     });
@@ -107,14 +98,11 @@ async function buyFluffi() {
   } catch (error) {
     console.error('Purchase failed:', error);
     alert(`Error: ${error.message}`);
-    // Update UI during tx processing
-document.getElementById('buyButton').disabled = true;
-// Re-enable after confirmation
-receipt.wait().then(() => {
-  document.getElementById('buyButton').disabled = false;
-});
+  } finally {
+    buyButton.disabled = false;
   }
 }
+
 // --- Price + Stage Update ---
 const initialPrice = 0.0001;
 const stages = 15;
