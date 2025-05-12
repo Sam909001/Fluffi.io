@@ -68,82 +68,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Fixed Buy Function ---
 async function buyFluffi() {
-  const buyButton = document.getElementById('buyButton');
-  buyButton.disabled = true;
-  
+  if (!window.ethereum) {
+    alert("MetaMask not installed");
+    return;
+  }
+
+  // 1. Check network (BSC Testnet = 0x61, Mainnet = 0x38)
+  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  if (chainId !== "0x61") { // BSC Testnet
+    alert("Please switch to BSC Testnet");
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: "0x61" }],
+    });
+    return;
+  }
+
+  // 2. Get inputs
+  const usdAmount = parseFloat(document.getElementById('amountInput').value);
+  if (isNaN(usdAmount)) {
+    alert("Invalid amount");
+    return;
+  }
+
   try {
-    if (!userWalletAddress) {
-      await initWeb3();
-      if (!userWalletAddress) return;
-    }
+    // 3. Initialize provider (use existing if you have global one)
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(
+      "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297", // Your testnet address
+      contractABI,
+      signer
+    );
 
-    const usdAmount = parseFloat(document.getElementById('amountInput').value);
-    if (isNaN(usdAmount) {
-      alert('Please enter valid amount');
-      return;
-    }
+    // 4. Calculate ETH amount (adjust rate as needed)
+    const ethAmount = (usdAmount * 0.0004).toFixed(6); // $1 = 0.0004 BNB
 
-    const ethAmount = usdAmount * 0.0004;
-    const ref = document.getElementById('refInput').value || ethers.ZeroAddress;
-
-    const tx = await contract.contribute(ref, {
+    // 5. Send transaction
+    const tx = await contract.contribute(ethers.ZeroAddress, { // No referral
       value: ethers.parseEther(ethAmount.toString())
     });
-
-    console.log('Transaction sent:', tx.hash);
-    const receipt = await tx.wait();
-    console.log('Confirmed:', receipt);
-    alert('Purchase successful!');
     
+    alert(`Transaction sent! Hash: ${tx.hash}`);
+    await tx.wait();
+    alert("Purchase confirmed!");
+
   } catch (error) {
-    console.error('Purchase failed:', error);
+    console.error("Buy failed:", error);
     alert(`Error: ${error.message}`);
-  } finally {
-    buyButton.disabled = false;
-  }
-}
-
-// --- Price + Stage Update ---
-const initialPrice = 0.0001;
-const stages = 15;
-const stageDuration = 1000 * 60 * 60 * 48; // 48 hours
-const startTime = new Date("2025-05-05T12:00:00Z").getTime();
-
-function updateStage() {
-  const now = Date.now();
-  const elapsed = now - startTime;
-  const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-  const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-  const stageInfo = document.getElementById('stageInfo');
-  const priceInfo = document.getElementById('priceInfo');
-  if (stageInfo) stageInfo.textContent = `Stage: ${stage + 1} / ${stages}`;
-  if (priceInfo) priceInfo.textContent = `Price: $${price}`;
-}
-
-// --- Countdown Timer ---
-function updateCountdown() {
-  const end = startTime + 30 * 24 * 60 * 60 * 1000;
-  const left = end - Date.now();
-  const days = Math.floor(left / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((left / (1000 * 60)) % 60);
-  const seconds = Math.floor((left / 1000) % 60);
-  const countdown = document.getElementById('countdown');
-  if (countdown) countdown.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-
-// --- Render Leaderboard ---
-function renderLeaderboard() {
-  const container = document.getElementById('leaderboard');
-  if (!container) return;
-  container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
-  const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  if (sorted.length === 0) {
-    container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
-  } else {
-    sorted.forEach(([address, amount], index) => {
-      container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
-    });
   }
 }
 </script>
