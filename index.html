@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
   <meta name="description" content="$FLUFFI is a Solana Layer 2 meme token with presale and staking features. Join the community and earn rewards." />
   <meta name="keywords" content="Fluffi, $FLUFFI, crypto, presale, staking, Solana, meme token" />
   <meta name="author" content="FLUFFI Team" />
+  <!-- Added CSP Policy -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self';
+                 script-src 'self' 
+                   https://cdn.jsdelivr.net 
+                   'unsafe-eval' 
+                   'wasm-unsafe-eval';
+                 connect-src 'self' 
+                   https://*.ethers.org 
+                   https://bsc-testnet.publicnode.com;
+                 style-src 'self' 
+                   'unsafe-inline' 
+                   https://cdn.jsdelivr.net;">
+  <link rel="icon" href="fluffi.jpg" type="image/jpeg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -17,49 +29,37 @@
     gtag('js', new Date());
     gtag('config', 'G-XXXXXXXXXX');
   </script>
-
   <style>
     body {
       background: linear-gradient(to bottom, #fff0f5, #fff9e6);
     }
-
     .timer {
       font-family: monospace;
     }
-
     .section-title {
-      font-size: 1.5rem; /* Tailwind's text-2xl */
-      font-weight: bold;
-      margin-bottom: 1rem;
+      @apply text-2xl font-bold mb-4;
     }
-
     .dark {
       background: #111827;
       color: white;
     }
-
     .dark .text-gray-800 {
       color: white !important;
     }
-
     .dark .bg-white {
       background-color: #1f2937 !important;
     }
-
     .dark .text-gray-600 {
       color: #d1d5db !important;
     }
-
     .dark .bg-gray-200 {
       background-color: #374151 !important;
     }
-
     .dark .text-blue-600 {
       color: #60a5fa !important;
     }
   </style>
 </head>
-
 <body class="text-gray-800 dark:text-white">
   <!-- Header -->
   <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
@@ -72,8 +72,8 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
+      <button id="darkModeToggle" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
     </nav>
   </header>
 
@@ -91,7 +91,7 @@
 
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
-      <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
+      <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
     </section>
 
     <!-- Claim Section -->
@@ -106,7 +106,7 @@
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
       <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+      <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
     <!-- Tokenomics -->
@@ -143,12 +143,142 @@
     </div>
   </footer>
 
-  <script>
-    let userWalletAddress = null;
+  <script type="module">
+    import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.8.1/+esm";
+
+    // --- Global Variables ---
+    let provider, signer, contract, userWalletAddress = null;
+    const contractAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+    const contractABI = [
+      {
+        "inputs": [{"internalType": "address", "name": "referrer", "type": "address"}],
+        "name": "contribute",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
+        "name": "stakeTokens",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ];
+
+    // --- Referral Tracking ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const refWallet = urlParams.get('ref');
+    if (refWallet) {
+      localStorage.setItem('fluffiRef', refWallet);
+    }
+
+    // --- Leaderboard Simulation ---
+    let leaderboard = JSON.parse(localStorage.getItem('fluffiLeaderboard')) || {};
+
+    // --- Init Wallet ---
+    async function initWeb3() {
+      if (!window.ethereum) {
+        alert("MetaMask not detected");
+        return;
+      }
+
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      userWalletAddress = await signer.getAddress();
+      contract = new ethers.Contract(contractAddress, contractABI, signer);
+      document.getElementById('walletButton').textContent = userWalletAddress.slice(0, 6) + '...';
+      console.log('✅ Wallet connected:', userWalletAddress);
+    }
+
+    // --- Dark Mode Toggle ---
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    // --- Buy Function ---
+    async function buyFluffi() {
+      const buyButton = document.getElementById('buyButton');
+      buyButton.disabled = true;
+      
+      try {
+        if (!window.ethereum) {
+          alert("MetaMask not installed");
+          return;
+        }
+
+        // Check network (BSC Testnet = 0x61)
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (chainId !== "0x61") {
+          alert("Please switch to BSC Testnet");
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: "0x61" }],
+          });
+          return;
+        }
+
+        const usdAmount = parseFloat(document.getElementById('amountInput').value);
+        if (isNaN(usdAmount) {
+          alert("Invalid amount");
+          return;
+        }
+
+        const ethAmount = (usdAmount * 0.0004).toFixed(6); // $1 = 0.0004 BNB
+        const ref = document.getElementById('refInput').value || ethers.ZeroAddress;
+
+        const tx = await contract.contribute(ref, {
+          value: ethers.parseEther(ethAmount.toString())
+        });
+        
+        alert(`Transaction sent! Hash: ${tx.hash}`);
+        await tx.wait();
+        alert("Purchase confirmed!");
+        
+      } catch (error) {
+        console.error("Buy failed:", error);
+        alert(`Error: ${error.message}`);
+      } finally {
+        buyButton.disabled = false;
+      }
+    }
+
+    // --- Stake Function ---
+    async function stakeFluffi() {
+      const stakeButton = document.getElementById('stakeButton');
+      stakeButton.disabled = true;
+      
+      try {
+        if (!userWalletAddress) {
+          await initWeb3();
+          if (!userWalletAddress) return;
+        }
+
+        const amount = document.getElementById('stakeInput').value;
+        if (!amount || isNaN(amount)) {
+          alert("Invalid amount");
+          return;
+        }
+
+        const tx = await contract.stakeTokens(ethers.parseUnits(amount, 18));
+        alert(`Staking initiated! TX Hash: ${tx.hash}`);
+        await tx.wait();
+        alert("Staking confirmed!");
+        
+      } catch (error) {
+        console.error("Stake failed:", error);
+        alert(`Error: ${error.message}`);
+      } finally {
+        stakeButton.disabled = false;
+      }
+    }
+
+    // --- Price + Stage Update ---
     const initialPrice = 0.0001;
     const stages = 15;
     const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+    const startTime = new Date("2025-05-05T12:00:00Z").getTime();
 
     function updateStage() {
       const now = Date.now();
@@ -160,6 +290,7 @@
       document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
     }
 
+    // --- Countdown Timer ---
     function updateCountdown() {
       const end = startTime + 30 * 24 * 60 * 60 * 1000;
       const left = end - Date.now();
@@ -170,50 +301,37 @@
       document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
-        } catch (error) {
-          alert('Wallet connection denied.');
-        }
+    // --- Render Leaderboard ---
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboard');
+      if (!container) return;
+      container.innerHTML = '<h3 class="text-lg font-bold mb-2">Top Referrers</h3>';
+      const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      if (sorted.length === 0) {
+        container.innerHTML += '<p class="text-sm text-gray-500">No referrals yet.</p>';
       } else {
-        alert('MetaMask not detected.');
+        sorted.forEach(([address, amount], index) => {
+          container.innerHTML += `<p class="text-sm">${index + 1}. ${address} - $${amount.toFixed(2)}</p>`;
+        });
       }
     }
 
-    function buyFluffi() {
-      const amount = document.getElementById('amountInput').value;
-      const ref = document.getElementById('refInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
-    }
-
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
-    }
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
-
-    setInterval(() => {
+    // --- Initialize ---
+    document.addEventListener('DOMContentLoaded', () => {
       updateStage();
       updateCountdown();
-    }, 1000);
+      renderLeaderboard();
+      setInterval(() => {
+        updateStage();
+        updateCountdown();
+      }, 1000);
 
-    updateStage();
-    updateCountdown();
+      // Event Listeners
+      document.getElementById('walletButton').addEventListener('click', initWeb3);
+      document.getElementById('buyButton').addEventListener('click', buyFluffi);
+      document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
+      document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+    });
   </script>
 </body>
 </html>
