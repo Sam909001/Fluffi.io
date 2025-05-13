@@ -150,7 +150,58 @@
       document.getElementById('priceInfo').textContent = `Price: $${price}`;
       document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
     }
+    
+const BSC_TESTNET_ID = "0x61";
 
+async function buyFluffi() {
+  const buyButton = document.getElementById('buyButton');
+  buyButton.disabled = true;
+  
+  try {
+    if (!userWalletAddress) {
+      await initWeb3();
+      if (!userWalletAddress) {
+        buyButton.disabled = false;
+        return;
+      }
+    }
+
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if (chainId !== BSC_TESTNET_ID) {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: BSC_TESTNET_ID }],
+      });
+      buyButton.disabled = false;
+      return;
+    }
+
+    const usdAmount = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(usdAmount)) {
+      alert("Please enter a valid amount");
+      return;
+    }
+
+    const bnbAmount = (usdAmount * 0.004).toFixed(6);
+    
+    const tx = await contract.contribute(ethers.ZeroAddress, {
+      value: ethers.parseEther(bnbAmount.toString())
+    });
+
+    alert(`Payment sent! TX Hash: ${tx.hash}`);
+    await tx.wait();
+    alert("Tokens purchased!");
+
+  } catch (error) {
+    console.error("Purchase failed:", error);
+    alert(`Error: ${error.message}`);
+  } finally {
+    buyButton.disabled = false;
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+});
+    
     function updateCountdown() {
       const end = startTime + 30 * 24 * 60 * 60 * 1000;
       const left = end - Date.now();
