@@ -60,9 +60,8 @@
       <a href="#staking" class="hover:underline">Staking</a>
       <a href="#tokenomics" class="hover:underline">Tokenomics</a>
       <a href="#faq" class="hover:underline">FAQ</a>
-      <button onclick="toggleDarkMode()" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
-      <button onclick="connectWallet()" id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
-    </nav>
+     <button id="darkModeButton" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
   </header>
 
   <main class="p-6 max-w-4xl mx-auto">
@@ -79,8 +78,7 @@
 
       <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
       <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
-      <button onclick="buyFluffi()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
-    </section>
+    <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
 
     <!-- Claim Section -->
     <section class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
@@ -94,7 +92,7 @@
       <h2 class="section-title">Stake Your $FLUFFI</h2>
       <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
       <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
-      <button onclick="stakeFluffi()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+     <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
     </section>
 
     <!-- Tokenomics -->
@@ -131,77 +129,97 @@
     </div>
   </footer>
 
-  <script>
-    let userWalletAddress = null;
-    const initialPrice = 0.0001;
-    const stages = 15;
-    const stageDuration = 1000 * 60 * 60 * 48;
-    const startTime = Date.now();
+ <script>
+  let userWalletAddress = null;
 
-    function updateStage() {
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const stage = Math.min(Math.floor(elapsed / stageDuration), stages - 1);
-      const price = (initialPrice * Math.pow(1.05, stage)).toFixed(6);
-      document.getElementById('stageInfo').textContent = `Stage: ${stage + 1} / ${stages}`;
-      document.getElementById('priceInfo').textContent = `Price: $${price}`;
-      document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
-    }
-
-    function updateCountdown() {
-      const end = startTime + 30 * 24 * 60 * 60 * 1000;
-      const left = end - Date.now();
-      const days = Math.floor(left / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((left / (1000 * 60)) % 60);
-      const seconds = Math.floor((left / 1000) % 60);
-      document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
-        } catch (error) {
-          alert('Wallet connection denied.');
-        }
-      } else {
-        alert('MetaMask not detected.');
+  // Connect Wallet Function
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userWalletAddress = accounts[0];
+        document.getElementById('walletButton').textContent = 'Connected';
+        alert('Wallet connected: ' + userWalletAddress);
+      } catch (error) {
+        console.error(error);
+        alert('Wallet connection failed.');
       }
+    } else {
+      alert('Please install MetaMask to connect your wallet.');
+    }
+  }
+
+  // Buy Fluffi Function
+  async function buyFluffi() {
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
     }
 
-    function buyFluffi() {
-      const amount = document.getElementById('amountInput').value;
-      const ref = document.getElementById('refInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
+    const amount = document.getElementById('amountInput').value;
+    const ref = document.getElementById('refInput').value;
+
+    if (!amount || isNaN(amount)) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+
+    alert(`Buying $FLUFFI for $${amount} with referral: ${ref || 'none'}`);
+    // Add your smart contract interaction code here
+  }
+
+  // Stake Fluffi Function
+  async function stakeFluffi() {
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
+    }
+
+    const amount = document.getElementById('stakeInput').value;
+    if (!amount || isNaN(amount)) {
+      alert('Please enter a valid amount to stake.');
+      return;
+    }
+
+    alert(`Staking ${amount} $FLUFFI`);
+    // Add staking interaction here
+  }
+
+  // Countdown Timer Logic (Optional enhancement)
+  function startCountdown(endTime) {
+    const countdownEl = document.getElementById('countdown');
+    function updateTimer() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+
+      if (distance <= 0) {
+        countdownEl.innerText = "Presale Ended";
+        clearInterval(timerInterval);
         return;
       }
-      alert(`Buying $FLUFFI worth $${amount} with referral: ${ref || 'none'}`);
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s left`;
     }
 
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
-      if (!userWalletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
-    }
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
+  }
 
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
+  // Attach Event Listeners After DOM Loads
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('walletButton').addEventListener('click', connectWallet);
+    document.getElementById('buyButton').addEventListener('click', buyFluffi);
+    document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
 
-    setInterval(() => {
-      updateStage();
-      updateCountdown();
-    }, 1000);
-
-    updateStage();
-    updateCountdown();
-  </script>
+    // Optional: Start countdown to a specific date/time
+    const endDate = new Date('2025-06-01T00:00:00Z').getTime();
+    startCountdown(endDate);
+  });
+</script>
 </body>
 </html>
