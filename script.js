@@ -48,6 +48,20 @@ async function initWeb3() {
 
 // --- DOM Ready ---
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('walletButton').addEventListener('click', connectWallet);
+  document.getElementById('buyButton').addEventListener('click', buyFluffi);
+  document.getElementById('toggleDarkMode').addEventListener('click', toggleDarkMode);
+  document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
+
+  // Initialize data
+  updateStage();
+  updateCountdown();
+  setInterval(() => {
+    updateStage();
+    updateCountdown();
+  }, 1000);
+});
+
   updateStage();
   updateCountdown();
   renderLeaderboard();
@@ -56,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCountdown();
   }, 1000);
 
+  
   const buyButton = document.getElementById('buyButton');
   const amountInput = document.getElementById('amountInput');
   if (buyButton && amountInput) {
@@ -96,8 +111,8 @@ async function buyFluffi() {
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(
-      "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297", // Your testnet address
-      contractABI,
+      "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297",
+      contractABI,[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"referrer","type":"address"}],"name":"Contribution","type":"event"},{"anonymous":false,"inputs":[],"name":"PresaleEnded","type":"event"},{"inputs":[],"name":"RATE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"referrer","type":"address"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endPresale","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getContributorAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"presaleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"setTokenAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRaised","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
       signer
     );
 
