@@ -188,15 +188,22 @@
       signer = await provider.getSigner();
       userWalletAddress = await signer.getAddress();
       contract = new ethers.Contract(contractAddress, contractABI, signer);
-      document.getElementById('walletButton').textContent = userWalletAddress.slice(0, 6) + '...';
-      console.log('✅ Wallet connected:', userWalletAddress);
-    }
+     // In your script tag
+document.getElementById('walletButton').onclick = async () => {
+  const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+  userWalletAddress = accounts[0];
+  console.log("Connected:", userWalletAddress);
+};
 
-    // --- Dark Mode Toggle ---
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
+document.getElementById('buyButton').onclick = () => {
+  if (!userWalletAddress) return alert("Connect wallet first");
+  console.log("Buy initiated");
+};
 
+document.getElementById('stakeButton').onclick = () => {
+  if (!userWalletAddress) return alert("Connect wallet first");
+  console.log("Stake initiated");
+};
     // --- Buy Function ---
     async function buyFluffi() {
       const buyButton = document.getElementById('buyButton');
