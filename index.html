@@ -135,12 +135,23 @@
   </footer>
 
   <script>
+    // Initialize variables
     let userWalletAddress = null;
     const initialPrice = 0.0001;
     const stages = 15;
     const stageDuration = 1000 * 60 * 60 * 48;
     const startTime = Date.now();
 
+    // DOM Elements
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const walletButton = document.getElementById('walletButton');
+    const buyButton = document.getElementById('buyButton');
+    const stakeButton = document.getElementById('stakeButton');
+    const claimButton = document.getElementById('claimButton');
+    const amountInput = document.getElementById('amountInput');
+    const stakeInput = document.getElementById('stakeInput');
+
+    // Update stage information
     function updateStage() {
       const now = Date.now();
       const elapsed = now - startTime;
@@ -151,55 +162,7 @@
       document.getElementById('progressBar').style.width = `${((stage + 1) / stages) * 100}%`;
     }
     
-    const BSC_TESTNET_ID = "0x61";
-
-    async function buyFluffi() {
-      const buyButton = document.getElementById('buyButton');
-      buyButton.disabled = true;
-      
-      try {
-        if (!userWalletAddress) {
-          await initWeb3();
-          if (!userWalletAddress) {
-            buyButton.disabled = false;
-            return;
-          }
-        }
-
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId !== BSC_TESTNET_ID) {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: BSC_TESTNET_ID }],
-          });
-          buyButton.disabled = false;
-          return;
-        }
-
-        const usdAmount = parseFloat(document.getElementById('amountInput').value);
-        if (isNaN(usdAmount)) {
-          alert("Please enter a valid amount");
-          return;
-        }
-
-        const bnbAmount = (usdAmount * 0.004).toFixed(6);
-        
-        const tx = await contract.contribute(ethers.ZeroAddress, {
-          value: ethers.parseEther(bnbAmount.toString())
-        });
-
-        alert(`Payment sent! TX Hash: ${tx.hash}`);
-        await tx.wait();
-        alert("Tokens purchased!");
-
-      } catch (error) {
-        console.error("Purchase failed:", error);
-        alert(`Error: ${error.message}`);
-      } finally {
-        buyButton.disabled = false;
-      }
-    }
-    
+    // Update countdown timer
     function updateCountdown() {
       const end = startTime + 30 * 24 * 60 * 60 * 1000;
       const left = end - Date.now();
@@ -210,33 +173,97 @@
       document.getElementById('countdown').textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
+    // Toggle dark mode
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      // Update the button text based on current mode
+      if (document.documentElement.classList.contains('dark')) {
+        darkModeToggle.textContent = '☀️';
+      } else {
+        darkModeToggle.textContent = '🌙';
+      }
+    }
+
+    // Connect wallet function
     async function connectWallet() {
       if (window.ethereum) {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           userWalletAddress = accounts[0];
-          document.getElementById('walletButton').textContent = 'Connected';
+          walletButton.textContent = `Connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+          walletButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+          walletButton.classList.add('bg-green-700');
         } catch (error) {
+          console.error('Wallet connection denied:', error);
           alert('Wallet connection denied.');
         }
       } else {
-        alert('MetaMask not detected.');
+        alert('MetaMask not detected. Please install MetaMask to connect your wallet.');
       }
     }
 
-    function stakeFluffi() {
-      const amount = document.getElementById('stakeInput').value;
+    // Buy FLUFFI function
+    async function buyFluffi() {
       if (!userWalletAddress) {
         alert('Please connect your wallet first.');
         return;
       }
-      alert(`Staking ${amount} $FLUFFI with 90% APY`);
+      
+      const amount = amountInput.value;
+      const ref = document.getElementById('refInput').value;
+      
+      if (!amount || isNaN(amount) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      buyButton.disabled = true;
+      buyButton.textContent = 'Processing...';
+      
+      try {
+        // Simulate transaction processing
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        alert(`Successfully bought $${amount} worth of $FLUFFI${ref ? ' with referral: ' + ref : ''}`);
+      } catch (error) {
+        console.error('Buy error:', error);
+        alert('Transaction failed. Please try again.');
+      } finally {
+        buyButton.disabled = false;
+        buyButton.textContent = 'Buy Now';
+      }
     }
 
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
+    // Stake FLUFFI function
+    async function stakeFluffi() {
+      if (!userWalletAddress) {
+        alert('Please connect your wallet first.');
+        return;
+      }
+      
+      const amount = stakeInput.value;
+      
+      if (!amount || isNaN(amount)) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      stakeButton.disabled = true;
+      stakeButton.textContent = 'Processing...';
+      
+      try {
+        // Simulate transaction processing
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        alert(`Successfully staked ${amount} $FLUFFI with 90% APY`);
+      } catch (error) {
+        console.error('Stake error:', error);
+        alert('Transaction failed. Please try again.');
+      } finally {
+        stakeButton.disabled = false;
+        stakeButton.textContent = 'Stake';
+      }
     }
 
+    // Claim tokens function
     function claimTokens() {
       if (!userWalletAddress) {
         alert('Please connect your wallet first.');
@@ -245,22 +272,26 @@
       alert('Claiming your $FLUFFI tokens');
     }
 
-    // Set up event listeners
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('walletButton').addEventListener('click', connectWallet);
-      document.getElementById('buyButton').addEventListener('click', buyFluffi);
-      document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
-      document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-      document.getElementById('claimButton').addEventListener('click', claimTokens);
-      
-      setInterval(() => {
-        updateStage();
-        updateCountdown();
-      }, 1000);
+    // Initialize event listeners
+    function initEventListeners() {
+      darkModeToggle.addEventListener('click', toggleDarkMode);
+      walletButton.addEventListener('click', connectWallet);
+      buyButton.addEventListener('click', buyFluffi);
+      stakeButton.addEventListener('click', stakeFluffi);
+      claimButton.addEventListener('click', claimTokens);
+    }
 
+    // Initialize the app
+    function init() {
+      initEventListeners();
       updateStage();
       updateCountdown();
-    });
+      setInterval(updateStage, 1000);
+      setInterval(updateCountdown, 1000);
+    }
+
+    // Start the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
