@@ -293,5 +293,77 @@
     // Start the app when DOM is loaded
     document.addEventListener('DOMContentLoaded', init);
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+  const presaleAddress = "0x60A94bc12d0d4F782Fd597e5E1222247CFb7E297";
+  const tokenAddress = "0x6F5f48A159Cd46a10faDEED95b29028972554747";
+
+  const abi = [/* <-- paste your ABI JSON array here */];
+
+  let web3;
+  let presaleContract;
+
+  async function initWeb3() {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      presaleContract = new web3.eth.Contract(abi, presaleAddress);
+    } else {
+      alert("MetaMask not detected.");
+    }
+  }
+
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userWalletAddress = accounts[0];
+        document.getElementById('walletButton').textContent = 'Connected';
+        await initWeb3();
+      } catch (error) {
+        alert('Wallet connection denied.');
+      }
+    } else {
+      alert('MetaMask not detected.');
+    }
+  }
+
+  async function buyFluffiHandler() {
+    if (!userWalletAddress) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
+    const usdAmount = parseFloat(document.getElementById('amountInput').value);
+    const refInput = document.getElementById('refInput').value.trim();
+    const refAddress = web3.utils.isAddress(refInput) ? refInput : "0x0000000000000000000000000000000000000000";
+
+    if (!usdAmount || isNaN(usdAmount)) {
+      alert("Please enter a valid amount in USD.");
+      return;
+    }
+
+    // Assuming 1 BNB ≈ 500 USD for estimation (adjust with live data if desired)
+    const bnbValue = usdAmount / 500;
+    const valueInWei = web3.utils.toWei(bnbValue.toString(), "ether");
+
+    try {
+      await presaleContract.methods
+        .contribute(refAddress)
+        .send({
+          from: userWalletAddress,
+          value: valueInWei
+        });
+      alert("Purchase successful!");
+    } catch (err) {
+      console.error(err);
+      alert("Transaction failed: " + err.message);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("walletButton").addEventListener("click", connectWallet);
+    document.querySelector("button.bg-green-500").addEventListener("click", buyFluffiHandler);
+  });
+</script>
 </body>
 </html>
