@@ -1,236 +1,226 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>$FLUFFI Presale & Staking</title>
+  <meta name="description" content="$FLUFFI is a Solana Layer 2 meme token with presale and staking features. Join the community and earn rewards." />
+  <meta name="keywords" content="Fluffi, $FLUFFI, crypto, presale, staking, Solana, meme token" />
+  <meta name="author" content="FLUFFI Team" />
+  <link rel="icon" href="fluffi.jpg" type="image/jpeg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
   <style>
     body {
       background: linear-gradient(to bottom, #fff0f5, #fff9e6);
+    }
+    .timer {
+      font-family: monospace;
+    }
+    .section-title {
+      @apply text-2xl font-bold mb-4;
     }
     .dark {
       background: #111827;
       color: white;
     }
+    .dark .text-gray-800 {
+      color: white !important;
+    }
     .dark .bg-white {
       background-color: #1f2937 !important;
+    }
+    .dark .text-gray-600 {
+      color: #d1d5db !important;
+    }
+    .dark .bg-gray-200 {
+      background-color: #374151 !important;
+    }
+    .dark .text-blue-600 {
+      color: #60a5fa !important;
     }
   </style>
 </head>
 <body class="text-gray-800 dark:text-white">
-  <header class="bg-white dark:bg-gray-900 shadow sticky top-0 z-10 p-4">
-    <div class="flex justify-between items-center max-w-6xl mx-auto">
-      <div class="flex items-center gap-3">
-        <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
-        <h1 class="text-xl font-bold">$FLUFFI</h1>
-      </div>
-      <nav class="flex items-center gap-4">
-        <a href="#presale" class="hover:underline">Presale</a>
-        <a href="#staking" class="hover:underline">Staking</a>
-        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">🌙</button>
-        <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
-          Connect Wallet
-        </button>
-      </nav>
+  <!-- Header -->
+  <header class="flex flex-col md:flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
+    <div class="flex items-center gap-3">
+      <img src="fluffi.jpg" alt="$FLUFFI Logo" class="w-10 h-10">
+      <h1 class="text-xl font-bold">$FLUFFI</h1>
     </div>
+    <nav class="flex flex-wrap gap-4 mt-2 md:mt-0 text-sm">
+      <a href="#presale" class="hover:underline">Presale</a>
+      <a href="#staking" class="hover:underline">Staking</a>
+      <a href="#tokenomics" class="hover:underline">Tokenomics</a>
+      <a href="#faq" class="hover:underline">FAQ</a>
+     <button id="darkModeButton" class="ml-2 bg-gray-300 hover:bg-gray-400 px-2 rounded">🌙</button>
+      <button id="walletButton" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded">Connect Wallet</button>
   </header>
 
-  <main class="max-w-4xl mx-auto p-6">
-    <section id="presale" class="bg-white dark:bg-gray-800 rounded shadow p-6 mb-6">
-      <h2 class="text-2xl font-bold mb-4">Presale is Live!</h2>
-      <div class="space-y-4">
-        <p id="stageInfo">Stage: 1 / 15</p>
-        <p id="priceInfo">Price: $0.000100</p>
-        <div class="w-full bg-gray-200 rounded-full h-4">
-          <div id="progressBar" class="bg-green-500 h-4 rounded-full" style="width: 10%"></div>
-        </div>
-        <p id="countdown" class="font-mono">Ends in: 29d 23h 59m 59s</p>
-        <input type="number" id="amountInput" placeholder="Amount in USD" class="w-full p-3 border rounded">
-        <input type="text" id="refInput" placeholder="Referral wallet (optional)" class="w-full p-3 border rounded">
-        <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded">
-          Buy Now
-        </button>
+  <main class="p-6 max-w-4xl mx-auto">
+    <!-- Presale Section -->
+    <section id="presale" class="mb-6 p-4 bg-white dark:bg-gray-800 rounded shadow">
+      <h2 class="section-title">Presale is Live!</h2>
+      <p id="stageInfo" class="mb-2">Stage: 1 / 15</p>
+      <p id="priceInfo" class="mb-2">Price: $0.000100</p>
+      <p class="mb-2">Referral Bonus: <strong>10%</strong></p>
+      <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+        <div class="bg-green-500 h-4 rounded-full transition-all duration-700 ease-in-out" id="progressBar" style="width: 10%"></div>
       </div>
+      <p class="mb-4 timer" id="countdown"></p>
+
+      <input type="number" placeholder="Amount in USD" id="amountInput" class="w-full p-2 border rounded mb-2 text-black" />
+      <input type="text" placeholder="Referral wallet (optional)" id="refInput" class="w-full p-2 border rounded mb-4 text-black" />
+    <button id="buyButton" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Buy Now</button>
+
+    <!-- Claim Section -->
+    <section class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Claim $FLUFFI</h2>
+      <p class="mb-2">Once the presale ends, you can claim your purchased tokens here.</p>
+      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Claim Tokens</button>
     </section>
 
-    <section id="staking" class="bg-white dark:bg-gray-800 rounded shadow p-6 mb-6">
-      <h2 class="text-2xl font-bold mb-4">Stake Your $FLUFFI</h2>
-      <div class="space-y-4">
-        <p>APY: <strong>90%</strong> | Ends at Listing Date</p>
-        <input type="number" id="stakeInput" placeholder="Amount to stake" class="w-full p-3 border rounded">
-        <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-4 rounded">
-          Stake
-        </button>
-      </div>
+    <!-- Staking Section -->
+    <section id="staking" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Stake Your $FLUFFI</h2>
+      <p class="mb-2">APY: <strong>90%</strong> | Ends at Listing Date</p>
+      <input type="number" placeholder="Amount to stake" id="stakeInput" class="w-full p-2 border rounded mb-2 text-black" />
+     <button id="stakeButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Stake</button>
+    </section>
+
+    <!-- Tokenomics -->
+    <section id="tokenomics" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">Tokenomics</h2>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Total Supply: 10,000,000,000 FLUFFI</li>
+        <li>Presale: 40%</li>
+        <li>Liquidity: 30% (Locked)</li>
+        <li>Staking: 20%</li>
+        <li>Marketing: 5%</li>
+        <li>Team: 5% (Locked)</li>
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="p-4 bg-white dark:bg-gray-800 rounded shadow mb-6">
+      <h2 class="section-title">FAQ</h2>
+      <details class="mb-2"><summary>How do I buy $FLUFFI?</summary><p class="pl-4">Connect your wallet, enter amount in USD, and click "Buy Now".</p></details>
+      <details class="mb-2"><summary>When does staking end?</summary><p class="pl-4">Staking ends at the official listing date.</p></details>
+      <details class="mb-2"><summary>What chains are supported?</summary><p class="pl-4">BNB, ETH, SOL, and USDC.</p></details>
     </section>
   </main>
 
-  <script>
-    // State management
-    const state = {
-      walletConnected: false,
-      darkMode: localStorage.getItem('darkMode') === 'true',
-      stage: 1,
-      price: 0.0001
-    };
+  <footer class="flex justify-between px-4 py-4 text-sm text-gray-600 dark:text-gray-300">
+    <div>© 2025 $FLUFFI Token</div>
+    <div class="flex gap-4">
+      <a href="https://t.me/FLUFFISOLANALAYER2" target="_blank" title="Telegram">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" class="w-5 h-5">
+      </a>
+      <a href="https://x.com/FLUFFIOFFICIAL" target="_blank" title="Twitter">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="Twitter" class="w-5 h-5">
+      </a>
+    </div>
+  </footer>
 
-    // DOM elements
-    const elements = {
-      darkModeToggle: document.getElementById('darkModeToggle'),
-      walletButton: document.getElementById('walletButton'),
-      buyButton: document.getElementById('buyButton'),
-      stakeButton: document.getElementById('stakeButton'),
-      amountInput: document.getElementById('amountInput'),
-      stakeInput: document.getElementById('stakeInput'),
-      stageInfo: document.getElementById('stageInfo'),
-      priceInfo: document.getElementById('priceInfo'),
-      progressBar: document.getElementById('progressBar'),
-      countdown: document.getElementById('countdown')
-    };
+ <script>
+  let userWalletAddress = null;
 
-    // Initialize the app
-    function init() {
-      setupEventListeners();
-      applyDarkMode();
-      startCountdown();
-      updateStageInfo();
-    }
-
-    // Set up all event listeners
-    function setupEventListeners() {
-      elements.darkModeToggle.addEventListener('click', toggleDarkMode);
-      elements.walletButton.addEventListener('click', handleWalletConnection);
-      elements.buyButton.addEventListener('click', handleBuy);
-      elements.stakeButton.addEventListener('click', handleStake);
-    }
-
-    // Dark mode functionality
-    function toggleDarkMode() {
-      state.darkMode = !state.darkMode;
-      localStorage.setItem('darkMode', state.darkMode);
-      applyDarkMode();
-    }
-
-    function applyDarkMode() {
-      if (state.darkMode) {
-        document.documentElement.classList.add('dark');
-        elements.darkModeToggle.textContent = '☀️';
-      } else {
-        document.documentElement.classList.remove('dark');
-        elements.darkModeToggle.textContent = '🌙';
-      }
-    }
-
-    // Wallet connection
-    async function handleWalletConnection() {
-      if (state.walletConnected) return;
-      
-      if (typeof window.ethereum === 'undefined') {
-        alert('Please install MetaMask to connect your wallet');
-        return;
-      }
-
+  // Connect Wallet Function
+  async function connectWallet() {
+    if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        if (accounts.length > 0) {
-          state.walletConnected = true;
-          updateWalletButton(accounts[0]);
-        }
+        userWalletAddress = accounts[0];
+        document.getElementById('walletButton').textContent = 'Connected';
+        alert('Wallet connected: ' + userWalletAddress);
       } catch (error) {
-        console.error('Wallet connection error:', error);
-        alert('Failed to connect wallet');
+        console.error(error);
+        alert('Wallet connection failed.');
       }
+    } else {
+      alert('Please install MetaMask to connect your wallet.');
+    }
+  }
+
+  // Buy Fluffi Function
+  async function buyFluffi() {
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
     }
 
-    function updateWalletButton(address) {
-      elements.walletButton.textContent = `${address.substring(0, 6)}...${address.substring(38)}`;
-      elements.walletButton.classList.remove('bg-green-500', 'hover:bg-green-600');
-      elements.walletButton.classList.add('bg-green-700', 'cursor-default');
+    const amount = document.getElementById('amountInput').value;
+    const ref = document.getElementById('refInput').value;
+
+    if (!amount || isNaN(amount)) {
+      alert('Please enter a valid amount.');
+      return;
     }
 
-    // Buy functionality
-    function handleBuy() {
-      if (!state.walletConnected) {
-        alert('Please connect your wallet first');
+    alert(`Buying $FLUFFI for $${amount} with referral: ${ref || 'none'}`);
+    // Add your smart contract interaction code here
+  }
+
+  // Stake Fluffi Function
+  async function stakeFluffi() {
+    if (!userWalletAddress) {
+      alert('Please connect your wallet first.');
+      return;
+    }
+
+    const amount = document.getElementById('stakeInput').value;
+    if (!amount || isNaN(amount)) {
+      alert('Please enter a valid amount to stake.');
+      return;
+    }
+
+    alert(`Staking ${amount} $FLUFFI`);
+    // Add staking interaction here
+  }
+
+  // Countdown Timer Logic (Optional enhancement)
+  function startCountdown(endTime) {
+    const countdownEl = document.getElementById('countdown');
+    function updateTimer() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+
+      if (distance <= 0) {
+        countdownEl.innerText = "Presale Ended";
+        clearInterval(timerInterval);
         return;
       }
 
-      const amount = parseFloat(elements.amountInput.value);
-      if (isNaN(amount) {
-        alert('Please enter a valid amount');
-        return;
-      }
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      elements.buyButton.disabled = true;
-      elements.buyButton.textContent = 'Processing...';
-
-      // Simulate transaction
-      setTimeout(() => {
-        alert(`Successfully purchased $${amount} worth of FLUFFI`);
-        elements.buyButton.disabled = false;
-        elements.buyButton.textContent = 'Buy Now';
-      }, 1500);
+      countdownEl.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s left`;
     }
 
-    // Stake functionality
-    function handleStake() {
-      if (!state.walletConnected) {
-        alert('Please connect your wallet first');
-        return;
-      }
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
+  }
 
-      const amount = parseFloat(elements.stakeInput.value);
-      if (isNaN(amount)) {
-        alert('Please enter a valid amount');
-        return;
-      }
+  // Attach Event Listeners After DOM Loads
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('walletButton').addEventListener('click', connectWallet);
+    document.getElementById('buyButton').addEventListener('click', buyFluffi);
+    document.getElementById('stakeButton').addEventListener('click', stakeFluffi);
 
-      elements.stakeButton.disabled = true;
-      elements.stakeButton.textContent = 'Processing...';
-
-      // Simulate transaction
-      setTimeout(() => {
-        alert(`Successfully staked ${amount} FLUFFI tokens`);
-        elements.stakeButton.disabled = false;
-        elements.stakeButton.textContent = 'Stake';
-      }, 1500);
-    }
-
-    // Stage and countdown functionality
-    function updateStageInfo() {
-      elements.stageInfo.textContent = `Stage: ${state.stage} / 15`;
-      elements.priceInfo.textContent = `Price: $${state.price.toFixed(6)}`;
-      elements.progressBar.style.width = `${(state.stage / 15) * 100}%`;
-    }
-
-    function startCountdown() {
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 30);
-      
-      function update() {
-        const now = new Date();
-        const diff = endDate - now;
-        
-        if (diff <= 0) {
-          elements.countdown.textContent = "Presale ended";
-          return;
-        }
-        
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
-        elements.countdown.textContent = `Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-      }
-      
-      update();
-      setInterval(update, 1000);
-    }
-
-    // Initialize the app when DOM is loaded
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+    // Optional: Start countdown to a specific date/time
+    const endDate = new Date('2025-06-01T00:00:00Z').getTime();
+    startCountdown(endDate);
+  });
+</script>
 </body>
 </html>
