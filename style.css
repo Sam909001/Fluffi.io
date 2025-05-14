@@ -1,93 +1,121 @@
-/* Base Styles & Reset */
+/* FLUFFI Meme Coin Presale & Staking - Base Styles */
 :root {
-  --primary: #ec4899;
-  --secondary: #f59e0b;
-  --accent: #10b981;
-  --dark-bg: #111827;
-  --dark-card: #1f2937;
-  --light-bg: #fff0f5;
-  --light-card: #ffffff;
-  --text-dark: #111827;
-  --text-light: #f9fafb;
-  --gray-light: #e5e7eb;
-  --gray-dark: #4b5563;
+  --main-bg: #faf4ea;
+  --main-fg: #181819;
+  --accent: #fece72;
+  --accent2: #fbc02d;
+  --header-bg: #f6dda4;
+  --card-bg: #fff9ed;
+  --btn-bg: #fbc02d;
+  --btn-fg: #1c1400;
 }
-
-* {
+[data-theme='dark'] {
+  --main-bg: #201a15;
+  --main-fg: #ffe7b5;
+  --header-bg: #453012;
+  --card-bg: #33260e;
+  --btn-bg: #fbc02d;
+}
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /* Removed global transition to prevent UI conflicts */
-}
-
-/* Added: Smoother transition for theme switching */
-body {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-#walletButton.connected {
-  background-color: #4CAF50;
-  cursor: default;
-}
-
-#walletButton.connected:hover {
-  transform: none;
-}
-
-/* Rest remains identical below */
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.5;
-  color: var(--text-dark);
-  background: linear-gradient(to bottom, var(--light-bg), #fff9e6);
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: var(--main-bg);
+  color: var(--main-fg);
   min-height: 100vh;
 }
-
-.dark body {
-  background: var(--dark-bg);
-  color: var(--text-light);
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--header-bg);
+  padding: 1rem 2rem;
 }
-
-/* ... (ALL OTHER ORIGINAL RULES REMAIN UNCHANGED) ... */
-
-/* Modified: Wallet button transitions (original appearance preserved) */
-#walletButton {
-  background-color: var(--accent);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  /* Added isolated transition */
-  transition: background-color 0.3s ease, transform 0.2s ease;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
-
-/* Added: Loading state without visual change */
-#walletButton.connecting {
+.logo img {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+}
+.logo span {
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #e1821d;
+}
+.social-links a {
+  margin-left: 15px;
+  color: var(--main-fg);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.social-links a:hover {
+  color: #40a2fa;
+}
+.dark-toggle {
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  margin-left: 1.5rem;
+  cursor: pointer;
+}
+.section {
+  margin: 2rem auto;
+  max-width: 840px;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 32px rgba(60,30,0,0.08);
   position: relative;
-  overflow: hidden;
 }
-
-#walletButton.connecting::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  transform: translate(-50%, -50%);
-  opacity: 0;
+.tokenomics-graph {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  align-items: center;
 }
-
-@keyframes spin {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+.tokenomics-info {
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
-
-/* Original social icons and footer remain unchanged */
-.social-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+.presale-panel, .staking-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.button {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: none;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.2rem;
+  border-radius: 1em;
+  box-shadow: 0 1px 6px rgba(206,154,43,0.17);
+  cursor: pointer;
+  font-weight: 600;
+  transition: filter 0.19s;
+}
+.button:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+}
+input, select {
+  font-size: 1.1rem;
+  padding: 0.67rem 1rem;
+  margin-top: 0.45rem;
+  border-radius: 0.44em;
+  border: 2px solid #ffd485;
+  background: #fffaf3;
+  color: #20201a;
+}
+@media (max-width: 540px) {
+  .header { flex-direction: column; gap: 1.1rem; padding: 1rem 0.7rem; }
+  .logo img { width: 40px; height: 40px; }
+  .logo span { font-size: 1.2rem; }
+  .section { padding: 1rem; }
+  .tokenomics-graph { flex-direction: column; gap: 1.5rem; }
 }
