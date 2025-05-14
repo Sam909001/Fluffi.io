@@ -113,8 +113,21 @@ const startTime = new Date("2025-05-05T12:00:00Z").getTime();
   }
 
   function toggleDarkMode() {
-    document.documentElement.classList.toggle('dark');
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('fluffiDarkMode', document.documentElement.classList.contains('dark'));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const darkModeBtn = document.getElementById('toggleDarkMode');
+  if (darkModeBtn) {
+    darkModeBtn.addEventListener('click', toggleDarkMode);
+
+    const darkMode = localStorage.getItem('fluffiDarkMode') === 'true';
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    }
   }
+});
 
   // --- Referral Logic ---
   function getReferrerFromURL() {
